@@ -24,6 +24,8 @@ services:
       REFRESH_TOKEN_SECRET: 0serms9f4w0fk-nbpgssjgd89gjer04g
       DATABASE_URL: postgresql://admin:password@postgres:5432/d2
       DOMAIN: .domain.com
+      NODEMAILER_USER: please-put-your-nodemailer-user-here
+      NODEMAILER_PASSWORD: please-put-your-nodemailer-user-password
     build:
       context: ./server
     depends_on:
