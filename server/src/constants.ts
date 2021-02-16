@@ -12,3 +12,5 @@ export const COOKIE_NAME = "nikolatec";
 export const FORGOT_PASSWORD_PREFIX = "forgot-password:";
 export const USER = "USER";
 export const ADMIN = "ADMIN";
+export const NODEMAILER_USER = process.env.NODEMAILER_USER;
+export const NODEMAILER_PASSWORD = process.env.NODEMAILER_PASSWORD;
