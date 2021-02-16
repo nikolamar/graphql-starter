@@ -1,0 +1,5 @@
+query Hotel($id: Int!) {
+  hotel(id: $id) {
+    ...HotelSnippet
+  }
+}

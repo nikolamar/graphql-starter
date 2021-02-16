@@ -1,0 +1,3 @@
+mutation Vote($reviewId: Int!, $value: Int!) {
+  vote(reviewId: $reviewId, value: $value)
+}

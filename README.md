@@ -1,4 +1,4 @@
-## Demo Hotels application built with:
+## GraphQL Starter:
 <!-- 
 Next.js|Apollo|TypeGraphQL|TypeORM
 :---:|:---:|:---:|:---: 

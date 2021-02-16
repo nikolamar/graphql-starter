@@ -1,0 +1,13 @@
+query Reviews($limit: Int!, $order: String, $cursor: Timestamp, $hotelId: Int) {
+  reviews(
+    limit: $limit
+    order: $order
+    cursor: $cursor
+    filter: { hotelId: $hotelId }
+  ) {
+    hasMore
+    reviews {
+      ...ReviewSnippet
+    }
+  }
+}

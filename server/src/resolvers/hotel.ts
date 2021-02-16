@@ -1,0 +1,163 @@
+import moment from "moment";
+import {
+  Arg,
+  Ctx,
+  FieldResolver,
+  GraphQLTimestamp,
+  Int,
+  Mutation,
+  Query,
+  Resolver,
+  Root,
+  UseMiddleware
+} from "type-graphql";
+import { getConnection } from "typeorm";
+import { config } from "../config";
+import { Hotel } from "../entities/hotel";
+import { Image } from "../entities/image";
+import { Review } from "../entities/review";
+import { User } from "../entities/user";
+import { HotelInput, HotelUpdateInput } from "../inputs";
+import { isAuthenticated } from "../middlewares/is-authenticated";
+import { refreshTokens } from "../middlewares/refresh-tokens";
+import { PaginatedHotels } from "../objects";
+import { Context, Order } from "../types";
+
+@Resolver(Hotel)
+export class HotelResolver {
+  @FieldResolver(() => String)
+  descriptionSnippet(@Root() hotel: Hotel): String {
+    return hotel.description.slice(0, 50);
+  }
+
+  @FieldResolver(() => User)
+  user(@Root() hotel: Hotel, @Ctx() ctx: Context) {
+    return ctx.userLoader.load(hotel.userId);
+  }
+
+  @FieldResolver(() => Image)
+  image(@Root() hotel: Hotel, @Ctx() ctx: Context) {
+    return ctx.imageLoader.load(hotel.imageId);
+  }
+
+  @FieldResolver(() => [Review])
+  async reviews(@Root() hotel: Hotel, @Ctx() ctx: Context) {
+    const reviews = await ctx.reviewsLoader.load(hotel.id);
+    return reviews || [];
+  }
+
+  @FieldResolver(() => [Image])
+  async images(@Root() hotel: Hotel, @Ctx() ctx: Context) {
+    const images = await ctx.hotelImagesLoader.load(hotel.id);
+    return images || [];
+  }
+
+  @Query(() => PaginatedHotels)
+  async hotels(
+    @Arg("limit", () => Int) limit: number,
+    @Arg("cursor", () => GraphQLTimestamp, { nullable: true }) cursor: number,
+    @Arg("order", () => String, { nullable: true }) order: Order = "ASC"
+  ): Promise<PaginatedHotels> {
+    const dbLimit = Math.min(config.defaultLimit, limit);
+    const dbLimitPlusOne = dbLimit + 1;
+    const createdAt = cursor ? `'${moment(cursor).format()}'` : null;
+    const whereQuery = createdAt
+      ? ` WHERE h."createdAt" ${order === "ASC" ? ">" : "<"} ${createdAt}`
+      : "";
+    const orderQuery = order ? ` ORDER BY h."createdAt" ${order}` : "";
+    const limitQuery = limit ? ` LIMIT ${dbLimitPlusOne}` : "";
+
+    const query =
+      "SELECT h.* FROM hotels AS h" + whereQuery + orderQuery + limitQuery;
+
+    const hotels = await getConnection().query(query);
+
+    return {
+      hotels: hotels.slice(0, dbLimit),
+      hasMore: hotels.length === dbLimitPlusOne,
+    };
+  }
+
+  @Query(() => Hotel, { nullable: true }) hotel(
+    @Arg("id", () => Int) id: number
+  ): Promise<Hotel | undefined> {
+    return Hotel.findOne(id);
+  }
+
+  @UseMiddleware(refreshTokens)
+  @UseMiddleware(isAuthenticated)
+  @Mutation(() => Hotel)
+  async createHotel(
+    @Arg("input") input: HotelInput,
+    @Ctx() ctx: Context
+  ): Promise<Hotel> {
+
+    let result: Hotel = {} as Hotel;
+
+    await getConnection().transaction(async (tm) => {
+      const [ image ] = await tm.query(
+        `INSERT INTO "images"("url") VALUES ($1) RETURNING "id"`,
+        [input.image]
+      );
+      const [ hotel ] = await tm.query(
+        `INSERT INTO "hotels"
+        ("name", "city", "country", "description", "location", "stars", "price", "userId", "imageId", "createdAt", "updatedAt")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, DEFAULT, DEFAULT)
+        RETURNING "id", "name", "city", "country", "description", "location", "stars", "price", "userId", "imageId", "createdAt", "updatedAt"`,
+        [input.name, input.city, input.country, input.description, input.location, input.stars, input.price, ctx.req.userId, image.id]
+      );
+      await tm.query(
+        `UPDATE images
+        SET "hotelId" = $2
+        WHERE id = $1
+      `,
+        [image.id, hotel.id]
+      );
+
+      result = hotel;
+    });
+
+    return result;
+  }
+
+  @UseMiddleware(refreshTokens)
+  @UseMiddleware(isAuthenticated)
+  @Mutation(() => Hotel, { nullable: true })
+  async updateHotel(
+    @Arg("id", () => Int) id: number,
+    @Arg("input") input: HotelUpdateInput,
+    @Ctx() ctx: Context
+  ): Promise<Hotel | null> {
+    if (Object.keys(input).length === 0 && input.constructor === Object) {
+      return null;
+    }
+
+    let { image, ...rest } = input;
+
+    const imgResult = await Image.create({ url: image, hotelId: id }).save();
+
+    const result = await getConnection()
+      .createQueryBuilder()
+      .update(Hotel)
+      .set({ ...rest, imageId: imgResult.id })
+      .where(`id = :id AND "userId" = :userId`, {
+        id,
+        userId: ctx.req.userId,
+      })
+      .returning("*")
+      .execute();
+
+    return result.raw[0];
+  }
+
+  @UseMiddleware(refreshTokens)
+  @UseMiddleware(isAuthenticated)
+  @Mutation(() => Boolean)
+  async deleteHotel(
+    @Arg("id", () => Int) id: number,
+    @Ctx() ctx: Context
+  ): Promise<Boolean> {
+    await Hotel.delete({ id, userId: ctx.req.userId });
+    return true;
+  }
+}

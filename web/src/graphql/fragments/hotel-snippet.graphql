@@ -1,0 +1,18 @@
+fragment HotelSnippet on Hotel {
+  id
+  name
+  city
+  country
+  image
+  stars
+  description
+  descriptionSnippet
+  price
+  location
+  createdAt
+  userId
+  user {
+    id
+    username
+  }
+}

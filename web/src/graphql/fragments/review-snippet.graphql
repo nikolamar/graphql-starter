@@ -1,0 +1,9 @@
+fragment ReviewSnippet on Review {
+  id
+  message
+  likes
+  dislikes
+  voteStatus
+  hotelId
+  createdAt
+}

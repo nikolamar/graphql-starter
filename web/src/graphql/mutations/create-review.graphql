@@ -1,0 +1,5 @@
+mutation CreateReview($hotelId: Int!, $message: String!) {
+  createReview(hotelId: $hotelId, message: $message) {
+    ...ReviewSnippet
+  }
+}
