@@ -66,3 +66,12 @@ export class ImageUrl {
   @Field()
   url: string;
 }
+
+@ObjectType()
+export class ImageResponse {
+  @Field({ nullable: true })
+  id: number;
+
+  @Field({ nullable: false })
+  url: string;
+}

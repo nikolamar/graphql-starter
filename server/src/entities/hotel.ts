@@ -14,15 +14,7 @@ import {
 import { Review } from "./review";
 import { User } from "./user";
 import { Image } from "./image";
-
-@ObjectType()
-class ImageResponse {
-  @Field({ nullable: true })
-  id: number;
-
-  @Field({ nullable: false })
-  url: string;
-}
+import { ImageResponse } from "../objects";
 
 @ObjectType()
 @Entity({ name: "hotels" })
