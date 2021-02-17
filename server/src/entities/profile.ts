@@ -25,7 +25,27 @@ export class Profile extends BaseEntity {
 
   @Field({ nullable: true })
   @Column({ nullable: true })
+  middleName: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   lastName: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  city: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  country: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  birthDate: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  phone: string;
 
   @Field(() => GraphQLTimestamp)
   @CreateDateColumn()

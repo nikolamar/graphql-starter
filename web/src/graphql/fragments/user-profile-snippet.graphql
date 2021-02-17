@@ -1,0 +1,13 @@
+fragment UserProfileSnippet on User {
+  profile {
+    id
+    gender
+    firstName
+    middleName
+    lastName
+    city
+    country
+    birthDate
+    phone
+  }
+}

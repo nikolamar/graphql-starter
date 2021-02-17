@@ -110,10 +110,12 @@ export type User = {
   username: Scalars['String'];
   email: Scalars['String'];
   profileId?: Maybe<Scalars['Float']>;
+  imageId?: Maybe<Scalars['Float']>;
   createdAt: Scalars['Timestamp'];
   updatedAt: Scalars['Timestamp'];
   profile: Profile;
   images: Array<Image>;
+  image?: Maybe<Image>;
 };
 
 
@@ -122,7 +124,12 @@ export type Profile = {
   id: Scalars['Float'];
   gender?: Maybe<Scalars['String']>;
   firstName?: Maybe<Scalars['String']>;
+  middleName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  birthDate?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
   createdAt: Scalars['Timestamp'];
   updatedAt: Scalars['Timestamp'];
 };
@@ -350,6 +357,25 @@ export type ReviewSnippetFragment = (
   & Pick<Review, 'id' | 'message' | 'likes' | 'dislikes' | 'voteStatus' | 'hotelId' | 'createdAt'>
 );
 
+export type UserImagesSnippetFragment = (
+  { __typename?: 'User' }
+  & { image?: Maybe<(
+    { __typename?: 'Image' }
+    & Pick<Image, 'id' | 'url'>
+  )>, images: Array<(
+    { __typename?: 'Image' }
+    & Pick<Image, 'id' | 'url'>
+  )> }
+);
+
+export type UserProfileSnippetFragment = (
+  { __typename?: 'User' }
+  & { profile: (
+    { __typename?: 'Profile' }
+    & Pick<Profile, 'id' | 'gender' | 'firstName' | 'middleName' | 'lastName' | 'city' | 'country' | 'birthDate' | 'phone'>
+  ) }
+);
+
 export type UserResponseSnippetFragment = (
   { __typename?: 'UserResponse' }
   & { errors?: Maybe<Array<(
@@ -559,6 +585,8 @@ export type MeQuery = (
   & { me?: Maybe<(
     { __typename?: 'User' }
     & UserSnippetFragment
+    & UserProfileSnippetFragment
+    & UserImagesSnippetFragment
   )> }
 );
 
@@ -636,6 +664,33 @@ export const ReviewSnippetFragmentDoc = gql`
   voteStatus
   hotelId
   createdAt
+}
+    `;
+export const UserImagesSnippetFragmentDoc = gql`
+    fragment UserImagesSnippet on User {
+  image {
+    id
+    url
+  }
+  images {
+    id
+    url
+  }
+}
+    `;
+export const UserProfileSnippetFragmentDoc = gql`
+    fragment UserProfileSnippet on User {
+  profile {
+    id
+    gender
+    firstName
+    middleName
+    lastName
+    city
+    country
+    birthDate
+    phone
+  }
 }
     `;
 export const ErrorSnippetFragmentDoc = gql`
@@ -1109,9 +1164,13 @@ export const MeDocument = gql`
     query Me {
   me {
     ...UserSnippet
+    ...UserProfileSnippet
+    ...UserImagesSnippet
   }
 }
-    ${UserSnippetFragmentDoc}`;
+    ${UserSnippetFragmentDoc}
+${UserProfileSnippetFragmentDoc}
+${UserImagesSnippetFragmentDoc}`;
 
 /**
  * __useMeQuery__
