@@ -384,6 +384,8 @@ export type UserResponseSnippetFragment = (
   )>>, user?: Maybe<(
     { __typename?: 'User' }
     & UserSnippetFragment
+    & UserProfileSnippetFragment
+    & UserImagesSnippetFragment
   )> }
 );
 
@@ -666,16 +668,18 @@ export const ReviewSnippetFragmentDoc = gql`
   createdAt
 }
     `;
-export const UserImagesSnippetFragmentDoc = gql`
-    fragment UserImagesSnippet on User {
-  image {
-    id
-    url
-  }
-  images {
-    id
-    url
-  }
+export const ErrorSnippetFragmentDoc = gql`
+    fragment ErrorSnippet on FieldError {
+  field
+  message
+}
+    `;
+export const UserSnippetFragmentDoc = gql`
+    fragment UserSnippet on User {
+  id
+  email
+  username
+  createdAt
 }
     `;
 export const UserProfileSnippetFragmentDoc = gql`
@@ -693,18 +697,16 @@ export const UserProfileSnippetFragmentDoc = gql`
   }
 }
     `;
-export const ErrorSnippetFragmentDoc = gql`
-    fragment ErrorSnippet on FieldError {
-  field
-  message
-}
-    `;
-export const UserSnippetFragmentDoc = gql`
-    fragment UserSnippet on User {
-  id
-  email
-  username
-  createdAt
+export const UserImagesSnippetFragmentDoc = gql`
+    fragment UserImagesSnippet on User {
+  image {
+    id
+    url
+  }
+  images {
+    id
+    url
+  }
 }
     `;
 export const UserResponseSnippetFragmentDoc = gql`
@@ -714,10 +716,14 @@ export const UserResponseSnippetFragmentDoc = gql`
   }
   user {
     ...UserSnippet
+    ...UserProfileSnippet
+    ...UserImagesSnippet
   }
 }
     ${ErrorSnippetFragmentDoc}
-${UserSnippetFragmentDoc}`;
+${UserSnippetFragmentDoc}
+${UserProfileSnippetFragmentDoc}
+${UserImagesSnippetFragmentDoc}`;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($token: String!, $newpassword: String!) {
   changePassword(token: $token, newpassword: $newpassword) {
