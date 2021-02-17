@@ -62,7 +62,7 @@ const EditHotel: FC<{}> = ({}) => {
             city: data?.hotel?.city,
             country: data?.hotel?.country,
             description: data?.hotel?.description,
-            image: data?.hotel?.image,
+            image: data?.hotel?.image?.url,
             location: data?.hotel?.location,
             stars: data?.hotel?.stars,
             price: data?.hotel?.price
