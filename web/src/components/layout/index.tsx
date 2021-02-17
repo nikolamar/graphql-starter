@@ -1,8 +1,7 @@
 import { Box } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import { FC, ReactChild, useMemo } from "react";
-import Footer from "./footer";
-import Meta from "./meta";
+import { FC, ReactChild } from "react";
+import { Footer } from "./footer";
+import { Meta } from "./meta";
 import { NavBar } from "./nav-bar";
 
 interface LayoutProps {

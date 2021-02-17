@@ -1,7 +1,7 @@
 import { Flex, Link, Text, useColorModeValue } from "@chakra-ui/react";
 import { FC } from "react";
 
-const Footer: FC<{}> = () => {
+export const Footer: FC<{}> = () => {
 
   const color = useColorModeValue("teal.500", "gray.800");
 
@@ -16,5 +16,3 @@ const Footer: FC<{}> = () => {
     </Flex>
   );
 };
-
-export default Footer;
