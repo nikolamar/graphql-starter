@@ -25,18 +25,27 @@ import { Context, Order } from "../types";
 
 @Resolver(Hotel)
 export class HotelResolver {
-  @FieldResolver(() => String)
+  @FieldResolver(() => String, { nullable: true })
   descriptionSnippet(@Root() hotel: Hotel): String {
+    if (!hotel.description) {
+      return "";
+    }
     return hotel.description.slice(0, 50);
   }
 
-  @FieldResolver(() => User)
+  @FieldResolver(() => User, { nullable: true })
   user(@Root() hotel: Hotel, @Ctx() ctx: Context) {
+    if (!hotel.userId) {
+      return;
+    }
     return ctx.userLoader.load(hotel.userId);
   }
 
-  @FieldResolver(() => Image)
+  @FieldResolver(() => Image, { nullable: true })
   image(@Root() hotel: Hotel, @Ctx() ctx: Context) {
+    if (!hotel.imageId) {
+      return;
+    }
     return ctx.imageLoader.load(hotel.imageId);
   }
 
