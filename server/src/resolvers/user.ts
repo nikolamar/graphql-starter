@@ -46,6 +46,14 @@ export class UserResolver {
     return images || [];
   }
 
+  @FieldResolver(() => Image, { nullable: true })
+  image(@Root() user: User, @Ctx() ctx: Context) {
+    if (!user.imageId) {
+      return;
+    }
+    return ctx.imageLoader.load(user.imageId);
+  }
+
   @UseMiddleware(refreshTokens)
   @UseMiddleware(isAuthenticated)
   @UseMiddleware(isAdministrator)

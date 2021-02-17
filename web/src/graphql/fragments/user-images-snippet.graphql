@@ -1,0 +1,10 @@
+fragment UserImagesSnippet on User {
+  image {
+    id
+    url
+  }
+  images {
+    id
+    url
+  }
+}

@@ -15,6 +15,7 @@ import { Profile } from "./profile";
 import { Vote } from "./vote";
 import { Image } from "./image";
 import { USER } from "../constants";
+import { ImageResponse } from "../objects";
 
 @ObjectType()
 @Entity({ name: "users" })
@@ -61,6 +62,14 @@ export class User extends BaseEntity {
   // User -> [Vote]
   @OneToMany(() => Vote, (vote) => vote.user, { cascade: true })
   votes: Vote[];
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  imageId: number;
+
+  @OneToOne(() => Image, { nullable: true })
+  @JoinColumn()
+  image: ImageResponse;
 
   @Field(() => GraphQLTimestamp)
   @CreateDateColumn()
