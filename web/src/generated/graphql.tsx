@@ -22,6 +22,8 @@ export type Query = {
   helloWorld: Scalars['String'];
   hotels: PaginatedHotels;
   hotel?: Maybe<Hotel>;
+  images: PaginatedImages;
+  test: Scalars['Boolean'];
   reviews: PaginatedReviews;
   review?: Maybe<Review>;
   users: PaginatedUsers;
@@ -42,8 +44,15 @@ export type QueryHotelArgs = {
 };
 
 
+export type QueryImagesArgs = {
+  order?: Maybe<Scalars['String']>;
+  cursor?: Maybe<Scalars['Timestamp']>;
+  limit: Scalars['Int'];
+};
+
+
 export type QueryReviewsArgs = {
-  filter?: Maybe<FilterInput>;
+  filter?: Maybe<ReviewFilterInput>;
   order?: Maybe<Scalars['String']>;
   cursor?: Maybe<Scalars['Timestamp']>;
   limit: Scalars['Int'];
@@ -78,7 +87,6 @@ export type Hotel = {
   name: Scalars['String'];
   city: Scalars['String'];
   country: Scalars['String'];
-  image: Scalars['String'];
   description: Scalars['String'];
   location: Scalars['String'];
   stars: Scalars['Float'];
@@ -86,21 +94,50 @@ export type Hotel = {
   userId: Scalars['Float'];
   user: User;
   reviews: Array<Review>;
+  imageId?: Maybe<Scalars['Float']>;
   createdAt: Scalars['Timestamp'];
   updatedAt: Scalars['Timestamp'];
-  descriptionSnippet: Scalars['String'];
+  descriptionSnippet?: Maybe<Scalars['String']>;
+  image?: Maybe<Image>;
+  images: Array<Image>;
 };
 
 export type User = {
   __typename?: 'User';
   id: Scalars['Float'];
+  count: Scalars['Float'];
+  type: Scalars['String'];
   username: Scalars['String'];
   email: Scalars['String'];
-  profileId: Scalars['Float'];
+  profileId?: Maybe<Scalars['Float']>;
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
+  profile: Profile;
+  images: Array<Image>;
+};
+
+
+export type Profile = {
+  __typename?: 'Profile';
+  id: Scalars['Float'];
+  gender?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
   createdAt: Scalars['Timestamp'];
   updatedAt: Scalars['Timestamp'];
 };
 
+export type Image = {
+  __typename?: 'Image';
+  id: Scalars['Float'];
+  url?: Maybe<Scalars['String']>;
+  userId?: Maybe<Scalars['Float']>;
+  user: User;
+  hotelId?: Maybe<Scalars['Float']>;
+  hotel: Hotel;
+  createdAt: Scalars['Timestamp'];
+  updatedAt: Scalars['Timestamp'];
+};
 
 export type Review = {
   __typename?: 'Review';
@@ -114,13 +151,19 @@ export type Review = {
   updatedAt: Scalars['Timestamp'];
 };
 
+export type PaginatedImages = {
+  __typename?: 'PaginatedImages';
+  images: Array<Image>;
+  hasMore: Scalars['Boolean'];
+};
+
 export type PaginatedReviews = {
   __typename?: 'PaginatedReviews';
   reviews: Array<Review>;
   hasMore: Scalars['Boolean'];
 };
 
-export type FilterInput = {
+export type ReviewFilterInput = {
   hotelId?: Maybe<Scalars['Int']>;
 };
 
@@ -132,25 +175,22 @@ export type PaginatedUsers = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  imageUpload: ImageUrl;
   createHotel: Hotel;
   updateHotel?: Maybe<Hotel>;
   deleteHotel: Scalars['Boolean'];
+  createImage: Image;
+  deleteImage: Scalars['Boolean'];
   createReview: Review;
   updateReview?: Maybe<Review>;
   deleteReview: Scalars['Boolean'];
   vote: Scalars['Boolean'];
+  imageUpload: ImageUrl;
   deleteUser: Scalars['Boolean'];
   login: UserResponse;
   logout: Scalars['Boolean'];
   register: UserResponse;
   forgotPassword: UserResponse;
   changePassword: UserResponse;
-};
-
-
-export type MutationImageUploadArgs = {
-  file: Scalars['Upload'];
 };
 
 
@@ -166,6 +206,16 @@ export type MutationUpdateHotelArgs = {
 
 
 export type MutationDeleteHotelArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationCreateImageArgs = {
+  url: Scalars['String'];
+};
+
+
+export type MutationDeleteImageArgs = {
   id: Scalars['Int'];
 };
 
@@ -193,18 +243,23 @@ export type MutationVoteArgs = {
 };
 
 
+export type MutationImageUploadArgs = {
+  file: Scalars['Upload'];
+};
+
+
 export type MutationDeleteUserArgs = {
   id: Scalars['Int'];
 };
 
 
 export type MutationLoginArgs = {
-  input: UsernameOrEmailPasswordInput;
+  input: LoginInput;
 };
 
 
 export type MutationRegisterArgs = {
-  input: EmailAndUsernamePasswordInput;
+  input: RegisterInput;
 };
 
 
@@ -218,17 +273,11 @@ export type MutationChangePasswordArgs = {
   token: Scalars['String'];
 };
 
-export type ImageUrl = {
-  __typename?: 'ImageUrl';
-  url: Scalars['String'];
-};
-
-
 export type HotelInput = {
   name: Scalars['String'];
   city: Scalars['String'];
   country: Scalars['String'];
-  image: Scalars['String'];
+  image?: Maybe<Scalars['String']>;
   description: Scalars['String'];
   location: Scalars['String'];
   stars?: Maybe<Scalars['Int']>;
@@ -246,6 +295,12 @@ export type HotelUpdateInput = {
   price?: Maybe<Scalars['Int']>;
 };
 
+export type ImageUrl = {
+  __typename?: 'ImageUrl';
+  url: Scalars['String'];
+};
+
+
 export type UserResponse = {
   __typename?: 'UserResponse';
   errors?: Maybe<Array<FieldError>>;
@@ -258,15 +313,16 @@ export type FieldError = {
   message: Scalars['String'];
 };
 
-export type UsernameOrEmailPasswordInput = {
+export type LoginInput = {
   usernameoremail: Scalars['String'];
   password: Scalars['String'];
 };
 
-export type EmailAndUsernamePasswordInput = {
+export type RegisterInput = {
   email: Scalars['String'];
   username: Scalars['String'];
   password: Scalars['String'];
+  type?: Maybe<Scalars['String']>;
 };
 
 export type ErrorSnippetFragment = (
@@ -276,11 +332,17 @@ export type ErrorSnippetFragment = (
 
 export type HotelSnippetFragment = (
   { __typename?: 'Hotel' }
-  & Pick<Hotel, 'id' | 'name' | 'city' | 'country' | 'image' | 'stars' | 'description' | 'descriptionSnippet' | 'price' | 'location' | 'createdAt' | 'userId'>
+  & Pick<Hotel, 'id' | 'name' | 'city' | 'country' | 'stars' | 'description' | 'descriptionSnippet' | 'price' | 'location' | 'createdAt' | 'userId'>
   & { user: (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'username'>
-  ) }
+  ), image?: Maybe<(
+    { __typename?: 'Image' }
+    & Pick<Image, 'id' | 'url'>
+  )>, images: Array<(
+    { __typename?: 'Image' }
+    & Pick<Image, 'id' | 'url'>
+  )> }
 );
 
 export type ReviewSnippetFragment = (
@@ -334,7 +396,7 @@ export type CreateHotelMutation = (
   { __typename?: 'Mutation' }
   & { createHotel: (
     { __typename?: 'Hotel' }
-    & Pick<Hotel, 'id' | 'name' | 'city' | 'country' | 'image' | 'stars' | 'description' | 'price' | 'location' | 'createdAt'>
+    & HotelSnippetFragment
   ) }
 );
 
@@ -442,7 +504,7 @@ export type UpdateHotelMutation = (
   { __typename?: 'Mutation' }
   & { updateHotel?: Maybe<(
     { __typename?: 'Hotel' }
-    & Pick<Hotel, 'id' | 'name' | 'city' | 'country' | 'image' | 'stars' | 'description' | 'price' | 'location' | 'createdAt'>
+    & HotelSnippetFragment
   )> }
 );
 
@@ -544,7 +606,6 @@ export const HotelSnippetFragmentDoc = gql`
   name
   city
   country
-  image
   stars
   description
   descriptionSnippet
@@ -555,6 +616,14 @@ export const HotelSnippetFragmentDoc = gql`
   user {
     id
     username
+  }
+  image {
+    id
+    url
+  }
+  images {
+    id
+    url
   }
 }
     `;
@@ -632,19 +701,10 @@ export const CreateHotelDocument = gql`
   createHotel(
     input: {name: $name, city: $city, country: $country, description: $description, image: $image, location: $location, stars: $stars, price: $price}
   ) {
-    id
-    name
-    city
-    country
-    image
-    stars
-    description
-    price
-    location
-    createdAt
+    ...HotelSnippet
   }
 }
-    `;
+    ${HotelSnippetFragmentDoc}`;
 export type CreateHotelMutationFn = Apollo.MutationFunction<CreateHotelMutation, CreateHotelMutationVariables>;
 
 /**
@@ -906,19 +966,10 @@ export const UpdateHotelDocument = gql`
     id: $id
     input: {name: $name, city: $city, country: $country, description: $description, image: $image, location: $location, stars: $stars, price: $price}
   ) {
-    id
-    name
-    city
-    country
-    image
-    stars
-    description
-    price
-    location
-    createdAt
+    ...HotelSnippet
   }
 }
-    `;
+    ${HotelSnippetFragmentDoc}`;
 export type UpdateHotelMutationFn = Apollo.MutationFunction<UpdateHotelMutation, UpdateHotelMutationVariables>;
 
 /**
