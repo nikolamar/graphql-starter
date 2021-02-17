@@ -84,7 +84,7 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
           height={270}
           borderRadius={3}
           objectFit="cover"
-          src={hotel.image}
+          src={hotel.image?.url || undefined}
         />
         <Box flex={1}>
           <HStack>
