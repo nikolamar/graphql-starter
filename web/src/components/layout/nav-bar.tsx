@@ -56,7 +56,7 @@ export const NavBar: FC<{}> = (() => {
   }
 
   return (
-    <Flex zIndex={1} position="sticky" top={0} height={inRange ? 65 : 100} bg={color} mt="2rem" shadow={inRange ? "md" : undefined} transition="height 200ms">
+    <Flex zIndex={1000} position="sticky" top={0} height={inRange ? 65 : 100} bg={color} mt="2rem" shadow={inRange ? "md" : undefined} transition="height 200ms">
       <Flex flex={1} m="auto" align="center" maxW={800}>
         <HStack>
           <AccessibleLink href="/">
