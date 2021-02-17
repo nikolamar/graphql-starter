@@ -108,6 +108,7 @@ const EditHotel: FC<{}> = ({}) => {
           {({ isSubmitting }) => (
             <Form style={{margin: "50px 0"}}>
               <InputField
+                layout="horizontal"
                 name="name"
                 placeholder="name"
                 label="Name"
@@ -115,6 +116,7 @@ const EditHotel: FC<{}> = ({}) => {
               />
               <Box mt={4}/>
               <InputField
+                layout="horizontal"
                 name="city"
                 placeholder="city"
                 label="City"
@@ -122,6 +124,7 @@ const EditHotel: FC<{}> = ({}) => {
               />
               <Box mt={4}/>
               <InputField
+                layout="horizontal"
                 name="country"
                 placeholder="country"
                 label="Country"
@@ -129,6 +132,7 @@ const EditHotel: FC<{}> = ({}) => {
               />
               <Box mt={4}/>
               <InputField
+                layout="horizontal"
                 textarea
                 name="description"
                 placeholder="description"
@@ -137,26 +141,30 @@ const EditHotel: FC<{}> = ({}) => {
               />
               <Box mt={4}/>
               <InputField
+                layout="horizontal"
                 name="image"
-                placeholder={image ? image.name : "image"}
-                label="Pick image or add url"
+                placeholder={image ? image.name : "pick image or paste url"}
+                label="Pick image"
                 spellCheck={false}
                 disabled={image}
               >
-                <PickFileButton onChange={handlePickImage}/>
-                {!image ? null : (
-                  <IconButton
-                    aria-label="delete hotel"
-                    icon={<RiDeleteBinLine/>}
-                    onClick={handleRemoveImage}
-                    colorScheme="red"
-                  />)}
+                <Box mr={2}>
+                  <PickFileButton onChange={handlePickImage}/>
+                  {!image ? null : (
+                    <IconButton
+                      aria-label="delete hotel"
+                      icon={<RiDeleteBinLine/>}
+                      onClick={handleRemoveImage}
+                      colorScheme="red"
+                    />)}
+                  </Box>
               </InputField>
               <Box display="flex" justifyContent="center">
                 <Thumb file={image} />
               </Box>
               <Box mt={4}/>
               <InputField
+                layout="horizontal"
                 name="location"
                 placeholder="location"
                 label="Location"
@@ -164,6 +172,7 @@ const EditHotel: FC<{}> = ({}) => {
               />
                 <Box mt={4}/>
               <InputNumSliderField
+                layout="horizontal"
                 name="stars"
                 placeholder="stars"
                 label="Stars"
@@ -173,6 +182,7 @@ const EditHotel: FC<{}> = ({}) => {
               />
               <Box mt={4}/>
               <InputNumField
+                layout="horizontal"
                 name="price"
                 placeholder="price"
                 label="Price"
