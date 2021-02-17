@@ -1,17 +1,16 @@
 import {
-  FormControl,
+  Collapse, FormControl,
   FormErrorMessage, FormLabel,
-  Input,
-  Textarea,
-  Collapse,
-  HStack
+  HStack, Input, Textarea, VStack
 } from "@chakra-ui/react";
 import { useField } from "formik";
 import { FC, InputHTMLAttributes } from "react";
+import { config } from "../config";
 
 type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
   name: string;
+  layout?: "horizontal" | "vertical";
   textarea?: boolean;
   children?: any;
 };
@@ -20,22 +19,36 @@ export const InputField: FC<InputFieldProps> = ({
   label,
   textarea,
   children,
+  layout = "vertical",
   ...rest
 }) => {
+  const [field, { error }] = useField(rest);
+
   let InputOrTextarea: any = Input;
+
   if (textarea) {
     InputOrTextarea = Textarea;
   }
-  const [field, { error }] = useField(rest);
+
+  let isHorizontal = layout === "horizontal";
+
+  let form = (
+    <>
+      <FormLabel htmlFor={field.name} minW={config.defaultLabelMinWidth}>{label}</FormLabel>
+      <HStack align="flex-end" width="100%">
+        <InputOrTextarea {...field} {...rest} id={field.name} />
+        <VStack>
+          {children}
+        </VStack>
+      </HStack>
+    </>
+  );
+
   return (
     <FormControl isInvalid={!!error} className="unselectable">
-      <FormLabel htmlFor={field.name}>{label}</FormLabel>
-      <HStack align="flex-end">
-        <InputOrTextarea {...field} {...rest} id={field.name} />
-        {children}
-      </HStack>
+      {isHorizontal ? <HStack align="flex-start">{form}</HStack> : form}
       <Collapse in={!!error} animateOpacity>
-        <FormErrorMessage my={0}>{error}</FormErrorMessage>
+        <FormErrorMessage my={0} ml={isHorizontal ? config.defaultLabelMinWidth + 20 : undefined}>{error}</FormErrorMessage>
       </Collapse >
     </FormControl>
   );

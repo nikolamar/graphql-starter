@@ -1,37 +1,38 @@
-import { InputHTMLAttributes } from "react";
-import { useField } from "formik";
 import {
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  NumberInput,
-  NumberInputField,
-  NumberIncrementStepper,
-  NumberInputStepper,
-  NumberDecrementStepper,
-  Collapse,
+  Collapse, FormControl,
+  FormErrorMessage, FormLabel,
+  HStack, NumberDecrementStepper, NumberIncrementStepper, NumberInput,
+  NumberInputField, NumberInputStepper
 } from "@chakra-ui/react";
-import { FC } from "react";
+import { useField } from "formik";
+import { FC, InputHTMLAttributes } from "react";
+import { config } from "../config";
 
 type InputNumFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
   name: string;
+  layout?: "horizontal" | "vertical";
 };
 
 export const InputNumField: FC<InputNumFieldProps> = ({
   label,
+  layout = "vertical",
   ...rest
 }) => {
   const [field, meta, helpers] = useField(rest);
-  return (
-    <FormControl isInvalid={!!meta.error} className="unselectable">
-      <FormLabel htmlFor={field.name}>{label}</FormLabel>
+
+  let isHorizontal = layout === "horizontal";
+
+  let form = (
+    <>
+      <FormLabel htmlFor={field.name} minW={config.defaultLabelMinWidth}>{label}</FormLabel>
       <NumberInput
         {...rest as any}
         defaultValue={field.value}
         isInvalid={!!meta.error}
         id={field.name}
         onChange={val => helpers.setValue(parseInt(val))}
+        width="100%"
       >
         <NumberInputField />
         <NumberInputStepper>
@@ -39,8 +40,14 @@ export const InputNumField: FC<InputNumFieldProps> = ({
           <NumberDecrementStepper />
         </NumberInputStepper>
       </NumberInput>
+    </>
+  );
+
+  return (
+    <FormControl isInvalid={!!meta.error} className="unselectable">
+      {isHorizontal ? <HStack align="flex-start">{form}</HStack> : undefined}
       <Collapse in={!!meta.error} animateOpacity>
-        <FormErrorMessage my={0}>{meta.error}</FormErrorMessage>
+        <FormErrorMessage my={0} ml={isHorizontal ? config.defaultLabelMinWidth + 20 : undefined}>{meta.error}</FormErrorMessage>
       </Collapse>
     </FormControl>
   );

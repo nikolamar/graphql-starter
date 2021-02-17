@@ -1,30 +1,25 @@
-import { InputHTMLAttributes } from "react";
-import { useField } from "formik";
 import {
-  HStack,
-  Slider,
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  NumberInput,
+  Collapse, FormControl,
+  FormErrorMessage, FormLabel, HStack,
+  NumberDecrementStepper, NumberIncrementStepper, NumberInput,
   NumberInputField,
-  NumberIncrementStepper,
-  NumberInputStepper,
-  NumberDecrementStepper,
-  Collapse,
-  SliderTrack,
+  NumberInputStepper, Slider,
   SliderFilledTrack,
-  SliderThumb,
+  SliderThumb, SliderTrack, Flex, Box
 } from "@chakra-ui/react";
-import { FC } from "react";
+import { useField } from "formik";
+import { FC, InputHTMLAttributes } from "react";
+import { config } from "../config";
 
 type InputNumSliderFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
   name: string;
+  layout?: "horizontal" | "vertical";
 };
 
 export const InputNumSliderField: FC<InputNumSliderFieldProps> = ({
   label,
+  layout = "vertical",
   ...rest
 }) => {
   const [field, meta, helpers] = useField(rest);
@@ -34,10 +29,12 @@ export const InputNumSliderField: FC<InputNumSliderFieldProps> = ({
     helpers.setValue(num);
   }
 
-  return (
-    <FormControl isInvalid={!!meta.error} className="unselectable">
-      <FormLabel htmlFor={field.name}>{label}</FormLabel>
-      <HStack>
+  let isHorizontal = layout === "horizontal";
+
+  let form = (
+    <>
+      <FormLabel htmlFor={field.name} minW={config.defaultLabelMinWidth}>{label}</FormLabel>
+      <HStack width="100%" mx={isHorizontal ? 2 : undefined} spacing={5}>
         <NumberInput
           {...rest as any}
           defaultValue={field.value}
@@ -45,7 +42,6 @@ export const InputNumSliderField: FC<InputNumSliderFieldProps> = ({
           isInvalid={!!meta.error}
           id={field.name}
           onChange={handleChange}
-          mr={5}
         >
           <NumberInputField />
           <NumberInputStepper>
@@ -54,7 +50,8 @@ export const InputNumSliderField: FC<InputNumSliderFieldProps> = ({
           </NumberInputStepper>
         </NumberInput>
         <Slider
-          flex="1" focusThumbOnChange={false} value={field.value}
+          mr={2}
+          focusThumbOnChange={false} value={field.value}
           onChange={handleChange} min={rest.min as number}
           max={rest.max as number} colorScheme="teal"
         >
@@ -64,8 +61,14 @@ export const InputNumSliderField: FC<InputNumSliderFieldProps> = ({
           <SliderThumb fontSize="sm" boxSize="32px" children={field.value} />
         </Slider>
       </HStack>
+    </>
+  );
+
+  return (
+    <FormControl isInvalid={!!meta.error} className="unselectable">
+      {layout === "vertical" ? form : <Flex>{form}</Flex>}
       <Collapse in={!!meta.error} animateOpacity>
-        <FormErrorMessage my={0}>{meta.error}</FormErrorMessage>
+        <FormErrorMessage my={0} ml={isHorizontal ? config.defaultLabelMinWidth + 20 : undefined}>{meta.error}</FormErrorMessage>
       </Collapse>
     </FormControl>
   );
