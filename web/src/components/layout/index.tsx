@@ -5,30 +5,17 @@ import Footer from "./footer";
 import Meta from "./meta";
 import { NavBar } from "./nav-bar";
 
-const routesWithoutNavBar = new Set([
-  "/register",
-  "/login",
-  "/forgot-password",
-  "/change-password/[token]",
-]);
-
 interface LayoutProps {
   children: ReactChild;
 }
 
-const Layout: FC<LayoutProps> = ({ children }) => {
-
-  const router = useRouter();
-  const isFooterHeaderVisible = useMemo(() => !routesWithoutNavBar.has(router.pathname), [router.pathname]);
-
+export const Layout: FC<LayoutProps> = ({ children }) => {
   return (
     <Box>
       <Meta/>
-      {isFooterHeaderVisible ? <NavBar /> : null}
+      <NavBar />
       {children}
       <Footer/>
     </Box>
   );
 };
-
-export default Layout;
