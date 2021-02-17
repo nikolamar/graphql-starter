@@ -4,7 +4,7 @@ const fonts = { ...theme.fonts, mono: `'Menlo', monospace` };
 
 const breakpoints = ["40em", "52em", "64em"];
 
-const customTheme = extendTheme({
+export const customTheme = extendTheme({
   ...theme,
   fonts,
   breakpoints,
@@ -19,5 +19,3 @@ const customTheme = extendTheme({
     // },
   },
 });
-
-export default customTheme;

@@ -3,11 +3,10 @@ import { ChakraProvider } from "@chakra-ui/react";
 import Head from "next/head";
 import { FC } from "react";
 import Layout from "../components/layout";
-// import { PaginatedHotels } from "../generated/graphql";
-import customTheme from "../styles/custom-theme";
+import "../styles.css";
+import { customTheme } from "../styles/custom-theme";
 import "../styles/globals.css";
 import { client } from "../utils/with-apollo";
-import "../styles.css";
 
 interface MyAppProps {
   Component: any;
