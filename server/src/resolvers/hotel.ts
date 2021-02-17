@@ -90,7 +90,15 @@ export class HotelResolver {
   async createHotel(
     @Arg("input") input: HotelInput,
     @Ctx() ctx: Context
-  ): Promise<Hotel> {
+  ): Promise<Hotel | null> {
+    if (Object.keys(input).length === 0 && input.constructor === Object) {
+      return null;
+    }
+
+    if (!input.image) {
+      const { image, ...values } = input;
+      return await Hotel.create({ ...values, userId: ctx.req.userId }).save();
+    }
 
     let result: Hotel = {} as Hotel;
 

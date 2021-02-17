@@ -22,15 +22,6 @@ mutation UpdateHotel(
       price: $price
     }
   ) {
-    id
-    name
-    city
-    country
-    image
-    stars
-    description
-    price
-    location
-    createdAt
+    ...HotelSnippet
   }
 }

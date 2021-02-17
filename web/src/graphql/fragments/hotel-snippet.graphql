@@ -3,7 +3,6 @@ fragment HotelSnippet on Hotel {
   name
   city
   country
-  image
   stars
   description
   descriptionSnippet
@@ -14,5 +13,13 @@ fragment HotelSnippet on Hotel {
   user {
     id
     username
+  }
+  image {
+    id
+    url
+  }
+  images {
+    id
+    url
   }
 }

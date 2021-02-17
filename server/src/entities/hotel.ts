@@ -16,6 +16,15 @@ import { User } from "./user";
 import { Image } from "./image";
 
 @ObjectType()
+class ImageResponse {
+  @Field({ nullable: true })
+  id: number;
+
+  @Field({ nullable: false })
+  url: string;
+}
+
+@ObjectType()
 @Entity({ name: "hotels" })
 export class Hotel extends BaseEntity {
   @Field()
@@ -75,7 +84,7 @@ export class Hotel extends BaseEntity {
 
   @OneToOne(() => Image, { nullable: true })
   @JoinColumn()
-  image: Image;
+  image: ImageResponse;
 
   @Field(() => GraphQLTimestamp)
   @CreateDateColumn()

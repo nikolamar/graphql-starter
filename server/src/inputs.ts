@@ -39,7 +39,7 @@ export class HotelInput {
   @Field()
   country: string;
 
-  @Field()
+  @Field({ nullable: true })
   image: string;
 
   @Field()
