@@ -31,7 +31,7 @@ const EditHotel: FC<{}> = ({}) => {
     if (!e.target.files) {
       return;
     }
-    
+
     if (!isImage(e.target.files[0])) {
       alert("Pick image please");
       e.target.value = "";
@@ -45,7 +45,7 @@ const EditHotel: FC<{}> = ({}) => {
   const handleRemoveImage = () => {
     setImage(null);
   }
-  
+
   if (!data) {
     return <Wrapper minHeight="100vh" />;
   }
@@ -78,7 +78,7 @@ const EditHotel: FC<{}> = ({}) => {
           }
 
           const response = await updateHotel({ variables: hotelVariables });
-          
+
           if (response.errors) {
             toast({
               title: "Hotel has not been updated.",
