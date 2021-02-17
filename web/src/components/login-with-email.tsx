@@ -19,7 +19,7 @@ export const LoginWithEmail: FC<{}> = () => {
   const [login, { loading }] = useLoginMutation();
   const { colorMode } = useColorMode();
   const color = useColorModeValue("white", "gray.800");
-  
+
   return (
     <Box className={`tornado-background-${colorMode}`}>
       <Wrapper

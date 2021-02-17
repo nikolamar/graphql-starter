@@ -3,7 +3,7 @@ import {
   FormErrorMessage, FormLabel,
   Input,
   Textarea,
-  Collapse,  
+  Collapse,
   HStack
 } from "@chakra-ui/react";
 import { useField } from "formik";
