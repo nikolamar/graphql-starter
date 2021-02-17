@@ -10,7 +10,7 @@ export const PickFileButton: FC<PickFileButtonProps> = ({
   ...rest
 }) => (
   <label style={{position: "relative"}}>
-    <Button colorScheme="teal" {...rest}> 
+    <Button colorScheme="teal" {...rest}>
       Pick Image
     </Button>
     <input

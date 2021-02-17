@@ -17,7 +17,7 @@ interface LayoutProps {
 }
 
 const Layout: FC<LayoutProps> = ({ children }) => {
-  
+
   const router = useRouter();
   const isFooterHeaderVisible = useMemo(() => !routesWithoutNavBar.has(router.pathname), [router.pathname]);
 

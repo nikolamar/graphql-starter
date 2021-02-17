@@ -65,7 +65,7 @@ export const Review: FC<ReviewListItemProps> = ({ children: review }) => {
       }
     }});
   }
-  
+
   return (
     <Box mb={config.defaultMargin}>
       <HStack align="flex-start">

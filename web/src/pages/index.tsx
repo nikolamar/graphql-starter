@@ -10,7 +10,7 @@ import { Wrapper } from "../components/wrapper";
 const Index: FC<{}> = () => {
 
   const [order, setOrder] = useState("DESC");
-  
+
   const { data, loading, fetchMore } = useHotelsQuery({
     // skip: isServer(),
     variables: {
@@ -25,7 +25,7 @@ const Index: FC<{}> = () => {
       variables: {
         limit: config.defaultLimit,
         cursor: data?.hotels.hotels[data?.hotels.hotels.length - 1].createdAt,
-        order 
+        order
       }
     });
   }

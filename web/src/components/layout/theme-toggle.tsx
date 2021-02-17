@@ -3,7 +3,7 @@ import { FC } from "react";
 import { RiMoonFill, RiSunLine } from "react-icons/ri";
 
 const ThemeToggle: FC<{}> = (props) => {
-  
+
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (

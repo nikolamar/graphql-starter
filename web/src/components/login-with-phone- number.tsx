@@ -18,7 +18,7 @@ export const LoginWithPhoneNumber = () => {
   const [regionIdx, setRegionIdx] = useState(0);
   const { colorMode } = useColorMode();
   const color = useColorModeValue("white", "gray.800");
-  
+
   useEffect(() => {
     const region = navigator.language.split('-')[1];
     const idx = countriesData.map((region) => region.countryCode).indexOf(region);

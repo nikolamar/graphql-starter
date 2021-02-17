@@ -21,7 +21,7 @@ const Register: FC<{}> = ({}) => {
   const [register, { loading }] = useRegisterMutation();
   const { colorMode } = useColorMode();
   const color = useColorModeValue("white", "gray.800");
-  
+
   return (
     <Box className={`tornado-background-${colorMode}`}>
       <Wrapper
