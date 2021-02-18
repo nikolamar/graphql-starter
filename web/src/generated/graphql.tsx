@@ -24,6 +24,7 @@ export type Query = {
   hotel?: Maybe<Hotel>;
   images: PaginatedImages;
   test: Scalars['Boolean'];
+  profiles: PaginatedProfiles;
   reviews: PaginatedReviews;
   review?: Maybe<Review>;
   users: PaginatedUsers;
@@ -45,6 +46,13 @@ export type QueryHotelArgs = {
 
 
 export type QueryImagesArgs = {
+  order?: Maybe<Scalars['String']>;
+  cursor?: Maybe<Scalars['Timestamp']>;
+  limit: Scalars['Int'];
+};
+
+
+export type QueryProfilesArgs = {
   order?: Maybe<Scalars['String']>;
   cursor?: Maybe<Scalars['Timestamp']>;
   limit: Scalars['Int'];
@@ -121,7 +129,7 @@ export type User = {
 
 export type Profile = {
   __typename?: 'Profile';
-  id: Scalars['Float'];
+  id?: Maybe<Scalars['Float']>;
   gender?: Maybe<Scalars['String']>;
   firstName?: Maybe<Scalars['String']>;
   middleName?: Maybe<Scalars['String']>;
@@ -132,6 +140,7 @@ export type Profile = {
   phone?: Maybe<Scalars['String']>;
   createdAt: Scalars['Timestamp'];
   updatedAt: Scalars['Timestamp'];
+  fullName?: Maybe<Scalars['String']>;
 };
 
 export type Image = {
@@ -164,6 +173,12 @@ export type PaginatedImages = {
   hasMore: Scalars['Boolean'];
 };
 
+export type PaginatedProfiles = {
+  __typename?: 'PaginatedProfiles';
+  profiles: Array<Profile>;
+  hasMore: Scalars['Boolean'];
+};
+
 export type PaginatedReviews = {
   __typename?: 'PaginatedReviews';
   reviews: Array<Review>;
@@ -187,6 +202,9 @@ export type Mutation = {
   deleteHotel: Scalars['Boolean'];
   createImage: Image;
   deleteImage: Scalars['Boolean'];
+  createProfile: Profile;
+  updateProfile?: Maybe<Profile>;
+  deleteProfile: Scalars['Boolean'];
   createReview: Review;
   updateReview?: Maybe<Review>;
   deleteReview: Scalars['Boolean'];
@@ -223,6 +241,22 @@ export type MutationCreateImageArgs = {
 
 
 export type MutationDeleteImageArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationCreateProfileArgs = {
+  input: ProfileInput;
+};
+
+
+export type MutationUpdateProfileArgs = {
+  input: ProfileInput;
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteProfileArgs = {
   id: Scalars['Int'];
 };
 
@@ -302,6 +336,17 @@ export type HotelUpdateInput = {
   price?: Maybe<Scalars['Int']>;
 };
 
+export type ProfileInput = {
+  gender?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  middleName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  birthDate?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+};
+
 export type ImageUrl = {
   __typename?: 'ImageUrl';
   url: Scalars['String'];
@@ -352,6 +397,11 @@ export type HotelSnippetFragment = (
   )> }
 );
 
+export type ProfileSnippetFragment = (
+  { __typename?: 'Profile' }
+  & Pick<Profile, 'id' | 'gender' | 'fullName' | 'firstName' | 'middleName' | 'lastName' | 'city' | 'country' | 'birthDate' | 'phone'>
+);
+
 export type ReviewSnippetFragment = (
   { __typename?: 'Review' }
   & Pick<Review, 'id' | 'message' | 'likes' | 'dislikes' | 'voteStatus' | 'hotelId' | 'createdAt'>
@@ -372,7 +422,7 @@ export type UserProfileSnippetFragment = (
   { __typename?: 'User' }
   & { profile: (
     { __typename?: 'Profile' }
-    & Pick<Profile, 'id' | 'gender' | 'firstName' | 'middleName' | 'lastName' | 'city' | 'country' | 'birthDate' | 'phone'>
+    & Pick<Profile, 'id' | 'gender' | 'firstName' | 'middleName' | 'lastName' | 'fullName' | 'city' | 'country' | 'birthDate' | 'phone'>
   ) }
 );
 
@@ -536,6 +586,27 @@ export type UpdateHotelMutation = (
   )> }
 );
 
+export type UpdateProfileMutationVariables = Exact<{
+  id: Scalars['Int'];
+  gender: Scalars['String'];
+  firstName: Scalars['String'];
+  middleName: Scalars['String'];
+  lastName: Scalars['String'];
+  city: Scalars['String'];
+  country: Scalars['String'];
+  birthDate: Scalars['String'];
+  phone: Scalars['String'];
+}>;
+
+
+export type UpdateProfileMutation = (
+  { __typename?: 'Mutation' }
+  & { updateProfile?: Maybe<(
+    { __typename?: 'Profile' }
+    & ProfileSnippetFragment
+  )> }
+);
+
 export type VoteMutationVariables = Exact<{
   reviewId: Scalars['Int'];
   value: Scalars['Int'];
@@ -657,6 +728,21 @@ export const HotelSnippetFragmentDoc = gql`
   }
 }
     `;
+export const ProfileSnippetFragmentDoc = gql`
+    fragment ProfileSnippet on Profile {
+  id
+  gender
+  fullName
+  firstName
+  middleName
+  lastName
+  fullName
+  city
+  country
+  birthDate
+  phone
+}
+    `;
 export const ReviewSnippetFragmentDoc = gql`
     fragment ReviewSnippet on Review {
   id
@@ -690,6 +776,7 @@ export const UserProfileSnippetFragmentDoc = gql`
     firstName
     middleName
     lastName
+    fullName
     city
     country
     birthDate
@@ -1064,6 +1151,49 @@ export function useUpdateHotelMutation(baseOptions?: Apollo.MutationHookOptions<
 export type UpdateHotelMutationHookResult = ReturnType<typeof useUpdateHotelMutation>;
 export type UpdateHotelMutationResult = Apollo.MutationResult<UpdateHotelMutation>;
 export type UpdateHotelMutationOptions = Apollo.BaseMutationOptions<UpdateHotelMutation, UpdateHotelMutationVariables>;
+export const UpdateProfileDocument = gql`
+    mutation UpdateProfile($id: Int!, $gender: String!, $firstName: String!, $middleName: String!, $lastName: String!, $city: String!, $country: String!, $birthDate: String!, $phone: String!) {
+  updateProfile(
+    id: $id
+    input: {gender: $gender, firstName: $firstName, middleName: $middleName, lastName: $lastName, city: $city, country: $country, birthDate: $birthDate, phone: $phone}
+  ) {
+    ...ProfileSnippet
+  }
+}
+    ${ProfileSnippetFragmentDoc}`;
+export type UpdateProfileMutationFn = Apollo.MutationFunction<UpdateProfileMutation, UpdateProfileMutationVariables>;
+
+/**
+ * __useUpdateProfileMutation__
+ *
+ * To run a mutation, you first call `useUpdateProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProfileMutation, { data, loading, error }] = useUpdateProfileMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      gender: // value for 'gender'
+ *      firstName: // value for 'firstName'
+ *      middleName: // value for 'middleName'
+ *      lastName: // value for 'lastName'
+ *      city: // value for 'city'
+ *      country: // value for 'country'
+ *      birthDate: // value for 'birthDate'
+ *      phone: // value for 'phone'
+ *   },
+ * });
+ */
+export function useUpdateProfileMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProfileMutation, UpdateProfileMutationVariables>) {
+        return Apollo.useMutation<UpdateProfileMutation, UpdateProfileMutationVariables>(UpdateProfileDocument, baseOptions);
+      }
+export type UpdateProfileMutationHookResult = ReturnType<typeof useUpdateProfileMutation>;
+export type UpdateProfileMutationResult = Apollo.MutationResult<UpdateProfileMutation>;
+export type UpdateProfileMutationOptions = Apollo.BaseMutationOptions<UpdateProfileMutation, UpdateProfileMutationVariables>;
 export const VoteDocument = gql`
     mutation Vote($reviewId: Int!, $value: Int!) {
   vote(reviewId: $reviewId, value: $value)

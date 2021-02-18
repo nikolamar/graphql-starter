@@ -1,0 +1,27 @@
+mutation UpdateProfile(
+  $id: Int!
+  $gender: String!
+  $firstName: String!
+  $middleName: String!
+  $lastName: String!
+  $city: String!
+  $country: String!
+  $birthDate: String!
+  $phone: String!
+) {
+  updateProfile(
+    id: $id
+    input: {
+      gender: $gender
+      firstName: $firstName
+      middleName: $middleName
+      lastName: $lastName
+      city: $city
+      country: $country
+      birthDate: $birthDate
+      phone: $phone
+    }
+  ) {
+    ...ProfileSnippet
+  }
+}

@@ -1,0 +1,13 @@
+fragment ProfileSnippet on Profile {
+  id
+  gender
+  fullName
+  firstName
+  middleName
+  lastName
+  fullName
+  city
+  country
+  birthDate
+  phone
+}

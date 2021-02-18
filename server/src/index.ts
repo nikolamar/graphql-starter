@@ -13,6 +13,7 @@ import {
 import { HelloResolver } from "./resolvers/hello";
 import { HotelResolver } from "./resolvers/hotel";
 import { ImageResolver } from "./resolvers/image";
+import { ProfileResolver } from "./resolvers/profile";
 import { ReviewResolver } from "./resolvers/review";
 import { UploadResolver } from "./resolvers/upload";
 import { UserResolver } from "./resolvers/user";
@@ -50,7 +51,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, UserResolver, ImageResolver, HotelResolver, ReviewResolver, UploadResolver],
+      resolvers: [HelloResolver, UserResolver, ProfileResolver, ImageResolver, HotelResolver, ReviewResolver, UploadResolver],
       validate: false,
     }),
     // context is created on every request

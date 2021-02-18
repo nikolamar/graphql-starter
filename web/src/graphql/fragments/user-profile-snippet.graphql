@@ -5,6 +5,7 @@ fragment UserProfileSnippet on User {
     firstName
     middleName
     lastName
+    fullName
     city
     country
     birthDate

@@ -56,7 +56,7 @@ export const NavBar: FC<{}> = (() => {
   }
 
   return (
-    <Flex zIndex={1000} position="sticky" top={0} height={inRange ? 65 : 100} bg={color} mt="2rem" shadow={inRange ? "md" : undefined} transition="height 200ms">
+    <Flex zIndex={1000} position="sticky" top={0} height={inRange ? 55 : 100} bg={color} mt="2rem" shadow={inRange ? "md" : undefined} transition="height 200ms">
       <Flex flex={1} m="auto" align="center" maxW={800}>
         <HStack>
           <AccessibleLink href="/">
@@ -76,7 +76,7 @@ export const NavBar: FC<{}> = (() => {
             <HStack>
               <Text>{data.me.email || data.me.username}</Text>
               <Menu>
-                <Avatar as={MenuButton} width={inRange ? "40px" : "50px"} height={inRange ? "40px" : "50px"} name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
+                <Avatar as={MenuButton} width={inRange ? "40px" : "50px"} height={inRange ? "40px" : "50px"} name={data?.me?.profile?.fullName || undefined} src={data.me?.image?.url || undefined} />
                 <MenuList>
                   <MenuItem onClick={() => router.push("my-account")}>My Account</MenuItem>
                   <MenuItem onClick={() => router.push("settings")}>Settings</MenuItem>

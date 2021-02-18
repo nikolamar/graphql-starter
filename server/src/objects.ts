@@ -4,6 +4,7 @@ import {
 } from "type-graphql";
 import { Hotel } from "./entities/hotel";
 import { Image } from "./entities/image";
+import { Profile } from "./entities/profile";
 import { Review } from "./entities/review";
 import { User } from "./entities/user";
 
@@ -74,4 +75,13 @@ export class ImageResponse {
 
   @Field({ nullable: false })
   url: string;
+}
+
+@ObjectType()
+export class PaginatedProfiles {
+  @Field(() => [Profile])
+  profiles: Profile[];
+
+  @Field()
+  hasMore: boolean;
 }
