@@ -46,7 +46,7 @@ export const InputField: FC<InputFieldProps> = ({
 
   return (
     <FormControl isInvalid={!!error} className="unselectable">
-      {isHorizontal ? <HStack align="flex-start">{form}</HStack> : form}
+      {isHorizontal ? <HStack align="center">{form}</HStack> : form}
       <Collapse in={!!error} animateOpacity>
         <FormErrorMessage my={0} ml={isHorizontal ? config.defaultLabelMinWidth + 20 : undefined}>{error}</FormErrorMessage>
       </Collapse >

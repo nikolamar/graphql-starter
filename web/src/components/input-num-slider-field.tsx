@@ -5,7 +5,7 @@ import {
   NumberInputField,
   NumberInputStepper, Slider,
   SliderFilledTrack,
-  SliderThumb, SliderTrack, Flex, Box
+  SliderThumb, SliderTrack
 } from "@chakra-ui/react";
 import { useField } from "formik";
 import { FC, InputHTMLAttributes } from "react";
@@ -66,7 +66,7 @@ export const InputNumSliderField: FC<InputNumSliderFieldProps> = ({
 
   return (
     <FormControl isInvalid={!!meta.error} className="unselectable">
-      {layout === "vertical" ? form : <Flex>{form}</Flex>}
+      {layout === "vertical" ? form : <HStack align="center">{form}</HStack>}
       <Collapse in={!!meta.error} animateOpacity>
         <FormErrorMessage my={0} ml={isHorizontal ? config.defaultLabelMinWidth + 20 : undefined}>{meta.error}</FormErrorMessage>
       </Collapse>

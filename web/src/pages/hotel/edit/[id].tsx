@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, useToast } from "@chakra-ui/react";
+import { Box, Button, HStack, IconButton, useToast } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import { FC, useState } from "react";
@@ -148,7 +148,7 @@ const EditHotel: FC<{}> = ({}) => {
                 spellCheck={false}
                 disabled={image}
               >
-                <Box mr={2}>
+                <HStack mr={2}>
                   <PickFileButton onChange={handlePickImage}/>
                   {!image ? null : (
                     <IconButton
@@ -157,7 +157,7 @@ const EditHotel: FC<{}> = ({}) => {
                       onClick={handleRemoveImage}
                       colorScheme="red"
                     />)}
-                  </Box>
+                </HStack>
               </InputField>
               <Box display="flex" justifyContent="center">
                 <Thumb file={image} />
