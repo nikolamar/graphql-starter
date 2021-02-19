@@ -1,4 +1,4 @@
-import { Field, GraphQLTimestamp, ObjectType } from "type-graphql";
+import { Field, GraphQLISODateTime, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -39,11 +39,11 @@ export class Image extends BaseEntity {
   @ManyToOne(() => Hotel, (hotel) => hotel.images, { onDelete: "CASCADE" })
   hotel: Hotel;
 
-  @Field(() => GraphQLTimestamp)
-  @CreateDateColumn()
+  @Field(() => GraphQLISODateTime)
+  @CreateDateColumn({ precision: 3 })
   createdAt: Date;
 
-  @Field(() => GraphQLTimestamp)
-  @UpdateDateColumn()
+  @Field(() => GraphQLISODateTime)
+  @UpdateDateColumn({ precision: 3 })
   updatedAt: Date;
 }

@@ -1,4 +1,4 @@
-query Hotels($limit: Int!, $order: String, $cursor: Timestamp) {
+query Hotels($limit: Int!, $order: String, $cursor: DateTime) {
   hotels(limit: $limit, order: $order, cursor: $cursor) {
     hasMore
     hotels {

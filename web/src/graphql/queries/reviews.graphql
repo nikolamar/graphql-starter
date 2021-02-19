@@ -1,4 +1,4 @@
-query Reviews($limit: Int!, $order: String, $cursor: Timestamp, $hotelId: Int) {
+query Reviews($limit: Int!, $order: String, $cursor: DateTime, $hotelId: Int) {
   reviews(
     limit: $limit
     order: $order

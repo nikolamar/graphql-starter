@@ -1,4 +1,4 @@
-import { Field, GraphQLTimestamp, ObjectType } from "type-graphql";
+import { Field, GraphQLISODateTime, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -78,11 +78,11 @@ export class Hotel extends BaseEntity {
   @JoinColumn()
   image: ImageResponse;
 
-  @Field(() => GraphQLTimestamp)
-  @CreateDateColumn()
+  @Field(() => GraphQLISODateTime)
+  @CreateDateColumn({ precision: 3 })
   createdAt: Date;
 
-  @Field(() => GraphQLTimestamp)
-  @UpdateDateColumn()
+  @Field(() => GraphQLISODateTime)
+  @UpdateDateColumn({ precision: 3 })
   updatedAt: Date;
 }
