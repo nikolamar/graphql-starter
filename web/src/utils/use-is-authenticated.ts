@@ -19,7 +19,7 @@ export const useIsAuthenticated = () => {
         isClosable: true,
         position: "top-right"
       });
-      router.replace("/login?next=" + router.pathname);
+      router.replace("/login?next=" + router.asPath);
     }
   }, [loading, data, router]);
 };
