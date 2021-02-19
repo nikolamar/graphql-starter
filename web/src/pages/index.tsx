@@ -10,13 +10,14 @@ import { withApollo } from "../utils/with-apollo";
 
 const Index: FC<{}> = () => {
 
-  const [order, setOrder] = useState("DESC");
+  const [order, setOrder] = useState("ASC");
 
   const { data, loading, fetchMore } = useHotelsQuery({
     // skip: isServer(),
     variables: {
       limit: config.defaultLimit,
       cursor: null,
+      order,
     },
     notifyOnNetworkStatusChange: true,
   });
