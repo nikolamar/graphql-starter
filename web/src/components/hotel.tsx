@@ -16,7 +16,7 @@ interface HotelProps {
 
 export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
 
-  const [order, setOrder] = useState("ASC");
+  const [order, setOrder] = useState("DESC");
   const [isReviewsVisible, setReviewsVisible] = useState(false);
   const { data: dataMe } = useMeQuery();
   const [deleteHotel] = useDeleteHotelMutation();
@@ -24,9 +24,9 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
   const { data, loading, fetchMore } = useReviewsQuery({
     skip: !isReviewsVisible,
     variables: {
+      order,
       limit: config.defaultLimit,
       cursor: null,
-      order,
       hotelId: hotel.id
     },
     notifyOnNetworkStatusChange: true,
@@ -41,9 +41,9 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
   const handleLoadMoreReviews = () => {
     fetchMore({
       variables: {
+        order,
         limit: config.defaultLimit,
         cursor: data?.reviews.reviews[data?.reviews.reviews.length - 1].createdAt,
-        order,
         hotelId: hotel.id
       },
     });
