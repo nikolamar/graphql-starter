@@ -16,7 +16,7 @@ interface HotelProps {
 
 export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
 
-  const [order, setOrder] = useState("DESC");
+  const [order, setOrder] = useState(config.defaultOrder);
   const [isReviewsVisible, setReviewsVisible] = useState(false);
   const { data: dataMe } = useMeQuery();
   const [deleteHotel] = useDeleteHotelMutation();
