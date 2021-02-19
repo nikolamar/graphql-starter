@@ -28,16 +28,16 @@ const MyAccount: FC<{}> = () => {
         <Formik
           validateOnBlur={false}
           initialValues={{
-            username: data?.me?.username,
-            email: data?.me?.email,
-            gender: data?.me?.profile.gender,
-            firstName: data?.me?.profile.firstName,
-            middleName: data?.me?.profile.middleName,
-            lastName: data?.me?.profile.lastName,
-            city: data?.me?.profile.city,
-            country: data?.me?.profile.country,
-            birthDate: data?.me?.profile.birthDate,
-            phone: data?.me?.profile.phone,
+            username: data?.me?.username || "",
+            email: data?.me?.email || "",
+            gender: data?.me?.profile.gender || "",
+            firstName: data?.me?.profile.firstName || "",
+            middleName: data?.me?.profile.middleName || "",
+            lastName: data?.me?.profile.lastName || "",
+            city: data?.me?.profile.city || "",
+            country: data?.me?.profile.country || "",
+            birthDate: data?.me?.profile.birthDate || "",
+            phone: data?.me?.profile.phone || "",
           }}
           onSubmit={async (values) => {
             if (!data?.me?.profile?.id) {

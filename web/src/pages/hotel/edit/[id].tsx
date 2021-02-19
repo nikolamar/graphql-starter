@@ -58,14 +58,14 @@ const EditHotel: FC<{}> = ({}) => {
           validateOnBlur={false}
           validationSchema={schemas.hotel}
           initialValues={{
-            name: data?.hotel?.name,
-            city: data?.hotel?.city,
-            country: data?.hotel?.country,
-            description: data?.hotel?.description,
-            image: data?.hotel?.image?.url,
-            location: data?.hotel?.location,
-            stars: data?.hotel?.stars,
-            price: data?.hotel?.price
+            name: data?.hotel?.name || "",
+            city: data?.hotel?.city || "",
+            country: data?.hotel?.country || "",
+            description: data?.hotel?.description || "",
+            image: data?.hotel?.image?.url || "",
+            location: data?.hotel?.location || "",
+            stars: data?.hotel?.stars || 0,
+            price: data?.hotel?.price || 0
           }}
           onSubmit={async (values) => {
             if (!data?.hotel?.id) {
