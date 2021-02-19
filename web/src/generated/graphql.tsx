@@ -11,8 +11,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch. */
-  Timestamp: any;
+  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
+  DateTime: any;
   /** The `Upload` scalar type represents a file upload. */
   Upload: any;
 };
@@ -34,8 +34,9 @@ export type Query = {
 
 
 export type QueryHotelsArgs = {
+  filter?: Maybe<HotelInput>;
   order?: Maybe<Scalars['String']>;
-  cursor?: Maybe<Scalars['Timestamp']>;
+  cursor?: Maybe<Scalars['DateTime']>;
   limit: Scalars['Int'];
 };
 
@@ -46,15 +47,17 @@ export type QueryHotelArgs = {
 
 
 export type QueryImagesArgs = {
+  filter?: Maybe<ImageFilterInput>;
   order?: Maybe<Scalars['String']>;
-  cursor?: Maybe<Scalars['Timestamp']>;
+  cursor?: Maybe<Scalars['DateTime']>;
   limit: Scalars['Int'];
 };
 
 
 export type QueryProfilesArgs = {
+  filter?: Maybe<ReviewFilterInput>;
   order?: Maybe<Scalars['String']>;
-  cursor?: Maybe<Scalars['Timestamp']>;
+  cursor?: Maybe<Scalars['DateTime']>;
   limit: Scalars['Int'];
 };
 
@@ -62,7 +65,7 @@ export type QueryProfilesArgs = {
 export type QueryReviewsArgs = {
   filter?: Maybe<ReviewFilterInput>;
   order?: Maybe<Scalars['String']>;
-  cursor?: Maybe<Scalars['Timestamp']>;
+  cursor?: Maybe<Scalars['DateTime']>;
   limit: Scalars['Int'];
 };
 
@@ -73,8 +76,9 @@ export type QueryReviewArgs = {
 
 
 export type QueryUsersArgs = {
+  filter?: Maybe<UserFilterInput>;
   order?: Maybe<Scalars['String']>;
-  cursor?: Maybe<Scalars['Timestamp']>;
+  cursor?: Maybe<Scalars['DateTime']>;
   limit: Scalars['Int'];
 };
 
@@ -103,8 +107,8 @@ export type Hotel = {
   user: User;
   reviews: Array<Review>;
   imageId?: Maybe<Scalars['Float']>;
-  createdAt: Scalars['Timestamp'];
-  updatedAt: Scalars['Timestamp'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
   descriptionSnippet?: Maybe<Scalars['String']>;
   image?: Maybe<Image>;
   images: Array<Image>;
@@ -119,8 +123,8 @@ export type User = {
   email: Scalars['String'];
   profileId?: Maybe<Scalars['Float']>;
   imageId?: Maybe<Scalars['Float']>;
-  createdAt: Scalars['Timestamp'];
-  updatedAt: Scalars['Timestamp'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
   profile: Profile;
   images: Array<Image>;
   image?: Maybe<Image>;
@@ -129,7 +133,7 @@ export type User = {
 
 export type Profile = {
   __typename?: 'Profile';
-  id?: Maybe<Scalars['Float']>;
+  id: Scalars['Float'];
   gender?: Maybe<Scalars['String']>;
   firstName?: Maybe<Scalars['String']>;
   middleName?: Maybe<Scalars['String']>;
@@ -138,8 +142,8 @@ export type Profile = {
   country?: Maybe<Scalars['String']>;
   birthDate?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
-  createdAt: Scalars['Timestamp'];
-  updatedAt: Scalars['Timestamp'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
   fullName?: Maybe<Scalars['String']>;
 };
 
@@ -151,8 +155,8 @@ export type Image = {
   user: User;
   hotelId?: Maybe<Scalars['Float']>;
   hotel: Hotel;
-  createdAt: Scalars['Timestamp'];
-  updatedAt: Scalars['Timestamp'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type Review = {
@@ -163,8 +167,19 @@ export type Review = {
   dislikes: Scalars['Float'];
   voteStatus?: Maybe<Scalars['Int']>;
   hotelId: Scalars['Float'];
-  createdAt: Scalars['Timestamp'];
-  updatedAt: Scalars['Timestamp'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type HotelInput = {
+  name?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  stars?: Maybe<Scalars['Int']>;
+  price?: Maybe<Scalars['Int']>;
 };
 
 export type PaginatedImages = {
@@ -173,10 +188,23 @@ export type PaginatedImages = {
   hasMore: Scalars['Boolean'];
 };
 
+export type ImageFilterInput = {
+  url?: Maybe<Scalars['String']>;
+  userId?: Maybe<Scalars['Int']>;
+  hotelId?: Maybe<Scalars['Int']>;
+};
+
 export type PaginatedProfiles = {
   __typename?: 'PaginatedProfiles';
   profiles: Array<Profile>;
   hasMore: Scalars['Boolean'];
+};
+
+export type ReviewFilterInput = {
+  message?: Maybe<Scalars['String']>;
+  likes?: Maybe<Scalars['Int']>;
+  dislikes?: Maybe<Scalars['Int']>;
+  hotelId?: Maybe<Scalars['Int']>;
 };
 
 export type PaginatedReviews = {
@@ -185,14 +213,19 @@ export type PaginatedReviews = {
   hasMore: Scalars['Boolean'];
 };
 
-export type ReviewFilterInput = {
-  hotelId?: Maybe<Scalars['Int']>;
-};
-
 export type PaginatedUsers = {
   __typename?: 'PaginatedUsers';
   users: Array<User>;
   hasMore: Scalars['Boolean'];
+};
+
+export type UserFilterInput = {
+  count?: Maybe<Scalars['Int']>;
+  type?: Maybe<Scalars['String']>;
+  username?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  profileId?: Maybe<Scalars['Int']>;
+  imageId?: Maybe<Scalars['Int']>;
 };
 
 export type Mutation = {
@@ -225,7 +258,7 @@ export type MutationCreateHotelArgs = {
 
 
 export type MutationUpdateHotelArgs = {
-  input: HotelUpdateInput;
+  input: HotelInput;
   id: Scalars['Int'];
 };
 
@@ -312,28 +345,6 @@ export type MutationForgotPasswordArgs = {
 export type MutationChangePasswordArgs = {
   newpassword: Scalars['String'];
   token: Scalars['String'];
-};
-
-export type HotelInput = {
-  name: Scalars['String'];
-  city: Scalars['String'];
-  country: Scalars['String'];
-  image?: Maybe<Scalars['String']>;
-  description: Scalars['String'];
-  location: Scalars['String'];
-  stars?: Maybe<Scalars['Int']>;
-  price?: Maybe<Scalars['Int']>;
-};
-
-export type HotelUpdateInput = {
-  name?: Maybe<Scalars['String']>;
-  city?: Maybe<Scalars['String']>;
-  country?: Maybe<Scalars['String']>;
-  image?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  location?: Maybe<Scalars['String']>;
-  stars?: Maybe<Scalars['Int']>;
-  price?: Maybe<Scalars['Int']>;
 };
 
 export type ProfileInput = {
@@ -634,7 +645,7 @@ export type HotelQuery = (
 export type HotelsQueryVariables = Exact<{
   limit: Scalars['Int'];
   order?: Maybe<Scalars['String']>;
-  cursor?: Maybe<Scalars['Timestamp']>;
+  cursor?: Maybe<Scalars['DateTime']>;
 }>;
 
 
@@ -666,7 +677,7 @@ export type MeQuery = (
 export type ReviewsQueryVariables = Exact<{
   limit: Scalars['Int'];
   order?: Maybe<Scalars['String']>;
-  cursor?: Maybe<Scalars['Timestamp']>;
+  cursor?: Maybe<Scalars['DateTime']>;
   hotelId?: Maybe<Scalars['Int']>;
 }>;
 
@@ -685,7 +696,7 @@ export type ReviewsQuery = (
 
 export type UsersQueryVariables = Exact<{
   limit: Scalars['Int'];
-  cursor?: Maybe<Scalars['Timestamp']>;
+  cursor?: Maybe<Scalars['DateTime']>;
 }>;
 
 
@@ -1259,7 +1270,7 @@ export type HotelQueryHookResult = ReturnType<typeof useHotelQuery>;
 export type HotelLazyQueryHookResult = ReturnType<typeof useHotelLazyQuery>;
 export type HotelQueryResult = Apollo.QueryResult<HotelQuery, HotelQueryVariables>;
 export const HotelsDocument = gql`
-    query Hotels($limit: Int!, $order: String, $cursor: Timestamp) {
+    query Hotels($limit: Int!, $order: String, $cursor: DateTime) {
   hotels(limit: $limit, order: $order, cursor: $cursor) {
     hasMore
     hotels {
@@ -1333,7 +1344,7 @@ export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const ReviewsDocument = gql`
-    query Reviews($limit: Int!, $order: String, $cursor: Timestamp, $hotelId: Int) {
+    query Reviews($limit: Int!, $order: String, $cursor: DateTime, $hotelId: Int) {
   reviews(
     limit: $limit
     order: $order
@@ -1377,7 +1388,7 @@ export type ReviewsQueryHookResult = ReturnType<typeof useReviewsQuery>;
 export type ReviewsLazyQueryHookResult = ReturnType<typeof useReviewsLazyQuery>;
 export type ReviewsQueryResult = Apollo.QueryResult<ReviewsQuery, ReviewsQueryVariables>;
 export const UsersDocument = gql`
-    query Users($limit: Int!, $cursor: Timestamp) {
+    query Users($limit: Int!, $cursor: DateTime) {
   users(limit: $limit, cursor: $cursor) {
     hasMore
     users {

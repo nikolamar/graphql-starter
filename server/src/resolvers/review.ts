@@ -1,9 +1,8 @@
-import moment from "moment";
 import {
   Arg,
   Ctx,
   FieldResolver,
-  GraphQLTimestamp,
+  GraphQLISODateTime,
   Int,
   Mutation,
   Query,
@@ -20,6 +19,7 @@ import { isAuthenticated } from "../middlewares/is-authenticated";
 import { refreshTokens } from "../middlewares/refresh-tokens";
 import { PaginatedReviews } from "../objects";
 import { Context, Order } from "../types";
+import { createPaginatedQuery } from "../utils/create-paginated-query";
 
 @Resolver(Review)
 export class ReviewResolver {
@@ -40,34 +40,17 @@ export class ReviewResolver {
 
   @Query(() => PaginatedReviews) async reviews(
     @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => GraphQLTimestamp, { nullable: true }) cursor: number,
-    @Arg("order", () => String, { nullable: true }) order: Order = "ASC",
+    @Arg("cursor", () => GraphQLISODateTime, { nullable: true }) cursor: Date,
+    @Arg("order", () => String, { nullable: true }) order: Order,
     @Arg("filter", () => ReviewFilterInput, { nullable: true }) filter: ReviewFilterInput
   ): Promise<PaginatedReviews> {
     const dbLimit = Math.min(config.defaultLimit, limit);
-    const dbLimitPlusOne = dbLimit + 1;
-    const createdAt = cursor ? `'${moment(cursor).format()}'` : null;
-    const whereCretedAtQuery = createdAt
-      ? ` WHERE h."createdAt" ${order === "ASC" ? ">" : "<"} ${createdAt}`
-      : "";
-    const whereHotelIdQuery = filter?.hotelId
-      ? ` ${createdAt ? "AND" : "WHERE"} "hotelId" = ${filter.hotelId}`
-      : "";
-    const orderQuery = order ? ` ORDER BY r."createdAt" ${order}` : "";
-    const limitQuery = limit ? ` LIMIT ${dbLimitPlusOne}` : "";
-
-    const query =
-      "SELECT r.* FROM reviews AS r" +
-      whereCretedAtQuery +
-      whereHotelIdQuery +
-      orderQuery +
-      limitQuery;
-
-    const reviews = await getConnection().query(query);
+    const query = createPaginatedQuery("reviews", cursor, order, dbLimit, filter);
+    const result = await getConnection().query(query);
 
     return {
-      reviews: reviews.slice(0, dbLimit),
-      hasMore: reviews.length === dbLimitPlusOne,
+      reviews: result.slice(0, dbLimit),
+      hasMore: result.length === (dbLimit + 1),
     };
   }
 

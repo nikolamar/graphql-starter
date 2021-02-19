@@ -1,10 +1,9 @@
 import argon2 from "argon2";
-import moment from "moment";
 import {
   Arg,
   Ctx,
   FieldResolver,
-  GraphQLTimestamp,
+  GraphQLISODateTime,
   Int,
   Mutation,
   Query,
@@ -16,10 +15,10 @@ import { getConnection } from "typeorm";
 import { v4 } from "uuid";
 import { config } from "../config";
 import { COOKIE_NAME, CORS_ORIGIN, FORGOT_PASSWORD_PREFIX } from "../constants";
+import { Image } from "../entities/image";
 import { Profile } from "../entities/profile";
 import { User } from "../entities/user";
-import { Image } from "../entities/image";
-import { LoginInput, RegisterInput } from "../inputs";
+import { LoginInput, RegisterInput, UserFilterInput } from "../inputs";
 import { isAdministrator } from "../middlewares/is-administrator";
 import { isAuthenticated } from "../middlewares/is-authenticated";
 import { refreshTokens } from "../middlewares/refresh-tokens";
@@ -28,6 +27,7 @@ import { regEmail } from "../regex";
 import { Context, Order } from "../types";
 import { createCookies } from "../utils/create-cookies";
 import { createError } from "../utils/create-error";
+import { createPaginatedQuery } from "../utils/create-paginated-query";
 import { createTokens } from "../utils/create-tokens";
 import { invalidateTokens } from "../utils/invalidate-tokens";
 import { sendEmail } from "../utils/send-email";
@@ -59,26 +59,17 @@ export class UserResolver {
   @UseMiddleware(isAdministrator)
   @Query(() => PaginatedUsers) async users(
     @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => GraphQLTimestamp, { nullable: true }) cursor: number,
-    @Arg("order", () => String, { nullable: true }) order: Order = "ASC"
+    @Arg("cursor", () => GraphQLISODateTime, { nullable: true }) cursor: Date,
+    @Arg("order", () => String, { nullable: true }) order: Order,
+    @Arg("filter", () => UserFilterInput, { nullable: true }) filter: UserFilterInput
   ): Promise<PaginatedUsers> {
     const dbLimit = Math.min(config.defaultLimit, limit);
-    const dbLimitPlusOne = dbLimit + 1;
-    const createdAt = cursor ? `'${moment(cursor).format()}'` : null;
-    const whereQuery = createdAt
-      ? ` WHERE h."createdAt" ${order === "ASC" ? ">" : "<"} ${createdAt}`
-      : "";
-    const orderQuery = order ? ` ORDER BY u."createdAt" ${order}` : "";
-    const limitQuery = limit ? ` LIMIT ${dbLimitPlusOne}` : "";
-
-    const query =
-      "SELECT u.* FROM users AS u" + whereQuery + orderQuery + limitQuery;
-
-    const users = await getConnection().query(query);
+    const query = createPaginatedQuery("users", cursor, order, dbLimit, filter);
+    const result = await getConnection().query(query);
 
     return {
-      users: users.slice(0, dbLimit),
-      hasMore: users.length === dbLimitPlusOne,
+      users: result.slice(0, dbLimit),
+      hasMore: result.length === (dbLimit + 1),
     };
   }
 

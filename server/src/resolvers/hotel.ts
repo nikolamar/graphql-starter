@@ -1,9 +1,8 @@
-import moment from "moment";
 import {
   Arg,
   Ctx,
   FieldResolver,
-  GraphQLTimestamp,
+  GraphQLISODateTime,
   Int,
   Mutation,
   Query,
@@ -17,11 +16,12 @@ import { Hotel } from "../entities/hotel";
 import { Image } from "../entities/image";
 import { Review } from "../entities/review";
 import { User } from "../entities/user";
-import { HotelInput, HotelUpdateInput } from "../inputs";
+import { HotelInput } from "../inputs";
 import { isAuthenticated } from "../middlewares/is-authenticated";
 import { refreshTokens } from "../middlewares/refresh-tokens";
 import { PaginatedHotels } from "../objects";
 import { Context, Order } from "../types";
+import { createPaginatedQuery } from "../utils/create-paginated-query";
 
 @Resolver(Hotel)
 export class HotelResolver {
@@ -64,26 +64,17 @@ export class HotelResolver {
   @Query(() => PaginatedHotels)
   async hotels(
     @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => GraphQLTimestamp, { nullable: true }) cursor: number,
-    @Arg("order", () => String, { nullable: true }) order: Order = "ASC"
+    @Arg("cursor", () => GraphQLISODateTime, { nullable: true }) cursor: Date,
+    @Arg("order", () => String, { nullable: true }) order: Order,
+    @Arg("filter", () => HotelInput, { nullable: true }) filter: HotelInput
   ): Promise<PaginatedHotels> {
     const dbLimit = Math.min(config.defaultLimit, limit);
-    const dbLimitPlusOne = dbLimit + 1;
-    const createdAt = cursor ? `'${moment(cursor).format()}'` : null;
-    const whereQuery = createdAt
-      ? ` WHERE h."createdAt" ${order === "ASC" ? ">" : "<"} ${createdAt}`
-      : "";
-    const orderQuery = order ? ` ORDER BY h."createdAt" ${order}` : "";
-    const limitQuery = limit ? ` LIMIT ${dbLimitPlusOne}` : "";
-
-    const query =
-      "SELECT h.* FROM hotels AS h" + whereQuery + orderQuery + limitQuery;
-
-    const hotels = await getConnection().query(query);
+    const query = createPaginatedQuery("hotels", cursor, order, dbLimit, filter);
+    const result = await getConnection().query(query);
 
     return {
-      hotels: hotels.slice(0, dbLimit),
-      hasMore: hotels.length === dbLimitPlusOne,
+      hotels: result.slice(0, dbLimit),
+      hasMore: result.length === (dbLimit + 1),
     };
   }
 
@@ -142,7 +133,7 @@ export class HotelResolver {
   @Mutation(() => Hotel, { nullable: true })
   async updateHotel(
     @Arg("id", () => Int) id: number,
-    @Arg("input") input: HotelUpdateInput,
+    @Arg("input") input: HotelInput,
     @Ctx() ctx: Context
   ): Promise<Hotel | null> {
     if (Object.keys(input).length === 0 && input.constructor === Object) {
@@ -151,12 +142,22 @@ export class HotelResolver {
 
     let { image, ...rest } = input;
 
-    const imgResult = await Image.create({ url: image, hotelId: id }).save();
+    const res1 = await Hotel.findOne(id);
 
-    const result = await getConnection()
+    if (image) {
+      await getConnection()
+        .createQueryBuilder()
+        .update(Image)
+        .set({ url: image })
+        .where(`"id" = :id`, { id: res1?.imageId })
+        .returning("*")
+        .execute();
+    }
+
+    const res2 = await getConnection()
       .createQueryBuilder()
       .update(Hotel)
-      .set({ ...rest, imageId: imgResult.id })
+      .set({ ...rest })
       .where(`id = :id AND "userId" = :userId`, {
         id,
         userId: ctx.req.userId,
@@ -164,7 +165,7 @@ export class HotelResolver {
       .returning("*")
       .execute();
 
-    return result.raw[0];
+    return res2.raw[0];
   }
 
   @UseMiddleware(refreshTokens)

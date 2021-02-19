@@ -1,8 +1,7 @@
-import moment from "moment";
 import {
   Arg,
   FieldResolver,
-  GraphQLTimestamp,
+  GraphQLISODateTime,
   Int,
   Mutation,
   Query,
@@ -13,11 +12,12 @@ import {
 import { getConnection } from "typeorm";
 import { config } from "../config";
 import { Profile } from "../entities/profile";
-import { ProfileInput } from "../inputs";
+import { ProfileInput, ReviewFilterInput } from "../inputs";
 import { isAuthenticated } from "../middlewares/is-authenticated";
 import { refreshTokens } from "../middlewares/refresh-tokens";
 import { PaginatedProfiles } from "../objects";
 import { Order } from "../types";
+import { createPaginatedQuery } from "../utils/create-paginated-query";
 
 @Resolver(Profile)
 export class ProfileResolver {
@@ -40,26 +40,17 @@ export class ProfileResolver {
   @UseMiddleware(isAuthenticated)
   @Query(() => PaginatedProfiles) async profiles(
     @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => GraphQLTimestamp, { nullable: true }) cursor: number,
-    @Arg("order", () => String, { nullable: true }) order: Order = "ASC"
+    @Arg("cursor", () => GraphQLISODateTime, { nullable: true }) cursor: Date,
+    @Arg("order", () => String, { nullable: true }) order: Order = "ASC",
+    @Arg("filter", () => ReviewFilterInput, { nullable: true }) filter: ReviewFilterInput
   ): Promise<PaginatedProfiles> {
     const dbLimit = Math.min(config.defaultLimit, limit);
-    const dbLimitPlusOne = dbLimit + 1;
-    const createdAt = cursor ? `'${moment(cursor).format()}'` : null;
-    const whereQuery = createdAt
-      ? ` WHERE p."createdAt" ${order === "ASC" ? ">" : "<"} ${createdAt}`
-      : "";
-    const orderQuery = order ? ` ORDER BY p."createdAt" ${order}` : "";
-    const limitQuery = limit ? ` LIMIT ${dbLimitPlusOne}` : "";
-
-    const query =
-      "SELECT p.* FROM profiles AS p" + whereQuery + orderQuery + limitQuery;
-
-    const profiles = await getConnection().query(query);
+    const query = createPaginatedQuery("hotels", cursor, order, dbLimit, filter);
+    const result = await getConnection().query(query);
 
     return {
-      profiles: profiles.slice(0, dbLimit),
-      hasMore: profiles.length === dbLimitPlusOne,
+      profiles: result.slice(0, dbLimit),
+      hasMore: result.length === (dbLimit + 1),
     };
   }
 
