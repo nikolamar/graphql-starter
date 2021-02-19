@@ -30,28 +30,28 @@ export class LoginInput {
 
 @InputType()
 export class HotelInput {
-  @Field()
+  @Field({ nullable: true })
   name: string;
 
-  @Field()
+  @Field({ nullable: true })
   city: string;
 
-  @Field()
+  @Field({ nullable: true })
   country: string;
 
   @Field({ nullable: true })
   image: string;
 
-  @Field()
+  @Field({ nullable: true })
   description: string;
 
-  @Field()
+  @Field({ nullable: true })
   location: string;
 
-  @Field(() => Int, { defaultValue: 0 })
+  @Field(() => Int, { nullable: true })
   stars: number;
 
-  @Field(() => Int, { defaultValue: 0 })
+  @Field(() => Int, { nullable: true })
   price: number;
 }
 
@@ -83,34 +83,49 @@ export class ProfileInput {
 }
 
 @InputType()
-export class HotelUpdateInput {
+export class ImageFilterInput {
   @Field({ nullable: true })
-  name: string;
-
-  @Field({ nullable: true })
-  city: string;
-
-  @Field({ nullable: true })
-  country: string;
-
-  @Field({ nullable: true })
-  image: string;
-
-  @Field({ nullable: true })
-  description: string;
-
-  @Field({ nullable: true })
-  location: string;
+  url: string;
 
   @Field(() => Int, { nullable: true })
-  stars: number;
+  userId: number;
 
   @Field(() => Int, { nullable: true })
-  price: number;
+  hotelId: number;
 }
 
 @InputType()
 export class ReviewFilterInput {
+  @Field({ nullable: true })
+  message: string;
+
+  @Field(() => Int, { nullable: true })
+  likes: number;
+
+  @Field(() => Int, { nullable: true })
+  dislikes: number;
+
   @Field(() => Int, { nullable: true })
   hotelId: number;
+}
+
+@InputType()
+export class UserFilterInput {
+  @Field(() => Int, { nullable: true })
+  count: number;
+
+  @Field({ nullable: true })
+  type: string;
+
+  @Field({ nullable: true })
+  username: string;
+
+  @Field({ nullable: true })
+  email: string;
+
+  @Field(() => Int, { nullable: true })
+  profileId: number;
+
+  @Field(() => Int, { nullable: true })
+  imageId: number;
 }
