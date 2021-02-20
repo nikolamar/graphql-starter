@@ -1,7 +1,6 @@
 fragment ProfileSnippet on Profile {
   id
   gender
-  fullName
   firstName
   middleName
   lastName
@@ -10,4 +9,5 @@ fragment ProfileSnippet on Profile {
   country
   birthDate
   phone
+  ...ProfileImagesSnippet
 }

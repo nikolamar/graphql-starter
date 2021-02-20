@@ -1,4 +1,5 @@
 import argon2 from "argon2";
+import { Hotel } from "../entities/hotel";
 import {
   Arg,
   Ctx,
@@ -11,13 +12,13 @@ import {
   Root,
   UseMiddleware
 } from "type-graphql";
-import { getConnection } from "typeorm";
+import { getConnection, In } from "typeorm";
 import { v4 } from "uuid";
 import { config } from "../config";
 import { COOKIE_NAME, CORS_ORIGIN, FORGOT_PASSWORD_PREFIX } from "../constants";
-import { Image } from "../entities/image";
 import { Profile } from "../entities/profile";
 import { User } from "../entities/user";
+import { Image } from "../entities/image";
 import { LoginInput, RegisterInput, UserFilterInput } from "../inputs";
 import { isAdministrator } from "../middlewares/is-administrator";
 import { isAuthenticated } from "../middlewares/is-authenticated";
@@ -32,26 +33,14 @@ import { createTokens } from "../utils/create-tokens";
 import { invalidateTokens } from "../utils/invalidate-tokens";
 import { sendEmail } from "../utils/send-email";
 import { validateRegister } from "../utils/validate-register";
+import { Review } from "../entities/review";
+import { Vote } from "../entities/vote";
 
 @Resolver(User)
 export class UserResolver {
   @FieldResolver(() => Profile)
   profile(@Root() user: User, @Ctx() ctx: Context) {
     return ctx.profileLoader.load(user.profileId);
-  }
-
-  @FieldResolver(() => [Image])
-  async images(@Root() user: User, @Ctx() ctx: Context) {
-    const images = await ctx.userImagesLoader.load(user.id);
-    return images || [];
-  }
-
-  @FieldResolver(() => Image, { nullable: true })
-  image(@Root() user: User, @Ctx() ctx: Context) {
-    if (!user.imageId) {
-      return;
-    }
-    return ctx.imageLoader.load(user.imageId);
   }
 
   @UseMiddleware(refreshTokens)
@@ -84,6 +73,38 @@ export class UserResolver {
   @UseMiddleware(isAdministrator)
   @Mutation(() => Boolean)
   async deleteUser(@Arg("id", () => Int) id: number): Promise<Boolean> {
+    const user = await User.findOne(id);
+    const profile = await Profile.findOne(user?.profileId);
+    const images = await Image.find({ where: { profileId: profile?.id }});
+    const imageIds = images.map(i => i.id);
+    const votes = await Vote.find({ where: { userId: user?.id }});
+    const voteUserIds = votes.map(v => v.userId);
+    const voteReviewIds = votes.map(v => v.reviewId);
+    const reviews = await Review.find({ where: { hotelId: id } });
+    const reviewIds = reviews.map(r => r.id);
+    const hotels = await Hotel.find({ where: { userId: user?.id } });
+    const hotelIds = hotels.map(h => h.id);
+
+    if (imageIds?.length) {
+      await Image.delete(imageIds);
+    }
+
+    if (voteUserIds?.length && voteReviewIds?.length) {
+      await Vote.delete({ userId: In(voteUserIds), reviewId: In(voteReviewIds) });
+    }
+
+    if (reviewIds?.length) {
+      await Review.delete(reviewIds);
+    }
+
+    if (hotelIds?.length) {
+      await Hotel.delete(hotelIds);
+    }
+
+    if (profile) {
+      await Profile.delete(profile.id);
+    }
+
     await User.delete(id);
     return true;
   }

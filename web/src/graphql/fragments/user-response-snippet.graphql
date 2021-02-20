@@ -5,6 +5,5 @@ fragment UserResponseSnippet on UserResponse {
   user {
     ...UserSnippet
     ...UserProfileSnippet
-    ...UserImagesSnippet
   }
 }

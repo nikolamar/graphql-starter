@@ -1,4 +1,4 @@
-fragment UserImagesSnippet on User {
+fragment ProfileImagesSnippet on Profile {
   image {
     id
     url

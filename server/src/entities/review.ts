@@ -34,17 +34,25 @@ export class Review extends BaseEntity {
   @Field(() => Int, { nullable: true })
   voteStatus: number | null;
 
-  // Review -> [Vote]
-  // @Field(() => [Vote])
+  /**
+   * Review -> [Vote]
+   * field votes has reviewId key in vote entity
+   */
   @OneToMany(() => Vote, (vote) => vote.review, { cascade: true })
   votes: Vote[];
 
-  // review.hotelId = hotel.id
+  /**
+   * review.hotelId = hotel.id
+   */
   @Field()
   @Column()
   hotelId: number;
 
-  // [Review] -> Hotel
+  /**
+   * [Review] -> Hotel
+   * field hotel has hotelId key
+   * in this entity
+   */
   @ManyToOne(() => Hotel, (hotel) => hotel.reviews, { onDelete: "CASCADE" })
   hotel: Hotel;
 

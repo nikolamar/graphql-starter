@@ -122,12 +122,9 @@ export type User = {
   username: Scalars['String'];
   email: Scalars['String'];
   profileId?: Maybe<Scalars['Float']>;
-  imageId?: Maybe<Scalars['Float']>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   profile: Profile;
-  images: Array<Image>;
-  image?: Maybe<Image>;
 };
 
 
@@ -142,8 +139,11 @@ export type Profile = {
   country?: Maybe<Scalars['String']>;
   birthDate?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
+  imageId?: Maybe<Scalars['Float']>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+  image?: Maybe<Image>;
+  images: Array<Image>;
   fullName?: Maybe<Scalars['String']>;
 };
 
@@ -151,8 +151,8 @@ export type Image = {
   __typename?: 'Image';
   id: Scalars['Float'];
   url?: Maybe<Scalars['String']>;
-  userId?: Maybe<Scalars['Float']>;
-  user: User;
+  profileId?: Maybe<Scalars['Float']>;
+  profile: Profile;
   hotelId?: Maybe<Scalars['Float']>;
   hotel: Hotel;
   createdAt: Scalars['DateTime'];
@@ -393,13 +393,30 @@ export type ErrorSnippetFragment = (
   & Pick<FieldError, 'field' | 'message'>
 );
 
+export type HotelImagesSnippetFragment = (
+  { __typename?: 'Hotel' }
+  & { image?: Maybe<(
+    { __typename?: 'Image' }
+    & Pick<Image, 'id' | 'url'>
+  )>, images: Array<(
+    { __typename?: 'Image' }
+    & Pick<Image, 'id' | 'url'>
+  )> }
+);
+
 export type HotelSnippetFragment = (
   { __typename?: 'Hotel' }
   & Pick<Hotel, 'id' | 'name' | 'city' | 'country' | 'stars' | 'description' | 'descriptionSnippet' | 'price' | 'location' | 'createdAt' | 'userId'>
   & { user: (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'username'>
-  ), image?: Maybe<(
+  ) }
+  & HotelImagesSnippetFragment
+);
+
+export type ProfileImagesSnippetFragment = (
+  { __typename?: 'Profile' }
+  & { image?: Maybe<(
     { __typename?: 'Image' }
     & Pick<Image, 'id' | 'url'>
   )>, images: Array<(
@@ -410,7 +427,8 @@ export type HotelSnippetFragment = (
 
 export type ProfileSnippetFragment = (
   { __typename?: 'Profile' }
-  & Pick<Profile, 'id' | 'gender' | 'fullName' | 'firstName' | 'middleName' | 'lastName' | 'city' | 'country' | 'birthDate' | 'phone'>
+  & Pick<Profile, 'id' | 'gender' | 'firstName' | 'middleName' | 'lastName' | 'fullName' | 'city' | 'country' | 'birthDate' | 'phone'>
+  & ProfileImagesSnippetFragment
 );
 
 export type ReviewSnippetFragment = (
@@ -418,22 +436,11 @@ export type ReviewSnippetFragment = (
   & Pick<Review, 'id' | 'message' | 'likes' | 'dislikes' | 'voteStatus' | 'hotelId' | 'createdAt'>
 );
 
-export type UserImagesSnippetFragment = (
-  { __typename?: 'User' }
-  & { image?: Maybe<(
-    { __typename?: 'Image' }
-    & Pick<Image, 'id' | 'url'>
-  )>, images: Array<(
-    { __typename?: 'Image' }
-    & Pick<Image, 'id' | 'url'>
-  )> }
-);
-
 export type UserProfileSnippetFragment = (
   { __typename?: 'User' }
   & { profile: (
     { __typename?: 'Profile' }
-    & Pick<Profile, 'id' | 'gender' | 'firstName' | 'middleName' | 'lastName' | 'fullName' | 'city' | 'country' | 'birthDate' | 'phone'>
+    & ProfileSnippetFragment
   ) }
 );
 
@@ -446,7 +453,6 @@ export type UserResponseSnippetFragment = (
     { __typename?: 'User' }
     & UserSnippetFragment
     & UserProfileSnippetFragment
-    & UserImagesSnippetFragment
   )> }
 );
 
@@ -670,7 +676,6 @@ export type MeQuery = (
     { __typename?: 'User' }
     & UserSnippetFragment
     & UserProfileSnippetFragment
-    & UserImagesSnippetFragment
   )> }
 );
 
@@ -712,6 +717,18 @@ export type UsersQuery = (
   ) }
 );
 
+export const HotelImagesSnippetFragmentDoc = gql`
+    fragment HotelImagesSnippet on Hotel {
+  image {
+    id
+    url
+  }
+  images {
+    id
+    url
+  }
+}
+    `;
 export const HotelSnippetFragmentDoc = gql`
     fragment HotelSnippet on Hotel {
   id
@@ -729,31 +746,9 @@ export const HotelSnippetFragmentDoc = gql`
     id
     username
   }
-  image {
-    id
-    url
-  }
-  images {
-    id
-    url
-  }
+  ...HotelImagesSnippet
 }
-    `;
-export const ProfileSnippetFragmentDoc = gql`
-    fragment ProfileSnippet on Profile {
-  id
-  gender
-  fullName
-  firstName
-  middleName
-  lastName
-  fullName
-  city
-  country
-  birthDate
-  phone
-}
-    `;
+    ${HotelImagesSnippetFragmentDoc}`;
 export const ReviewSnippetFragmentDoc = gql`
     fragment ReviewSnippet on Review {
   id
@@ -779,24 +774,8 @@ export const UserSnippetFragmentDoc = gql`
   createdAt
 }
     `;
-export const UserProfileSnippetFragmentDoc = gql`
-    fragment UserProfileSnippet on User {
-  profile {
-    id
-    gender
-    firstName
-    middleName
-    lastName
-    fullName
-    city
-    country
-    birthDate
-    phone
-  }
-}
-    `;
-export const UserImagesSnippetFragmentDoc = gql`
-    fragment UserImagesSnippet on User {
+export const ProfileImagesSnippetFragmentDoc = gql`
+    fragment ProfileImagesSnippet on Profile {
   image {
     id
     url
@@ -807,6 +786,28 @@ export const UserImagesSnippetFragmentDoc = gql`
   }
 }
     `;
+export const ProfileSnippetFragmentDoc = gql`
+    fragment ProfileSnippet on Profile {
+  id
+  gender
+  firstName
+  middleName
+  lastName
+  fullName
+  city
+  country
+  birthDate
+  phone
+  ...ProfileImagesSnippet
+}
+    ${ProfileImagesSnippetFragmentDoc}`;
+export const UserProfileSnippetFragmentDoc = gql`
+    fragment UserProfileSnippet on User {
+  profile {
+    ...ProfileSnippet
+  }
+}
+    ${ProfileSnippetFragmentDoc}`;
 export const UserResponseSnippetFragmentDoc = gql`
     fragment UserResponseSnippet on UserResponse {
   errors {
@@ -815,13 +816,11 @@ export const UserResponseSnippetFragmentDoc = gql`
   user {
     ...UserSnippet
     ...UserProfileSnippet
-    ...UserImagesSnippet
   }
 }
     ${ErrorSnippetFragmentDoc}
 ${UserSnippetFragmentDoc}
-${UserProfileSnippetFragmentDoc}
-${UserImagesSnippetFragmentDoc}`;
+${UserProfileSnippetFragmentDoc}`;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($token: String!, $newpassword: String!) {
   changePassword(token: $token, newpassword: $newpassword) {
@@ -1312,12 +1311,10 @@ export const MeDocument = gql`
   me {
     ...UserSnippet
     ...UserProfileSnippet
-    ...UserImagesSnippet
   }
 }
     ${UserSnippetFragmentDoc}
-${UserProfileSnippetFragmentDoc}
-${UserImagesSnippetFragmentDoc}`;
+${UserProfileSnippetFragmentDoc}`;
 
 /**
  * __useMeQuery__

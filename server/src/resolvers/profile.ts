@@ -1,5 +1,6 @@
 import {
   Arg,
+  Ctx,
   FieldResolver,
   GraphQLISODateTime,
   Int,
@@ -11,16 +12,31 @@ import {
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { config } from "../config";
+import { Image } from "../entities/image";
 import { Profile } from "../entities/profile";
 import { ProfileInput, ReviewFilterInput } from "../inputs";
 import { isAuthenticated } from "../middlewares/is-authenticated";
 import { refreshTokens } from "../middlewares/refresh-tokens";
 import { PaginatedProfiles } from "../objects";
-import { Order } from "../types";
+import { Context, Order } from "../types";
 import { createPaginatedQuery } from "../utils/create-paginated-query";
 
 @Resolver(Profile)
 export class ProfileResolver {
+  @FieldResolver(() => Image, { nullable: true })
+  image(@Root() profile: Profile, @Ctx() ctx: Context) {
+    if (!profile.imageId) {
+      return;
+    }
+    return ctx.imageLoader.load(profile.imageId);
+  }
+
+  @FieldResolver(() => [Image])
+  async images(@Root() profile: Profile, @Ctx() ctx: Context) {
+    const images = await ctx.profileImagesLoader.load(profile.id);
+    return images || [];
+  }
+
   @FieldResolver(() => String, { nullable: true })
   fullName(@Root() profile: Profile): String {
     let fullName = "";
@@ -41,11 +57,11 @@ export class ProfileResolver {
   @Query(() => PaginatedProfiles) async profiles(
     @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => GraphQLISODateTime, { nullable: true }) cursor: Date,
-    @Arg("order", () => String, { nullable: true }) order: Order = "ASC",
+    @Arg("order", () => String, { nullable: true }) order: Order,
     @Arg("filter", () => ReviewFilterInput, { nullable: true }) filter: ReviewFilterInput
   ): Promise<PaginatedProfiles> {
     const dbLimit = Math.min(config.defaultLimit, limit);
-    const query = createPaginatedQuery("hotels", cursor, order, dbLimit, filter);
+    const query = createPaginatedQuery("profiles", cursor, order, dbLimit, filter);
     const result = await getConnection().query(query);
 
     return {

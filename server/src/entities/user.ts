@@ -13,9 +13,7 @@ import {
 import { Hotel } from "./hotel";
 import { Profile } from "./profile";
 import { Vote } from "./vote";
-import { Image } from "./image";
 import { USER } from "../constants";
-import { ImageResponse } from "../objects";
 
 @ObjectType()
 @Entity({ name: "users" })
@@ -40,36 +38,30 @@ export class User extends BaseEntity {
   @Column({ unique: true })
   email!: string;
 
+  @Column()
+  password!: string;
+
   @Field({ nullable: true })
   @Column({ nullable: true })
   profileId: number;
 
-  @OneToOne(() => Profile)
+  @OneToOne(() => Profile, { onDelete: "CASCADE" })
   @JoinColumn()
   profile: Profile;
 
-  @Column()
-  password!: string;
-
-  // User -> [Image]
-  @OneToMany(() => Image, (image) => image.user, { cascade: true })
-  images: Image[];
-
-  // User -> [Hotel]
+  /**
+   * User -> [Hotel]
+   * field hotels has userId key in hotel entity
+   */
   @OneToMany(() => Hotel, (hotel) => hotel.user, { cascade: true })
   hotels: Hotel[];
 
-  // User -> [Vote]
+  /**
+   * User -> [Vote]
+   * field votes has userId key in vote entity
+   */
   @OneToMany(() => Vote, (vote) => vote.user, { cascade: true })
   votes: Vote[];
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  imageId: number;
-
-  @OneToOne(() => Image, { nullable: true })
-  @JoinColumn()
-  image: ImageResponse;
 
   @Field(() => GraphQLISODateTime)
   @CreateDateColumn({ precision: 3 })

@@ -1,14 +1,5 @@
 fragment UserProfileSnippet on User {
   profile {
-    id
-    gender
-    firstName
-    middleName
-    lastName
-    fullName
-    city
-    country
-    birthDate
-    phone
+    ...ProfileSnippet
   }
 }

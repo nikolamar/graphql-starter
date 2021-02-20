@@ -76,7 +76,7 @@ export const NavBar: FC<{}> = (() => {
             <HStack>
               <Text>{data.me.email || data.me.username}</Text>
               <Menu>
-                <Avatar as={MenuButton} width={inRange ? "40px" : "50px"} height={inRange ? "40px" : "50px"} name={data?.me?.profile?.fullName || undefined} src={data.me?.image?.url || undefined} />
+                <Avatar as={MenuButton} width={inRange ? "40px" : "50px"} height={inRange ? "40px" : "50px"} name={data?.me?.profile?.fullName || undefined} src={data.me?.profile?.image?.url || undefined} />
                 <MenuList>
                   <MenuItem onClick={() => router.push("my-account")}>My Account</MenuItem>
                   <MenuItem onClick={() => router.push("settings")}>Settings</MenuItem>

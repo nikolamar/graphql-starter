@@ -14,12 +14,5 @@ fragment HotelSnippet on Hotel {
     id
     username
   }
-  image {
-    id
-    url
-  }
-  images {
-    id
-    url
-  }
+  ...HotelImagesSnippet
 }

@@ -20,9 +20,9 @@ import { UserResolver } from "./resolvers/user";
 import { typeOrmConfig } from "./type-orm.config";
 import { createHotelImagesLoader } from "./utils/create-hotel-images-loader";
 import { createImageLoader } from "./utils/create-image-loader";
+import { createProfileImagesLoader } from "./utils/create-profile-images-loader";
 import { createProfileLoader } from "./utils/create-profile-loader";
 import { createReviewsLoader } from "./utils/create-reviews-loader";
-import { createUserImagesLoader } from "./utils/create-user-images-loader";
 import { createUserLoader } from "./utils/create-user-loader";
 import { createVoteStatusLoader } from "./utils/create-vote-status-loader";
 
@@ -61,10 +61,10 @@ const main = async () => {
       redis,
       userLoader: createUserLoader(),
       profileLoader: createProfileLoader(),
-      imageLoader: createImageLoader(),
       voteStatusLoader: createVoteStatusLoader(),
       reviewsLoader: createReviewsLoader(),
-      userImagesLoader: createUserImagesLoader(),
+      imageLoader: createImageLoader(),
+      profileImagesLoader: createProfileImagesLoader(),
       hotelImagesLoader: createHotelImagesLoader()
     }),
   });

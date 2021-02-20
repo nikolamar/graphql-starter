@@ -1,0 +1,10 @@
+fragment HotelImagesSnippet on Hotel {
+  image {
+    id
+    url
+  }
+  images {
+    id
+    url
+  }
+}

@@ -41,18 +41,18 @@ export class HotelResolver {
     return ctx.userLoader.load(hotel.userId);
   }
 
+  @FieldResolver(() => [Review])
+  async reviews(@Root() hotel: Hotel, @Ctx() ctx: Context) {
+    const reviews = await ctx.reviewsLoader.load(hotel.id);
+    return reviews || [];
+  }
+
   @FieldResolver(() => Image, { nullable: true })
   image(@Root() hotel: Hotel, @Ctx() ctx: Context) {
     if (!hotel.imageId) {
       return;
     }
     return ctx.imageLoader.load(hotel.imageId);
-  }
-
-  @FieldResolver(() => [Review])
-  async reviews(@Root() hotel: Hotel, @Ctx() ctx: Context) {
-    const reviews = await ctx.reviewsLoader.load(hotel.id);
-    return reviews || [];
   }
 
   @FieldResolver(() => [Image])
@@ -95,17 +95,16 @@ export class HotelResolver {
       return null;
     }
 
-    if (!input.image) {
-      const { image, ...values } = input;
+    const { image: url, ...values } = input;
+
+    if (!url) {
       return await Hotel.create({ ...values, userId: ctx.req.userId }).save();
     }
 
-    let result: Hotel = {} as Hotel;
-
-    await getConnection().transaction(async (tm) => {
+    return await getConnection().transaction(async (tm) => {
       const [ image ] = await tm.query(
         `INSERT INTO "images"("url") VALUES ($1) RETURNING "id"`,
-        [input.image]
+        [url]
       );
       const [ hotel ] = await tm.query(
         `INSERT INTO "hotels"
@@ -122,10 +121,8 @@ export class HotelResolver {
         [image.id, hotel.id]
       );
 
-      result = hotel;
+      return hotel;
     });
-
-    return result;
   }
 
   @UseMiddleware(refreshTokens)
@@ -140,32 +137,37 @@ export class HotelResolver {
       return null;
     }
 
-    let { image, ...rest } = input;
+    let newImage;
+    let { image: url, ...values } = input;
+    const hotel = await Hotel.findOne(id);
 
-    const res1 = await Hotel.findOne(id);
-
-    if (image) {
-      await getConnection()
-        .createQueryBuilder()
-        .update(Image)
-        .set({ url: image })
-        .where(`"id" = :id`, { id: res1?.imageId })
-        .returning("*")
-        .execute();
+    if (url) {
+      if (hotel?.imageId) {
+        newImage = (await getConnection()
+          .createQueryBuilder()
+          .update(Image)
+          .set({ url })
+          .where(`"id" = :id`, { id: hotel?.imageId })
+          .returning("*")
+          .execute()).raw[0];
+      } else {
+        newImage = await Image.create({ url, hotelId: id })
+      }
     }
 
-    const res2 = await getConnection()
+    const result = await getConnection()
       .createQueryBuilder()
       .update(Hotel)
-      .set({ ...rest })
-      .where(`id = :id AND "userId" = :userId`, {
+      .set({ ...values })
+      .where(`id = :id AND "userId" = :userId AND "imageId" = :imageId`, {
         id,
         userId: ctx.req.userId,
+        imageId: newImage.id
       })
       .returning("*")
       .execute();
 
-    return res2.raw[0];
+    return result.raw[0];
   }
 
   @UseMiddleware(refreshTokens)
@@ -175,6 +177,13 @@ export class HotelResolver {
     @Arg("id", () => Int) id: number,
     @Ctx() ctx: Context
   ): Promise<Boolean> {
+    const images = await Image.find({ where: { hotelId: id }});
+    const imageIds = images.map(i => i.id);
+
+    if (imageIds?.length) {
+      await Image.delete(imageIds);
+    }
+
     await Hotel.delete({ id, userId: ctx.req.userId });
     return true;
   }

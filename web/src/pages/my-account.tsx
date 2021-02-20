@@ -83,7 +83,7 @@ const MyAccount: FC<{}> = () => {
           {({ isSubmitting, values }) => (
             <Form style={{margin: "50px 0"}}>
               <HStack spacing="10">
-                <Avatar name={data?.me?.profile?.fullName || undefined} src={data.me?.image?.url || undefined} width="200px" height="200px" />
+                <Avatar name={data?.me?.profile?.fullName || undefined} src={data.me?.profile?.image?.url || undefined} width="200px" height="200px" />
                 <Box>
                   <Text fontSize={45}>{values.firstName}</Text>
                   <Text fontSize={45}>{values.middleName}</Text>

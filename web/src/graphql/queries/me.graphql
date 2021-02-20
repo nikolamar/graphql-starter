@@ -2,6 +2,5 @@ query Me {
   me {
     ...UserSnippet
     ...UserProfileSnippet
-    ...UserImagesSnippet
   }
 }
