@@ -15,9 +15,9 @@ const Index: FC<{}> = () => {
   const { data, loading, fetchMore } = useHotelsQuery({
     // skip: isServer(),
     variables: {
-      limit: config.defaultLimit,
-      cursor: null,
       order,
+      limit: config.defaultLimit,
+      cursor: null
     },
     notifyOnNetworkStatusChange: true,
   });
@@ -25,9 +25,9 @@ const Index: FC<{}> = () => {
   const handleLoadMoreHotels = () => {
     fetchMore({
       variables: {
+        order,
         limit: config.defaultLimit,
-        cursor: data?.hotels.hotels[data?.hotels.hotels.length - 1].createdAt,
-        order
+        cursor: data?.hotels.hotels[data?.hotels.hotels.length - 1].createdAt
       }
     });
   }

@@ -11,8 +11,6 @@ export const createPaginatedQuery = (
     createdAt = `'${cursor.toISOString()}'`;
   }
 
-  console.log(createdAt);
-
   let whereQuery = "";
 
   if (createdAt) {
@@ -22,7 +20,8 @@ export const createPaginatedQuery = (
   let filterQuery = "";
 
   if (filter) {
-    filterQuery = Object.keys(filter).reduce((a, v) => `${a} "${v}"=${filter[v]}`, false ? " AND" : " WHERE");
+    let initial = filter && createdAt ? " AND" : " WHERE";
+    filterQuery = Object.keys(filter).reduce((a, v) => `${a} "${v}"=${filter[v]}`, initial);
   }
 
   let orderQuery = "";
