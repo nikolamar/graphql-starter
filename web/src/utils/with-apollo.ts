@@ -5,7 +5,7 @@ import {
 import { createUploadLink } from "apollo-upload-client";
 import { withApollo as createWithApollo } from "next-apollo";
 import { API_URL } from "../constants";
-import { PaginatedHotels } from "../generated/graphql";
+import { PaginatedHotels, PaginatedReviews } from "../generated/graphql";
 import { isServer } from "./is-server";
 
 export const client = new ApolloClient({
@@ -28,6 +28,18 @@ export const client = new ApolloClient({
               return {
                 ...incoming,
                 hotels: [...(existing?.hotels || []), ...incoming.hotels],
+              };
+            },
+          },
+          reviews: {
+            keyArgs: [],
+            merge(
+              existing: PaginatedReviews | undefined,
+              incoming: PaginatedReviews
+            ): PaginatedReviews {
+              return {
+                ...incoming,
+                reviews: [...(existing?.reviews || []), ...incoming.reviews],
               };
             },
           },

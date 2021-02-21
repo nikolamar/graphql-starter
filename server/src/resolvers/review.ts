@@ -39,7 +39,8 @@ export class ReviewResolver {
     return vote ? vote.value : null;
   }
 
-  @Query(() => PaginatedReviews) async reviews(
+  @Query(() => PaginatedReviews)
+  async reviews(
     @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => GraphQLISODateTime, { nullable: true }) cursor: Date,
     @Arg("order", () => String, { nullable: true }) order: Order,
