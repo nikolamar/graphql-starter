@@ -23,6 +23,7 @@ import { createPaginatedQuery } from "../utils/create-paginated-query";
 
 @Resolver(Review)
 export class ReviewResolver {
+  @UseMiddleware(refreshTokens)
   @FieldResolver(() => Int, { nullable: true })
   async voteStatus(
     @Root() review: Review,
