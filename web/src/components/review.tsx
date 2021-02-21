@@ -85,7 +85,7 @@ export const Review: FC<ReviewListItemProps> = ({ children: review }) => {
               textAlign="justify"
               fontSize={14}
             >
-              {review.id} {review.message}
+              {review.message}
             </Text>
             <HStack spacing={1}>
               {!review.likes ? null : <Likes>{review.likes}</Likes>}
