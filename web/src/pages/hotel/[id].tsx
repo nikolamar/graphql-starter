@@ -1,9 +1,9 @@
-import { Box } from '@chakra-ui/react';
 import { FC, useState } from 'react';
 import { Hotel } from "../../components/hotel";
 import { HotelSkeleton } from "../../components/hotel-skeleton";
 import { Layout } from "../../components/layout";
 import { NotFound } from "../../components/not-found";
+import { Wrapper } from "../../components/wrapper";
 import { config } from "../../config";
 import { useGetHotelFromUrl } from '../../utils/use-get-hotel-from-url';
 import { withApollo } from '../../utils/with-apollo';
@@ -24,7 +24,11 @@ const HotelById: FC<{}> = () => {
 
   if (loading) {
     return (
-      <HotelSkeleton/>
+      <Layout>
+        <Wrapper minHeight="100vh">
+          <HotelSkeleton/>
+        </Wrapper>
+      </Layout>
     );
   }
 
@@ -36,9 +40,9 @@ const HotelById: FC<{}> = () => {
 
   return (
     <Layout>
-      <Box w="full">
+      <Wrapper minHeight="100vh">
         <Hotel>{data?.hotel}</Hotel>
-      </Box>
+      </Wrapper>
     </Layout>
   );
 }
