@@ -1,12 +1,16 @@
-import { Box, Button, Collapse, Flex, Heading, HStack, IconButton, Image, Text } from "@chakra-ui/react";
+import { Box, Button, Collapse, Flex, Heading, HStack, IconButton, Image, Text, useToast } from "@chakra-ui/react";
+import { Form, Formik } from "formik";
 import moment from "moment";
+import { useRouter } from "next/router";
 import { FC, useState } from "react";
 import { IoIosArrowDropdownCircle, IoIosArrowDropupCircle } from "react-icons/io";
 import { RiDeleteBinLine, RiEdit2Line } from "react-icons/ri";
+import { InputField } from "../components/input-field";
 import { Review } from "../components/review";
 import { ReviewsHeader } from "../components/reviews-header";
 import { config } from "../config";
-import { HotelSnippetFragment, useDeleteHotelMutation, useMeQuery, useReviewsQuery } from "../generated/graphql";
+import { HotelSnippetFragment, useCreateReviewMutation, useDeleteHotelMutation, useMeQuery, useReviewsQuery } from "../generated/graphql";
+import * as schemas from "../yup-schemas";
 import { AccessibleLink } from "./accessible-link";
 import { Rate } from "./rate";
 
@@ -16,18 +20,21 @@ interface HotelProps {
 
 export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
 
-  const [order, setOrder] = useState(config.defaultOrder);
-  const [isReviewsVisible, setReviewsVisible] = useState(false);
+  const toast = useToast();
+  const router = useRouter();
   const { data: dataMe } = useMeQuery();
   const [deleteHotel] = useDeleteHotelMutation();
+  const [createReview] = useCreateReviewMutation();
+  const [order, setOrder] = useState(config.defaultOrder);
+  const [isReviewsVisible, setReviewsVisible] = useState(false);
 
   const { data, loading, fetchMore } = useReviewsQuery({
     skip: !isReviewsVisible,
     variables: {
       order,
+      hotelId: hotel.id,
       limit: config.defaultLimit,
-      cursor: null,
-      hotelId: hotel.id
+      cursor: null
     },
     notifyOnNetworkStatusChange: true,
   });
@@ -42,9 +49,9 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
     fetchMore({
       variables: {
         order,
+        hotelId: hotel.id,
         limit: config.defaultLimit,
-        cursor: data?.reviews.reviews[data?.reviews.reviews.length - 1].createdAt,
-        hotelId: hotel.id
+        cursor: data?.reviews.reviews[data?.reviews.reviews.length - 1].createdAt
       },
     });
   }
@@ -121,12 +128,69 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
       </HStack>
       <Collapse in={isReviewsVisible} animateOpacity>
         <ReviewsHeader/>
+        <Formik
+          validateOnBlur={false}
+          validationSchema={schemas.review}
+          initialValues={{ review: "" }}
+          onSubmit={async (values) => {
+            if (!dataMe?.me?.id) {
+              toast({
+                title: "Review has not been created.",
+                description: `You need to login before you review it!`,
+                status: "error",
+                duration: config.defaultToastDuration,
+                isClosable: true,
+                position: "top-right"
+              });
+              router.replace("/login?next=" + router.asPath);
+              return;
+            }
+
+            const response = await createReview({ variables: { hotelId: hotel.id, message: values.review }, update: (cache) => {
+              cache.evict({ fieldName: "reviews" });
+            }});
+
+            if (response.errors) {
+              toast({
+                title: "Review has not been created.",
+                description: `We've couldn't create review due to the error: ${response.errors}`,
+                status: "error",
+                duration: config.defaultToastDuration,
+                isClosable: true,
+                position: "top-right"
+              });
+            }
+          }}
+        >
+          {({ isSubmitting }) => (
+            <Form style={{flex: 1}}>
+              <Box mb={4}>
+                <InputField
+                  name="review"
+                  placeholder="write review"
+                  label="Write review"
+                  type="review"
+                  spellCheck={false}
+                >
+                  <Button
+                    type="submit"
+                    isLoading={loading || isSubmitting}
+                    colorScheme="teal"
+                  >
+                    Save
+                  </Button>
+                </InputField>
+              </Box>
+            </Form>
+          )}
+        </Formik>
         {data?.reviews?.reviews?.map((review) => <Review key={review.id}>{review}</Review>)}
-        {data && data.reviews.hasMore ? <Flex>
+        {!data?.reviews?.hasMore ? null : <Flex>
           <Button m="auto" my="8" isLoading={loading} onClick={handleLoadMoreReviews}>
             Load More
           </Button>
-        </Flex> : <Text textAlign="center">No reviews yet!</Text>}
+        </Flex>}
+        {data?.reviews?.reviews?.length ? null : <Text textAlign="center">No reviews yet, be first to review it!</Text>}
       </Collapse>
     </Box>
   );

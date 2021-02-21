@@ -63,3 +63,7 @@ export const hotel = yup.object({
   stars: yup.number().required("hotel stars are required").min(1).max(5),
   price: yup.number().required("price is required").min(1).max(5000),
 });
+
+export const review = yup.object({
+  review: yup.string().required("review is required").max(250)
+});

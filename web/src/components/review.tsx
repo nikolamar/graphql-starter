@@ -18,7 +18,6 @@ export const Review: FC<ReviewListItemProps> = ({ children: review }) => {
 
   const handleVote = (value: 1 | -1) => {
     vote({ variables: { reviewId: review.id, value }, update: (cache) => {
-      // const { reviewId, value } = args as VoteMutationVariables;
       const reviewId = "Review:" + review.id;
       const data = cache.readFragment<ReviewSnippetFragment>({
         id: reviewId,
@@ -31,29 +30,26 @@ export const Review: FC<ReviewListItemProps> = ({ children: review }) => {
           }
         `,
       });
-      if (data) {
-        // vote is new
-        if (data.voteStatus === null) {
-          return;
-        }
 
+      // if it is change of vote
+      if (data && data.voteStatus !== value) {
         let likes = data.likes;
         let dislikes = data.dislikes;
 
-        // it is change of vote
-        if (data.voteStatus !== value) {
-          if (value === 1) {
-            likes++;
-            dislikes--;
-          } else {
-            likes--;
-            dislikes++;
-          }
+        if (value === 1) {
+          likes++;
+          // if voteStatus is not undefined
+          !!data.voteStatus && dislikes--;
+        } else {
+          likes--;
+          // if voteStatus is not undefined
+          !!data.voteStatus && dislikes++;
         }
+
         cache.writeFragment({
           id: reviewId,
           fragment: gql`
-            fragment _ on Review {
+            fragment __ on Review {
               id
               likes
               dislikes
