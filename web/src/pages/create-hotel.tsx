@@ -20,9 +20,9 @@ import * as schemas from "../yup-schemas";
 const CreateHotel: FC<{}> = ({}) => {
 
   useIsAuthenticated();
+  const toast = useToast();
   const router = useRouter();
   const [createHotel, { loading }] = useCreateHotelMutation();
-  const toast = useToast();
   const [image, setImage] = useState(null as any);
   const [imageUpload] = useImageUploadMutation();
 
@@ -82,6 +82,7 @@ const CreateHotel: FC<{}> = ({}) => {
                 isClosable: true,
                 position: "top-right"
               });
+              return;
             }
 
             if (response.data?.createHotel?.id) {
