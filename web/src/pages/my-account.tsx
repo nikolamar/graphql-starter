@@ -54,8 +54,6 @@ const MyAccount: FC<{}> = () => {
 
             const response = await updateProfile({ variables: profileVariables });
 
-            console.log(response);
-
             if (response.errors) {
               toast({
                 title: "Profile has not been updated.",
