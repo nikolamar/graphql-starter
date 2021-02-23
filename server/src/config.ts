@@ -1,3 +1,3 @@
 export const config = {
-  defaultLimit: 15,
+  defaultPageLimit: 60,
 };

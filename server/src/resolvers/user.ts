@@ -52,7 +52,7 @@ export class UserResolver {
     @Arg("order", () => String, { nullable: true }) order: Order,
     @Arg("filter", () => UserFilterInput, { nullable: true }) filter: UserFilterInput
   ): Promise<PaginatedUsers> {
-    const dbLimit = Math.min(config.defaultLimit, limit);
+    const dbLimit = Math.min(config.defaultPageLimit, limit);
     const query = createPaginatedQuery("users", cursor, order, dbLimit, filter);
     const result = await getConnection().query(query);
 

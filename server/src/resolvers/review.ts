@@ -46,7 +46,7 @@ export class ReviewResolver {
     @Arg("order", () => String, { nullable: true }) order: Order,
     @Arg("filter", () => ReviewFilterInput, { nullable: true }) filter: ReviewFilterInput
   ): Promise<PaginatedReviews> {
-    const dbLimit = Math.min(config.defaultLimit, limit);
+    const dbLimit = Math.min(config.defaultPageLimit, limit);
     const query = createPaginatedQuery("reviews", cursor, order, dbLimit, filter);
     const result = await getConnection().query(query);
 

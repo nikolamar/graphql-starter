@@ -16,7 +16,7 @@ const Index: FC<{}> = () => {
     // skip: isServer(),
     variables: {
       order,
-      limit: config.defaultLimit,
+      limit: config.defaultPageLimit,
       cursor: null
     },
     notifyOnNetworkStatusChange: true,
@@ -26,7 +26,7 @@ const Index: FC<{}> = () => {
     fetchMore({
       variables: {
         order,
-        limit: config.defaultLimit,
+        limit: config.defaultPageLimit,
         cursor: data?.hotels.hotels[data?.hotels.hotels.length - 1].createdAt
       }
     });

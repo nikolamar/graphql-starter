@@ -27,7 +27,7 @@ export class ImageResolver {
     @Arg("order", () => String, { nullable: true }) order: Order,
     @Arg("filter", () => ImageFilterInput, { nullable: true }) filter: ImageFilterInput
   ): Promise<PaginatedImages> {
-    const dbLimit = Math.min(config.defaultLimit, limit);
+    const dbLimit = Math.min(config.defaultPageLimit, limit);
     const query = createPaginatedQuery("images", cursor, order, dbLimit, filter);
     const result = await getConnection().query(query);
 

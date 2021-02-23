@@ -15,7 +15,7 @@ const HotelById: FC<{}> = () => {
   const {data, loading} = useGetHotelFromUrl();
 
   const handleLoadMoreReviews = () => {
-    setSliceIdx(config.defaultLimit);
+    setSliceIdx(config.defaultPageLimit);
   }
 
   const handleHideReviews = () => {

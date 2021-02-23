@@ -33,7 +33,7 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
     variables: {
       order,
       hotelId: hotel.id,
-      limit: config.defaultLimit,
+      limit: config.defaultPageLimit,
       cursor: null
     },
     notifyOnNetworkStatusChange: true,
@@ -50,7 +50,7 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
       variables: {
         order,
         hotelId: hotel.id,
-        limit: config.defaultLimit,
+        limit: config.defaultPageLimit,
         cursor: data?.reviews.reviews[data?.reviews.reviews.length - 1].createdAt
       },
     });

@@ -68,7 +68,7 @@ export class HotelResolver {
     @Arg("order", () => String, { nullable: true }) order: Order,
     @Arg("filter", () => HotelInput, { nullable: true }) filter: HotelInput
   ): Promise<PaginatedHotels> {
-    const dbLimit = Math.min(config.defaultLimit, limit);
+    const dbLimit = Math.min(config.defaultPageLimit, limit);
     const query = createPaginatedQuery("hotels", cursor, order, dbLimit, filter);
     const result = await getConnection().query(query);
 

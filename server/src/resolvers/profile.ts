@@ -60,7 +60,7 @@ export class ProfileResolver {
     @Arg("order", () => String, { nullable: true }) order: Order,
     @Arg("filter", () => ReviewFilterInput, { nullable: true }) filter: ReviewFilterInput
   ): Promise<PaginatedProfiles> {
-    const dbLimit = Math.min(config.defaultLimit, limit);
+    const dbLimit = Math.min(config.defaultPageLimit, limit);
     const query = createPaginatedQuery("profiles", cursor, order, dbLimit, filter);
     const result = await getConnection().query(query);
 
