@@ -19,3 +19,11 @@
   -webkit-user-select: none;
   -o-user-select: none;
 }
+
+.form-standard {
+  margin: 50px 0;
+}
+
+.form-flex {
+  flex: 1;
+}

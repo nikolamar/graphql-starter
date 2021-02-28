@@ -163,7 +163,7 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
           }}
         >
           {({ isSubmitting }) => (
-            <Form style={{flex: 1}}>
+            <Form className="form-flex">
               <Box mb={4}>
                 <InputField
                   name="review"

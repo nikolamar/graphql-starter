@@ -55,7 +55,7 @@ const Register: FC<{}> = ({}) => {
             }}
           >
             {({ isSubmitting }) => (
-              <Form style={{flex: 1}}>
+              <Form className="form-flex">
                 <InputField
                   name="username"
                   placeholder="username"

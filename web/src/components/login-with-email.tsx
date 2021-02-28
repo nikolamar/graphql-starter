@@ -49,7 +49,7 @@ export const LoginWithEmail: FC<{}> = () => {
             }}
           >
             {({ isSubmitting }) => (
-              <Form style={{flex: 1}}>
+              <Form className="form-flex">
                 <InputField
                   name="usernameoremail"
                   placeholder="username or email"

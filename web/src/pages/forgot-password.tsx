@@ -49,7 +49,7 @@ const ForgotPassword: FC<{}> = ({}) => {
                 );
               }
               return (
-                <Form style={{flex: 1}}>
+                <Form className="form-flex">
                   <InputField
                     name="usernameoremail"
                     placeholder="username or email"
