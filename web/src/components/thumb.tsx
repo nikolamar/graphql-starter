@@ -1,11 +1,11 @@
-import { Box, Image } from "@chakra-ui/react";
+import { Box, BoxProps, Image } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 
-interface ThumbProps {
+type ThumbProps = BoxProps & {
   file: File | null;
 }
 
-export const Thumb: FC<ThumbProps> = ({ file }) => {
+export const Thumb: FC<ThumbProps> = ({ file, ...rest }) => {
   const [loading, setLoading] = useState(false);
   const [thumb, setThumb] = useState();
 
@@ -25,8 +25,8 @@ export const Thumb: FC<ThumbProps> = ({ file }) => {
   if (loading) { return <p>Loading image...</p>; }
 
   return (
-    <Box overflow="hidden" mt={2}>
-      <Image src={thumb} alt={file.name}/>
+    <Box {...rest}>
+      <Image src={thumb} alt={file.name} objectFit="cover" w="100%" h="100%"/>
     </Box>
   );
 }
