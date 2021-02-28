@@ -8,6 +8,7 @@ mutation UpdateProfile(
   $country: String!
   $birthDate: String!
   $phone: String!
+  $image: String!
 ) {
   updateProfile(
     id: $id
@@ -20,6 +21,7 @@ mutation UpdateProfile(
       country: $country
       birthDate: $birthDate
       phone: $phone
+      image: $image
     }
   ) {
     ...ProfileSnippet

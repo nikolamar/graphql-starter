@@ -80,6 +80,9 @@ export class ProfileInput {
 
   @Field({ nullable: true })
   phone: string;
+
+  @Field({ nullable: true })
+  image: string;
 }
 
 @InputType()
