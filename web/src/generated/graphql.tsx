@@ -356,6 +356,7 @@ export type ProfileInput = {
   country?: Maybe<Scalars['String']>;
   birthDate?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
 };
 
 export type ImageUrl = {
@@ -613,6 +614,7 @@ export type UpdateProfileMutationVariables = Exact<{
   country: Scalars['String'];
   birthDate: Scalars['String'];
   phone: Scalars['String'];
+  image: Scalars['String'];
 }>;
 
 
@@ -1162,10 +1164,10 @@ export type UpdateHotelMutationHookResult = ReturnType<typeof useUpdateHotelMuta
 export type UpdateHotelMutationResult = Apollo.MutationResult<UpdateHotelMutation>;
 export type UpdateHotelMutationOptions = Apollo.BaseMutationOptions<UpdateHotelMutation, UpdateHotelMutationVariables>;
 export const UpdateProfileDocument = gql`
-    mutation UpdateProfile($id: Int!, $gender: String!, $firstName: String!, $middleName: String!, $lastName: String!, $city: String!, $country: String!, $birthDate: String!, $phone: String!) {
+    mutation UpdateProfile($id: Int!, $gender: String!, $firstName: String!, $middleName: String!, $lastName: String!, $city: String!, $country: String!, $birthDate: String!, $phone: String!, $image: String!) {
   updateProfile(
     id: $id
-    input: {gender: $gender, firstName: $firstName, middleName: $middleName, lastName: $lastName, city: $city, country: $country, birthDate: $birthDate, phone: $phone}
+    input: {gender: $gender, firstName: $firstName, middleName: $middleName, lastName: $lastName, city: $city, country: $country, birthDate: $birthDate, phone: $phone, image: $image}
   ) {
     ...ProfileSnippet
   }
@@ -1195,6 +1197,7 @@ export type UpdateProfileMutationFn = Apollo.MutationFunction<UpdateProfileMutat
  *      country: // value for 'country'
  *      birthDate: // value for 'birthDate'
  *      phone: // value for 'phone'
+ *      image: // value for 'image'
  *   },
  * });
  */
