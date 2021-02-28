@@ -1,30 +1,89 @@
-import { Avatar, Box, Button, Divider, HStack, Text, Flex, useToast } from "@chakra-ui/react";
+import { Avatar, Box, Button, Divider, HStack, Menu, MenuButton, MenuItem, MenuList, Text, useToast } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
-import { useRouter } from "next/router";
-import { FC } from "react";
+import { FC, useState } from "react";
+import { FilePicker } from "../components/file-picker";
 import { InputField } from "../components/input-field";
 import { Layout } from "../components/layout";
+import { Thumb } from "../components/thumb";
 import { Wrapper } from "../components/wrapper";
 import { config } from "../config";
-import { useMeQuery, useUpdateProfileMutation } from "../generated/graphql";
+import { useImageUploadMutation, useMeQuery, useUpdateProfileMutation } from "../generated/graphql";
+import { isImage } from "../utils/is-image";
 import { useIsAuthenticated } from "../utils/use-is-authenticated";
 import { withApollo } from "../utils/with-apollo";
 
 const MyAccount: FC<{}> = () => {
 
   useIsAuthenticated();
-  const { data } = useMeQuery();
-  const router = useRouter();
-  const [updateProfile, { loading }] = useUpdateProfileMutation();
   const toast = useToast();
+  const { data } = useMeQuery();
+  const [updateProfile, { loading }] = useUpdateProfileMutation();
+  const [image, setImage] = useState(null as any);
+  const [imageUpload] = useImageUploadMutation();
 
   if (!data) {
     return <Wrapper minHeight="100vh" />;
   }
 
+  const handlePickImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) {
+      return;
+    }
+
+    if (!isImage(e.target.files[0])) {
+      alert("Pick image please");
+      e.target.value = "";
+      return;
+    }
+
+    setImage(e.target.files[0]);
+    e.target.value = "";
+  }
+
+  const isProfileChanged = (values: any) => {
+    if (
+      data?.me?.profile?.firstName !== values.firstName ||
+      data?.me?.profile?.middleName !== values.middleName ||
+      data?.me?.profile?.lastName !== values.lastName ||
+      data?.me?.profile?.gender !== values.gender ||
+      data?.me?.profile?.city !== values.city ||
+      data?.me?.profile?.country !== values.country ||
+      data?.me?.profile?.birthDate !== values.birthDate ||
+      data?.me?.profile?.phone !== values.phone ||
+      image !== null
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   return (
     <Layout>
       <Wrapper minHeight="100vh">
+        <HStack spacing="10">
+          <Menu>
+            {image ? (
+                <MenuButton>
+                  <Thumb file={image} w="128px" h="128px" borderRadius="64px" overflow="hidden" />
+                </MenuButton>
+              ) : (
+                <MenuButton>
+                  <Avatar name={data?.me?.profile?.fullName || undefined} src={data?.me?.profile?.image?.url || undefined} size="2xl" />
+                </MenuButton>
+              )}
+            <MenuList>
+              <MenuItem>View Profile Picture</MenuItem>
+              <MenuItem p={0}>
+                <FilePicker paddingX={3} paddingY={2} w="230px" onChange={handlePickImage}>Update Profile Picture</FilePicker>
+              </MenuItem>
+            </MenuList>
+          </Menu>
+          <Box>
+            <Text fontSize={30}>{data?.me?.profile?.firstName}</Text>
+            <Text fontSize={30}>{data?.me?.profile?.middleName}</Text>
+            <Text fontSize={30}>{data?.me?.profile?.lastName}</Text>
+          </Box>
+        </HStack>
         <Formik
           validateOnBlur={false}
           initialValues={{
@@ -47,10 +106,10 @@ const MyAccount: FC<{}> = () => {
             let { email, ...rest } = values;
             let profileVariables = { id: data?.me?.profile?.id, ...rest as any };
 
-            // if (image) {
-            //   const response = await updateProfile({ variables: { file: image } });
-            //   profileVariables.image = response.data?.imageUpload.url as string;
-            // }
+            if (image) {
+              const response = await imageUpload({ variables: { file: image } });
+              profileVariables.image = response.data?.imageUpload.url as string;
+            }
 
             const response = await updateProfile({ variables: profileVariables });
 
@@ -66,7 +125,6 @@ const MyAccount: FC<{}> = () => {
             }
 
             if (response.data?.updateProfile?.id) {
-              router.back();
               toast({
                 title: "Profile updated.",
                 description: "We've successfully updated your profile.",
@@ -79,15 +137,7 @@ const MyAccount: FC<{}> = () => {
           }}
         >
           {({ isSubmitting, values }) => (
-            <Form style={{margin: "50px 0"}}>
-              <HStack spacing="10">
-                <Avatar name={data?.me?.profile?.fullName || undefined} src={data.me?.profile?.image?.url || undefined} width="200px" height="200px" />
-                <Box>
-                  <Text fontSize={45}>{values.firstName}</Text>
-                  <Text fontSize={45}>{values.middleName}</Text>
-                  <Text fontSize={45}>{values.lastName}</Text>
-                </Box>
-              </HStack>
+            <Form className="form-standard">
               <Box mt={4}/>
               <Divider/>
               <Box mt={4}/>
@@ -130,6 +180,7 @@ const MyAccount: FC<{}> = () => {
                 placeholder="email"
                 label="Email"
                 spellCheck={false}
+                disabled={true}
               />
               <Box mt={4}/>
               <InputField
@@ -177,6 +228,7 @@ const MyAccount: FC<{}> = () => {
                 type="submit"
                 isLoading={loading || isSubmitting}
                 colorScheme="teal"
+                disabled={isProfileChanged(values)}
               >
                 Save
               </Button>

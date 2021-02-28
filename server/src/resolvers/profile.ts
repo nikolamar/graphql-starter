@@ -73,14 +73,41 @@ export class ProfileResolver {
   @UseMiddleware(refreshTokens)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Profile)
-  createProfile(
+  async createProfile(
     @Arg("input") input: ProfileInput,
-  ): Promise<Profile> | null {
+  ): Promise<Profile | null> {
     if (Object.keys(input).length === 0 && input.constructor === Object) {
       return null;
     }
 
-    return Profile.create({ ...input }).save();
+    const { image: url, ...values } = input;
+
+    if (!url) {
+      return await Profile.create({ ...values }).save();
+    }
+
+    return await getConnection().transaction(async (tm) => {
+      const [ image ] = await tm.query(
+        `INSERT INTO "images"("url") VALUES ($1) RETURNING "id"`,
+        [url]
+      );
+      const [ profile ] = await tm.query(
+        `INSERT INTO "profiles"
+        ("gender", "firstName", "middleName", "lastName", "city", "country", "birthDate", "phone", "imageId", "createdAt", "updatedAt")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, DEFAULT, DEFAULT)
+        RETURNING "gender", "firstName", "middleName", "lastName", "city", "country", "birthDate", "phone", "imageId", "createdAt", "updatedAt"`,
+        [input.gender, input.firstName, input.middleName, input.lastName, input.city, input.country, input.birthDate, input.phone, image.id]
+      );
+      await tm.query(
+        `UPDATE images
+        SET "profileId" = $2
+        WHERE id = $1
+      `,
+        [image.id, profile.id]
+      );
+
+      return profile;
+    });
   }
 
   @UseMiddleware(refreshTokens)
@@ -89,10 +116,39 @@ export class ProfileResolver {
   async updateProfile(
     @Arg("id", () => Int) id: number,
     @Arg("input") input: ProfileInput,
-  ): Promise<Profile | undefined> {
-    await Profile.update({ id }, input);
+  ): Promise<Profile | null> {
+    if (Object.keys(input).length === 0 && input.constructor === Object) {
+      return null;
+    }
+
+    let { image: url, ...values } = input;
     const profile = await Profile.findOne(id);
-    return profile;
+
+    if (url) {
+      const profileImg = await Image.findOne(profile?.imageId);
+
+      if (!profileImg?.url || profileImg?.url !== url) {
+        let img = await getConnection()
+          .createQueryBuilder()
+          .insert()
+          .into(Image)
+          .values({ url, profileId: id })
+          .returning("id")
+          .execute();
+
+        (values as any).imageId = img.raw[0].id;
+      }
+    }
+
+    const result = await getConnection()
+      .createQueryBuilder()
+      .update(Profile)
+      .set({ ...values })
+      .where(`id = :id`, { id })
+      .returning("*")
+      .execute();
+
+    return result.raw[0];
   }
 
   @UseMiddleware(refreshTokens)
