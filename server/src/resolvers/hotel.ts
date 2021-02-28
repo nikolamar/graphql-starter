@@ -137,21 +137,22 @@ export class HotelResolver {
       return null;
     }
 
-    let newImage;
     let { image: url, ...values } = input;
     const hotel = await Hotel.findOne(id);
 
     if (url) {
-      if (hotel?.imageId) {
-        newImage = (await getConnection()
+      const hotelImg = await Image.findOne(hotel?.imageId);
+
+      if (!hotelImg?.url || hotelImg?.url !== url) {
+        let img = await getConnection()
           .createQueryBuilder()
-          .update(Image)
-          .set({ url })
-          .where(`"id" = :id`, { id: hotel?.imageId })
-          .returning("*")
-          .execute()).raw[0];
-      } else {
-        newImage = await Image.create({ url, hotelId: id })
+          .insert()
+          .into(Image)
+          .values({ url, hotelId: id })
+          .returning("id")
+          .execute();
+
+        (values as any).imageId = img.raw[0].id;
       }
     }
 
@@ -159,11 +160,7 @@ export class HotelResolver {
       .createQueryBuilder()
       .update(Hotel)
       .set({ ...values })
-      .where(`id = :id AND "userId" = :userId AND "imageId" = :imageId`, {
-        id,
-        userId: ctx.req.userId,
-        imageId: newImage.id
-      })
+      .where(`id = :id AND "userId" = :userId`, { id, userId: ctx.req.userId })
       .returning("*")
       .execute();
 
@@ -177,14 +174,14 @@ export class HotelResolver {
     @Arg("id", () => Int) id: number,
     @Ctx() ctx: Context
   ): Promise<Boolean> {
+    await Hotel.delete({ id, userId: ctx.req.userId });
+
     const images = await Image.find({ where: { hotelId: id }});
     const imageIds = images.map(i => i.id);
 
     if (imageIds?.length) {
       await Image.delete(imageIds);
     }
-
-    await Hotel.delete({ id, userId: ctx.req.userId });
     return true;
   }
 }

@@ -1,13 +1,12 @@
 import { Box, Button, HStack, IconButton, useToast } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
-import { useRouter } from "next/router";
 import { FC, useState } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { InputField } from "../components/input-field";
 import { InputNumField } from "../components/input-num-field";
 import { InputNumSliderField } from "../components/input-num-slider-field";
 import { Layout } from "../components/layout";
-import { PickFileButton } from "../components/pick-file-button";
+import { FilePicker } from "../components/file-picker";
 import { Thumb } from "../components/thumb";
 import { Wrapper } from '../components/wrapper';
 import { config } from "../config";
@@ -21,7 +20,6 @@ const CreateHotel: FC<{}> = ({}) => {
 
   useIsAuthenticated();
   const toast = useToast();
-  const router = useRouter();
   const [createHotel, { loading }] = useCreateHotelMutation();
   const [image, setImage] = useState(null as any);
   const [imageUpload] = useImageUploadMutation();
@@ -61,7 +59,7 @@ const CreateHotel: FC<{}> = ({}) => {
             stars: 0,
             price: 0
           }}
-          onSubmit={async (values) => {
+          onSubmit={async (values, { resetForm }) => {
             let hotelVariables = { ...values };
 
             if (image) {
@@ -86,7 +84,6 @@ const CreateHotel: FC<{}> = ({}) => {
             }
 
             if (response.data?.createHotel?.id) {
-              router.push("/");
               toast({
                 title: "Hotel created.",
                 description: "We've successfully created hotel.",
@@ -95,11 +92,15 @@ const CreateHotel: FC<{}> = ({}) => {
                 isClosable: true,
                 position: "top-right"
               });
+
+              handleRemoveImage();
+              resetForm({});
+              window.scrollTo(0, 0);
             }
           }}
         >
           {({ isSubmitting }) => (
-            <Form style={{margin: "50px 0"}}>
+            <Form className="form-standard">
               <InputField
                 layout="horizontal"
                 name="name"
@@ -142,7 +143,11 @@ const CreateHotel: FC<{}> = ({}) => {
                 disabled={image}
               >
                 <HStack mr={2}>
-                  <PickFileButton onChange={handlePickImage}/>
+                  <FilePicker onChange={handlePickImage}>
+                    <Button colorScheme="teal">
+                      Pick Image
+                    </Button>
+                  </FilePicker>
                   {!image ? null : (
                     <IconButton
                       aria-label="delete hotel"
@@ -153,7 +158,7 @@ const CreateHotel: FC<{}> = ({}) => {
                 </HStack>
               </InputField>
               <Box display="flex" justifyContent="center">
-                <Thumb file={image} />
+                <Thumb file={image} mt={2} mr={2} />
               </Box>
               <Box mt={4}/>
               <InputField
