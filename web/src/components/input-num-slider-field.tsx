@@ -22,7 +22,7 @@ export const InputNumSliderField: FC<InputNumSliderFieldProps> = ({
   layout = "vertical",
   ...rest
 }) => {
-  const [field, meta, helpers] = useField(rest);
+  const [field, { error }, helpers] = useField(rest);
 
   const handleChange = (val: string | number) => {
     const num = typeof val === "string" ? parseInt(val) : val;
@@ -37,9 +37,9 @@ export const InputNumSliderField: FC<InputNumSliderFieldProps> = ({
       <HStack width="100%" mx={isHorizontal ? 2 : undefined} spacing={5}>
         <NumberInput
           {...rest as any}
-          defaultValue={field.value}
           value={field.value}
-          isInvalid={!!meta.error}
+          defaultValue={field.value}
+          isInvalid={!!error}
           id={field.name}
           onChange={handleChange}
         >
@@ -52,8 +52,9 @@ export const InputNumSliderField: FC<InputNumSliderFieldProps> = ({
         <Slider
           mr={2}
           focusThumbOnChange={false} value={field.value}
-          onChange={handleChange} min={rest.min as number}
           max={rest.max as number} colorScheme="teal"
+          min={rest.min as number}
+          onChange={handleChange}
         >
           <SliderTrack>
             <SliderFilledTrack />
@@ -65,10 +66,10 @@ export const InputNumSliderField: FC<InputNumSliderFieldProps> = ({
   );
 
   return (
-    <FormControl isInvalid={!!meta.error} className="unselectable">
-      {layout === "vertical" ? form : <HStack align="center">{form}</HStack>}
-      <Collapse in={!!meta.error} animateOpacity>
-        <FormErrorMessage my={0} ml={isHorizontal ? config.defaultLabelMinWidth + 20 : undefined}>{meta.error}</FormErrorMessage>
+    <FormControl isInvalid={!!error} className="unselectable">
+      {isHorizontal ? <HStack align="center">{form}</HStack> : form}
+      <Collapse in={!!error} animateOpacity>
+        <FormErrorMessage my={0} ml={isHorizontal ? config.defaultLabelMinWidth + 20 : undefined}>{error}</FormErrorMessage>
       </Collapse>
     </FormControl>
   );

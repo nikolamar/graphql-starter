@@ -19,7 +19,12 @@ export const InputNumField: FC<InputNumFieldProps> = ({
   layout = "vertical",
   ...rest
 }) => {
-  const [field, meta, helpers] = useField(rest);
+  const [field, { error }, helpers] = useField(rest);
+
+  const handleChange = (val: string | number) => {
+    const num = typeof val === "string" ? parseInt(val) : val;
+    helpers.setValue(num);
+  }
 
   let isHorizontal = layout === "horizontal";
 
@@ -28,11 +33,12 @@ export const InputNumField: FC<InputNumFieldProps> = ({
       <FormLabel htmlFor={field.name} minW={config.defaultLabelMinWidth}>{label}</FormLabel>
       <NumberInput
         {...rest as any}
+        value={field.value}
         defaultValue={field.value}
-        isInvalid={!!meta.error}
+        isInvalid={!!error}
         id={field.name}
-        onChange={val => helpers.setValue(parseInt(val))}
         width="100%"
+        onChange={handleChange}
       >
         <NumberInputField />
         <NumberInputStepper>
@@ -44,10 +50,10 @@ export const InputNumField: FC<InputNumFieldProps> = ({
   );
 
   return (
-    <FormControl isInvalid={!!meta.error} className="unselectable">
-      {isHorizontal ? <HStack align="center">{form}</HStack> : undefined}
-      <Collapse in={!!meta.error} animateOpacity>
-        <FormErrorMessage my={0} ml={isHorizontal ? config.defaultLabelMinWidth + 20 : undefined}>{meta.error}</FormErrorMessage>
+    <FormControl isInvalid={!!error} className="unselectable">
+      {isHorizontal ? <HStack align="center">{form}</HStack> : form}
+      <Collapse in={!!error} animateOpacity>
+        <FormErrorMessage my={0} ml={isHorizontal ? config.defaultLabelMinWidth + 20 : undefined}>{error}</FormErrorMessage>
       </Collapse>
     </FormControl>
   );
