@@ -1,7 +1,6 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import Head from "next/head";
 import { FC } from "react";
-import "../styles.css";
 import { customTheme } from "../styles/custom-theme";
 import "../styles/globals.css";
 
