@@ -7,6 +7,9 @@ import { MeDocument, MeQuery, useLogoutMutation, useMeQuery } from '../../genera
 import { isServer } from "../../utils/is-server";
 import { AccessibleLink } from "../accessible-link";
 
+let lastKnownScrollPosition = 0;
+let ticking = false;
+
 export const NavBar: FC<{}> = (() => {
 
   const toast = useToast();
@@ -18,7 +21,7 @@ export const NavBar: FC<{}> = (() => {
     // cookie is passed even with ssr: true in create client
     // skip: isServer() // don't run on server
   });
-  const [inRange, setInRange] = useState(false);
+  const [isSmaller, setNavSmaller] = useState(false);
 
   useEffect(() => {
     if (!isServer()) {
@@ -30,8 +33,26 @@ export const NavBar: FC<{}> = (() => {
   }, []);
 
   const handleScroll = () => {
-    let position = window.pageYOffset || 0;
-    setInRange(position > 50);
+    let newScrollPosition = Math.round(window.scrollY / 50) * 50;
+
+    if (newScrollPosition === lastKnownScrollPosition) {
+      return;
+    }
+
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        if (newScrollPosition > lastKnownScrollPosition && newScrollPosition > 100) {
+          setNavSmaller(true);
+        }
+        if (newScrollPosition < lastKnownScrollPosition && newScrollPosition < 100) {
+          setNavSmaller(false);
+        }
+        lastKnownScrollPosition = newScrollPosition;
+        ticking = false;
+      });
+  
+      ticking = true;
+    }
   }
 
   const handleLogout = async () => {
@@ -56,7 +77,7 @@ export const NavBar: FC<{}> = (() => {
   }
 
   return (
-    <Flex zIndex={1000} position="sticky" top={0} height={inRange ? 55 : 100} bg={color} mt="2rem" shadow={inRange ? "md" : undefined} transition="height 200ms">
+    <Flex zIndex={1000} position="sticky" top={0} height={isSmaller ? 55 : 100} bg={color} mt="2rem" shadow={isSmaller ? "md" : undefined} transition="height 500ms">
       <Flex flex={1} m="auto" align="center" maxW={800}>
         <HStack>
           <AccessibleLink href="/">
@@ -77,7 +98,7 @@ export const NavBar: FC<{}> = (() => {
               <Text>{data.me.email || data.me.username}</Text>
               <Menu>
                 <MenuButton>
-                  <Avatar size={inRange ? "sm" : "md"} name={data?.me?.profile?.fullName || undefined} src={data.me?.profile?.image?.url || undefined} />
+                  <Avatar size={isSmaller ? "sm" : "md"} name={data?.me?.profile?.fullName || undefined} src={data.me?.profile?.image?.url || undefined} transition="width 500ms, height 500ms"/>
                 </MenuButton>
                 <div>
                   <MenuList>
