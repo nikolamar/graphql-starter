@@ -18,7 +18,7 @@ import { Review } from "../entities/review";
 import { User } from "../entities/user";
 import { HotelInput } from "../inputs";
 import { isAuthenticated } from "../middlewares/is-authenticated";
-import { refreshTokens } from "../middlewares/refresh-tokens";
+import { parseCookies } from "../middlewares/parse-cookies";
 import { PaginatedHotels } from "../objects";
 import { Context, Order } from "../types";
 import { createPaginatedQuery } from "../utils/create-paginated-query";
@@ -84,7 +84,7 @@ export class HotelResolver {
     return Hotel.findOne(id);
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Hotel)
   async createHotel(
@@ -125,7 +125,7 @@ export class HotelResolver {
     });
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Hotel, { nullable: true })
   async updateHotel(
@@ -167,7 +167,7 @@ export class HotelResolver {
     return result.raw[0];
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Boolean)
   async deleteHotel(

@@ -4,13 +4,13 @@ import { Arg, Mutation, Resolver, UseMiddleware } from "type-graphql";
 import { v4 } from "uuid";
 import { DOMAIN, PORT, PROD } from "../constants";
 import { isAuthenticated } from "../middlewares/is-authenticated";
-import { refreshTokens } from "../middlewares/refresh-tokens";
+import { parseCookies } from "../middlewares/parse-cookies";
 import { ImageUrl } from "../objects";
 import { FileUpload } from "../types";
 
 @Resolver()
 export class UploadResolver {
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => ImageUrl)
   async imageUpload(

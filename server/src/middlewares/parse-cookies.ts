@@ -11,16 +11,8 @@ import { Context } from "../types";
 import { createCookies } from "../utils/create-cookies";
 import { createTokens } from "../utils/create-tokens";
 
-export const refreshTokens: MiddlewareFn<Context> = async ({ context }, next) => {
-  if (!context.req.headers.cookie!) {
-    return next();
-  }
-
+export const parseCookies: MiddlewareFn<Context> = async ({ context }, next) => {
   const { [`${COOKIE_NAME}-access-token`]: accessToken } = cookie.parse(context.req.headers.cookie!);
-
-  if (!accessToken) {
-    return next();
-  }
 
   // check if access token valid and return
   try {
@@ -32,9 +24,6 @@ export const refreshTokens: MiddlewareFn<Context> = async ({ context }, next) =>
 
   // const refreshToken = req.cookies[`${COOKIE_NAME}-refresh-token`];
   const { [`${COOKIE_NAME}-refresh-token`]: refreshToken } = cookie.parse(context.req.headers.cookie!);
-  if (!refreshToken) {
-    return;
-  }
 
   let data;
 

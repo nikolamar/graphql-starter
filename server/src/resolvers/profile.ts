@@ -16,7 +16,7 @@ import { Image } from "../entities/image";
 import { Profile } from "../entities/profile";
 import { ProfileInput, ReviewFilterInput } from "../inputs";
 import { isAuthenticated } from "../middlewares/is-authenticated";
-import { refreshTokens } from "../middlewares/refresh-tokens";
+import { parseCookies } from "../middlewares/parse-cookies";
 import { PaginatedProfiles } from "../objects";
 import { Context, Order } from "../types";
 import { createPaginatedQuery } from "../utils/create-paginated-query";
@@ -52,7 +52,7 @@ export class ProfileResolver {
     return fullName;
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Query(() => PaginatedProfiles) async profiles(
     @Arg("limit", () => Int) limit: number,
@@ -70,7 +70,7 @@ export class ProfileResolver {
     };
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Profile)
   async createProfile(
@@ -110,7 +110,7 @@ export class ProfileResolver {
     });
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Profile, { nullable: true })
   async updateProfile(
@@ -151,7 +151,7 @@ export class ProfileResolver {
     return result.raw[0];
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Boolean)
   async deleteProfile(

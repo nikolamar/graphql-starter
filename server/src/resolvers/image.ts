@@ -12,14 +12,14 @@ import { config } from "../config";
 import { Image } from "../entities/image";
 import { ImageFilterInput } from "../inputs";
 import { isAuthenticated } from "../middlewares/is-authenticated";
-import { refreshTokens } from "../middlewares/refresh-tokens";
+import { parseCookies } from "../middlewares/parse-cookies";
 import { PaginatedImages } from "../objects";
 import { Order } from "../types";
 import { createPaginatedQuery } from "../utils/create-paginated-query";
 
 @Resolver(Image)
 export class ImageResolver {
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Query(() => PaginatedImages) async images(
     @Arg("limit", () => Int) limit: number,
@@ -41,7 +41,7 @@ export class ImageResolver {
     return true;
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Image)
   createImage(
@@ -50,7 +50,7 @@ export class ImageResolver {
     return Image.create({ url }).save();
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   async updateImage(
     @Arg("id", () => Int) id: number,
@@ -61,7 +61,7 @@ export class ImageResolver {
     return image;
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Boolean)
   async deleteImage(@Arg("id", () => Int) id: number): Promise<Boolean> {

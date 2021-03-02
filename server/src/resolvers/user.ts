@@ -22,7 +22,7 @@ import { Image } from "../entities/image";
 import { LoginInput, RegisterInput, UserFilterInput } from "../inputs";
 import { isAdministrator } from "../middlewares/is-administrator";
 import { isAuthenticated } from "../middlewares/is-authenticated";
-import { refreshTokens } from "../middlewares/refresh-tokens";
+import { parseCookies } from "../middlewares/parse-cookies";
 import { PaginatedUsers, UserResponse } from "../objects";
 import { regEmail } from "../regex";
 import { Context, Order } from "../types";
@@ -43,7 +43,7 @@ export class UserResolver {
     return ctx.profileLoader.load(user.profileId);
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @UseMiddleware(isAdministrator)
   @Query(() => PaginatedUsers) async users(
@@ -68,7 +68,7 @@ export class UserResolver {
     return User.findOne(id);
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @UseMiddleware(isAdministrator)
   @Mutation(() => Boolean)
@@ -109,7 +109,7 @@ export class UserResolver {
     return true;
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Query(() => User, { nullable: true })
   me(@Ctx() ctx: Context): Promise<User | undefined> {
@@ -149,7 +149,7 @@ export class UserResolver {
     return { user };
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Boolean)
   async logout(@Ctx() ctx: Context): Promise<Boolean> {

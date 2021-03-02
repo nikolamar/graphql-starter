@@ -16,14 +16,14 @@ import { Review } from "../entities/review";
 import { Vote } from "../entities/vote";
 import { ReviewFilterInput } from "../inputs";
 import { isAuthenticated } from "../middlewares/is-authenticated";
-import { refreshTokens } from "../middlewares/refresh-tokens";
+import { parseCookies } from "../middlewares/parse-cookies";
 import { PaginatedReviews } from "../objects";
 import { Context, Order } from "../types";
 import { createPaginatedQuery } from "../utils/create-paginated-query";
 
 @Resolver(Review)
 export class ReviewResolver {
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @FieldResolver(() => Int, { nullable: true })
   async voteStatus(
     @Root() review: Review,
@@ -62,7 +62,7 @@ export class ReviewResolver {
     return Review.findOne(id);
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Review)
   async createReview(
@@ -72,7 +72,7 @@ export class ReviewResolver {
     return Review.create({ message, hotelId }).save();
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Review, { nullable: true })
   async updateReview(
@@ -84,7 +84,7 @@ export class ReviewResolver {
     return review;
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Boolean)
   async deleteReview(@Arg("id", () => Int) id: number): Promise<Boolean> {
@@ -92,7 +92,7 @@ export class ReviewResolver {
     return true;
   }
 
-  @UseMiddleware(refreshTokens)
+  @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Boolean)
   async vote(
