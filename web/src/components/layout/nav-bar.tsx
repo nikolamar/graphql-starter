@@ -79,12 +79,14 @@ export const NavBar: FC<{}> = (() => {
                 <MenuButton>
                   <Avatar size={inRange ? "sm" : "md"} name={data?.me?.profile?.fullName || undefined} src={data.me?.profile?.image?.url || undefined} />
                 </MenuButton>
-                <MenuList>
-                  <MenuItem onClick={() => router.push("my-account")}>My Account</MenuItem>
-                  <MenuItem onClick={() => router.push("settings")}>Settings</MenuItem>
-                  <MenuDivider />
-                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                </MenuList>
+                <div>
+                  <MenuList>
+                    <MenuItem onClick={() => router.push("my-account")}><Text>My Account</Text></MenuItem>
+                    <MenuItem onClick={() => router.push("settings")}>Settings</MenuItem>
+                    <MenuDivider />
+                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                  </MenuList>
+                </div>
               </Menu>
             </HStack>
           )}

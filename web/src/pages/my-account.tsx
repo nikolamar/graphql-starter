@@ -71,12 +71,14 @@ const MyAccount: FC<{}> = () => {
                   <Avatar name={data?.me?.profile?.fullName || undefined} src={data?.me?.profile?.image?.url || undefined} size="2xl" />
                 </MenuButton>
               )}
-            <MenuList>
-              <MenuItem>View Profile Picture</MenuItem>
-              <MenuItem p={0}>
-                <FilePicker paddingX={3} paddingY={2} w="230px" onChange={handlePickImage}>Update Profile Picture</FilePicker>
-              </MenuItem>
-            </MenuList>
+            <div>
+              <MenuList>
+                <MenuItem>View Profile Picture</MenuItem>
+                <MenuItem p={0}>
+                  <FilePicker paddingX={3} paddingY={2} w="230px" onChange={handlePickImage}>Update Profile Picture</FilePicker>
+                </MenuItem>
+              </MenuList>
+            </div>
           </Menu>
           <Box>
             <Text fontSize={30}>{data?.me?.profile?.firstName}</Text>
