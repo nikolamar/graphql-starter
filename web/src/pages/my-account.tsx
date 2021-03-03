@@ -75,7 +75,7 @@ const MyAccount: FC<{}> = () => {
               <MenuList>
                 <MenuItem>View Profile Picture</MenuItem>
                 <MenuItem p={0}>
-                  <FilePicker paddingX={3} paddingY={2} w="230px" onChange={handlePickImage}>Update Profile Picture</FilePicker>
+                  <FilePicker paddingX={3} paddingY={2} w="230px" onChange={handlePickImage}>Pick Profile Picture</FilePicker>
                 </MenuItem>
               </MenuList>
             </div>
