@@ -32,7 +32,7 @@ export const client = new ApolloClient({
             },
           },
           reviews: {
-            keyArgs: [],
+            keyArgs: ["filter"],
             merge(
               existing: PaginatedReviews | undefined,
               incoming: PaginatedReviews
