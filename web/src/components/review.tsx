@@ -65,7 +65,7 @@ export const Review: FC<ReviewListItemProps> = ({ children: review }) => {
   return (
     <Box mb={config.defaultMargin}>
       <HStack align="flex-start">
-        <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
+        <Avatar name={review.user?.profile.fullName || undefined} src={review.user?.profile.image?.url || undefined} />
         <VStack align="flex-start" spacing={1}>
           <Text fontSize={14}>Firstname Lastname</Text>
           <Text fontSize={12}>{moment(review.createdAt).startOf('day').fromNow()}</Text>

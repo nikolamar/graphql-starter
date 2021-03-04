@@ -6,4 +6,13 @@ fragment ReviewSnippet on Review {
   voteStatus
   hotelId
   createdAt
+  user {
+    profile {
+      fullName
+      image {
+        id
+        url
+      }
+    }
+  }
 }

@@ -14,6 +14,7 @@ import { Hotel } from "./hotel";
 import { Profile } from "./profile";
 import { Vote } from "./vote";
 import { USER } from "../constants";
+import { Review } from "./review";
 
 @ObjectType()
 @Entity({ name: "users" })
@@ -55,6 +56,13 @@ export class User extends BaseEntity {
    */
   @OneToMany(() => Hotel, (hotel) => hotel.user, { cascade: true })
   hotels: Hotel[];
+
+  /**
+   * User -> [Review]
+   * field reviews has userId key in review entity
+   */
+  @OneToMany(() => Review, (review) => review.user, { cascade: true })
+  reviews: Review[];
 
   /**
    * User -> [Vote]

@@ -20,9 +20,18 @@ import { parseCookies } from "../middlewares/parse-cookies";
 import { PaginatedReviews } from "../objects";
 import { Context, Order } from "../types";
 import { createPaginatedQuery } from "../utils/create-paginated-query";
+import { User } from "../entities/user";
 
 @Resolver(Review)
 export class ReviewResolver {
+  @FieldResolver(() => User, { nullable: true })
+  user(@Root() review: Review, @Ctx() ctx: Context) {
+    if (!review.userId) {
+      return;
+    }
+    return ctx.userLoader.load(review.userId);
+  }
+  
   @UseMiddleware(parseCookies)
   @FieldResolver(() => Int, { nullable: true })
   async voteStatus(
@@ -67,9 +76,10 @@ export class ReviewResolver {
   @Mutation(() => Review)
   async createReview(
     @Arg("hotelId", () => Int) hotelId: number,
-    @Arg("message", () => String) message: string
+    @Arg("message", () => String) message: string,
+    @Ctx() ctx: Context
   ): Promise<Review> {
-    return Review.create({ message, hotelId }).save();
+    return Review.create({ message, hotelId, userId: ctx.req.userId }).save();
   }
 
   @UseMiddleware(parseCookies)

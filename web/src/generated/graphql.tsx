@@ -167,8 +167,10 @@ export type Review = {
   dislikes: Scalars['Float'];
   voteStatus?: Maybe<Scalars['Int']>;
   hotelId: Scalars['Float'];
+  userId?: Maybe<Scalars['Float']>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+  user?: Maybe<User>;
 };
 
 export type HotelInput = {
@@ -435,6 +437,17 @@ export type ProfileSnippetFragment = (
 export type ReviewSnippetFragment = (
   { __typename?: 'Review' }
   & Pick<Review, 'id' | 'message' | 'likes' | 'dislikes' | 'voteStatus' | 'hotelId' | 'createdAt'>
+  & { user?: Maybe<(
+    { __typename?: 'User' }
+    & { profile: (
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'fullName'>
+      & { image?: Maybe<(
+        { __typename?: 'Image' }
+        & Pick<Image, 'id' | 'url'>
+      )> }
+    ) }
+  )> }
 );
 
 export type UserProfileSnippetFragment = (
@@ -760,6 +773,15 @@ export const ReviewSnippetFragmentDoc = gql`
   voteStatus
   hotelId
   createdAt
+  user {
+    profile {
+      fullName
+      image {
+        id
+        url
+      }
+    }
+  }
 }
     `;
 export const ErrorSnippetFragmentDoc = gql`

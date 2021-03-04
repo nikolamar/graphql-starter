@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Hotel } from "./hotel";
+import { User } from "./user";
 import { Vote } from "./vote";
 
 @ObjectType()
@@ -55,6 +56,22 @@ export class Review extends BaseEntity {
    */
   @ManyToOne(() => Hotel, (hotel) => hotel.reviews, { onDelete: "CASCADE" })
   hotel: Hotel;
+
+  /**
+   * review.userId = user.id
+   */
+  @Field()
+  @Column()
+  userId: number;
+
+  /**
+   * [Review] -> Hotel
+   * field hotel has hotelId key
+   * in this entity
+   */
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.reviews, { onDelete: "CASCADE" })
+  user: User;
 
   @Field(() => GraphQLISODateTime)
   @CreateDateColumn({ precision: 3 })
