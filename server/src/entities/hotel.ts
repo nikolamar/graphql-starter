@@ -51,12 +51,18 @@ export class Hotel extends BaseEntity {
   @Column({ type: "int", default: 0 })
   price!: number;
 
-  // hotel.userId = user.id
+  /**
+   * hotel.userId = user.id
+   */
   @Field()
   @Column({ nullable: true })
   userId: number;
 
-  // [Hotel] -> User
+  /**
+   * [Hotel] -> User
+   * field user has hotelId key
+   * in this entity
+   */
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.hotels)
   user: User;
