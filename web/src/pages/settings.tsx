@@ -1,10 +1,10 @@
 import { FormControl, FormLabel, Switch, useColorMode } from '@chakra-ui/react';
-import * as React from 'react';
+import { FC } from "react";
 import { Layout } from "../components/layout";
 import { Wrapper } from '../components/wrapper';
 import { withApollo } from "../utils/with-apollo";
 
-const Settings: React.FC<{}> = () => {
+const Settings: FC<{}> = () => {
 
   const { colorMode, toggleColorMode } = useColorMode();
 
