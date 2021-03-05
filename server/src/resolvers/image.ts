@@ -37,10 +37,6 @@ export class ImageResolver {
     };
   }
 
-  @Query(() => Boolean) async test() {
-    return true;
-  }
-
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Image)
