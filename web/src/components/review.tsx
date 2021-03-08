@@ -4,7 +4,7 @@ import moment from "moment";
 import { FC } from "react";
 import { Dislikes } from "../components/dislikes";
 import { Likes } from "../components/likes";
-import { config } from "../config";
+import { defaults } from "../configs/defaults";
 import { ReviewSnippetFragment, useVoteMutation } from "../generated/graphql";
 
 interface ReviewListItemProps {
@@ -63,7 +63,7 @@ export const Review: FC<ReviewListItemProps> = ({ children: review }) => {
   }
 
   return (
-    <Box mb={config.defaultMargin}>
+    <Box mb={defaults.margin}>
       <HStack align="flex-start">
         <Avatar name={review.user?.profile.fullName || undefined} src={review.user?.profile.image?.url || undefined} />
         <VStack align="flex-start" spacing={1}>
@@ -77,7 +77,7 @@ export const Review: FC<ReviewListItemProps> = ({ children: review }) => {
             bgColor={color}
           >
             <Text
-              mb={config.defaultMargin}
+              mb={defaults.margin}
               textAlign="justify"
               fontSize={14}
             >

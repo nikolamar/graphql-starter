@@ -8,7 +8,7 @@ import { RiDeleteBinLine, RiEdit2Line } from "react-icons/ri";
 import { InputField } from "../components/input-field";
 import { Review } from "../components/review";
 import { ReviewsHeader } from "../components/reviews-header";
-import { config } from "../config";
+import { defaults } from "../configs/defaults";
 import { HotelSnippetFragment, useCreateReviewMutation, useDeleteHotelMutation, useMeQuery, useReviewsQuery } from "../generated/graphql";
 import * as schemas from "../yup-schemas";
 import { AccessibleLink } from "./accessible-link";
@@ -25,7 +25,7 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
   const { data: dataMe } = useMeQuery();
   const [deleteHotel] = useDeleteHotelMutation();
   const [createReview] = useCreateReviewMutation();
-  const [order, setOrder] = useState(config.defaultOrder);
+  const [order, setOrder] = useState(defaults.order);
   const [isReviewsVisible, setReviewsVisible] = useState(false);
 
   const { data, loading, fetchMore } = useReviewsQuery({
@@ -33,7 +33,7 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
     variables: {
       order,
       hotelId: hotel.id,
-      limit: config.defaultPageLimit,
+      limit: defaults.pageLimit,
       cursor: null
     },
     notifyOnNetworkStatusChange: true,
@@ -50,7 +50,7 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
       variables: {
         order,
         hotelId: hotel.id,
-        limit: config.defaultPageLimit,
+        limit: defaults.pageLimit,
         cursor: data?.reviews.reviews[data?.reviews.reviews.length - 1].createdAt
       },
     });
@@ -83,7 +83,7 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
   }
 
   return (
-    <Box key={hotel.id} mb={config.defaultMargin} p={config.deafaultPadding} shadow="base" borderWidth="1px" borderRadius={5}>
+    <Box key={hotel.id} mb={defaults.margin} p={defaults.padding} shadow="base" borderWidth="1px" borderRadius={5}>
       <HStack align="flex-start">
         <Image
           mr={1}
@@ -138,7 +138,7 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
                 title: "Review has not been created.",
                 description: `You need to login before you review it!`,
                 status: "error",
-                duration: config.defaultToastDuration,
+                duration: defaults.toastDuration,
                 isClosable: true,
                 position: "top-right"
               });
@@ -155,7 +155,7 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
                 title: "Review has not been created.",
                 description: `We've couldn't create review due to the error: ${response.errors}`,
                 status: "error",
-                duration: config.defaultToastDuration,
+                duration: defaults.toastDuration,
                 isClosable: true,
                 position: "top-right"
               });

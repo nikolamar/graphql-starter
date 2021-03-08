@@ -5,7 +5,7 @@ import {
 } from "@chakra-ui/react";
 import { useField } from "formik";
 import { FC, InputHTMLAttributes } from "react";
-import { config } from "../config";
+import { defaults } from "../configs/defaults";
 
 type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
@@ -34,7 +34,7 @@ export const InputField: FC<InputFieldProps> = ({
 
   let form = (
     <>
-      <FormLabel htmlFor={field.name} minW={config.defaultLabelMinWidth}>{label}</FormLabel>
+      <FormLabel htmlFor={field.name} minW={defaults.labelMinWidth}>{label}</FormLabel>
       <HStack align="flex-end" width="100%">
         <InputOrTextarea {...field} {...rest} id={field.name} />
         <VStack>
@@ -48,7 +48,7 @@ export const InputField: FC<InputFieldProps> = ({
     <FormControl isInvalid={!!error} className="unselectable">
       {isHorizontal ? <HStack align="center">{form}</HStack> : form}
       <Collapse in={!!error} animateOpacity>
-        <FormErrorMessage my={0} ml={isHorizontal ? config.defaultLabelMinWidth + 20 : undefined}>{error}</FormErrorMessage>
+        <FormErrorMessage my={0} ml={isHorizontal ? defaults.labelMinWidth + 20 : undefined}>{error}</FormErrorMessage>
       </Collapse >
     </FormControl>
   );

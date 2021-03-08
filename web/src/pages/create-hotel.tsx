@@ -9,7 +9,7 @@ import { Layout } from "../components/layout";
 import { FilePicker } from "../components/file-picker";
 import { Thumb } from "../components/thumb";
 import { Wrapper } from '../components/wrapper';
-import { config } from "../config";
+import { defaults } from "../configs/defaults";
 import { useCreateHotelMutation, useImageUploadMutation } from "../generated/graphql";
 import { isImage } from "../utils/is-image";
 import { useIsAuthenticated } from "../utils/use-is-authenticated";
@@ -76,7 +76,7 @@ const CreateHotel: FC<{}> = ({}) => {
                 title: "Hotel has not been created.",
                 description: `We've couldn't create hotel due to the error: ${response.errors}`,
                 status: "error",
-                duration: config.defaultToastDuration,
+                duration: defaults.toastDuration,
                 isClosable: true,
                 position: "top-right"
               });
@@ -88,7 +88,7 @@ const CreateHotel: FC<{}> = ({}) => {
                 title: "Hotel created.",
                 description: "We've successfully created hotel.",
                 status: "success",
-                duration: config.defaultToastDuration,
+                duration: defaults.toastDuration,
                 isClosable: true,
                 position: "top-right"
               });

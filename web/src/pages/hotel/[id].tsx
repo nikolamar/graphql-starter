@@ -4,7 +4,7 @@ import { HotelSkeleton } from "../../components/hotel-skeleton";
 import { Layout } from "../../components/layout";
 import { NotFound } from "../../components/not-found";
 import { Wrapper } from "../../components/wrapper";
-import { config } from "../../config";
+import { defaults } from "../../configs/defaults";
 import { useGetHotelFromUrl } from '../../utils/use-get-hotel-from-url';
 import { withApollo } from '../../utils/with-apollo';
 
@@ -15,7 +15,7 @@ const HotelById: FC<{}> = () => {
   const {data, loading} = useGetHotelFromUrl();
 
   const handleLoadMoreReviews = () => {
-    setSliceIdx(config.defaultPageLimit);
+    setSliceIdx(defaults.pageLimit);
   }
 
   const handleHideReviews = () => {

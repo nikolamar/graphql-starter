@@ -6,7 +6,7 @@ import { InputField } from "../components/input-field";
 import { Layout } from "../components/layout";
 import { Thumb } from "../components/thumb";
 import { Wrapper } from "../components/wrapper";
-import { config } from "../config";
+import { defaults } from "../configs/defaults";
 import { useImageUploadMutation, useMeQuery, useUpdateProfileMutation } from "../generated/graphql";
 import { isImage } from "../utils/is-image";
 import { useIsAuthenticated } from "../utils/use-is-authenticated";
@@ -120,7 +120,7 @@ const MyAccount: FC<{}> = () => {
                 title: "Profile has not been updated.",
                 description: `We've couldn't update your profile due to the error: ${response.errors}`,
                 status: "error",
-                duration: config.defaultToastDuration,
+                duration: defaults.toastDuration,
                 isClosable: true,
                 position: "top-right"
               });
@@ -131,7 +131,7 @@ const MyAccount: FC<{}> = () => {
                 title: "Profile updated.",
                 description: "We've successfully updated your profile.",
                 status: "success",
-                duration: config.defaultToastDuration,
+                duration: defaults.toastDuration,
                 isClosable: true,
                 position: "top-right"
               });

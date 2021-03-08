@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { useField } from "formik";
 import { FC, InputHTMLAttributes } from "react";
-import { config } from "../config";
+import { defaults } from "../configs/defaults";
 
 type InputNumSliderFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
@@ -33,7 +33,7 @@ export const InputNumSliderField: FC<InputNumSliderFieldProps> = ({
 
   let form = (
     <>
-      <FormLabel htmlFor={field.name} minW={config.defaultLabelMinWidth}>{label}</FormLabel>
+      <FormLabel htmlFor={field.name} minW={defaults.labelMinWidth}>{label}</FormLabel>
       <HStack width="100%" mx={isHorizontal ? 2 : undefined} spacing={5}>
         <NumberInput
           {...rest as any}
@@ -69,7 +69,7 @@ export const InputNumSliderField: FC<InputNumSliderFieldProps> = ({
     <FormControl isInvalid={!!error} className="unselectable">
       {isHorizontal ? <HStack align="center">{form}</HStack> : form}
       <Collapse in={!!error} animateOpacity>
-        <FormErrorMessage my={0} ml={isHorizontal ? config.defaultLabelMinWidth + 20 : undefined}>{error}</FormErrorMessage>
+        <FormErrorMessage my={0} ml={isHorizontal ? defaults.labelMinWidth + 20 : undefined}>{error}</FormErrorMessage>
       </Collapse>
     </FormControl>
   );

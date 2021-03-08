@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { Box, HStack, Skeleton, SkeletonText } from '@chakra-ui/react';
-import { config } from "../config";
+import { defaults } from "../configs/defaults";
 
 export const HotelSkeleton: FC<{}> = () => {
   return (
     <Box w="full">
-      <Box mb={config.defaultMargin} p={config.deafaultPadding} shadow="base" borderWidth="1px" borderRadius={5}>
+      <Box mb={defaults.margin} p={defaults.padding} shadow="base" borderWidth="1px" borderRadius={5}>
         <HStack align="flex-start">
           <Skeleton
             mr={1}

@@ -2,14 +2,14 @@ import { Box, Button, HStack, IconButton, useToast } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { FC, useState } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { FilePicker } from "../../../components/file-picker";
 import { InputField } from "../../../components/input-field";
 import { InputNumField } from "../../../components/input-num-field";
 import { InputNumSliderField } from "../../../components/input-num-slider-field";
 import { Layout } from "../../../components/layout";
-import { FilePicker } from "../../../components/file-picker";
 import { Thumb } from "../../../components/thumb";
 import { Wrapper } from '../../../components/wrapper';
-import { config } from "../../../config";
+import { defaults } from "../../../configs/defaults";
 import { useImageUploadMutation, useUpdateHotelMutation } from "../../../generated/graphql";
 import { isImage } from "../../../utils/is-image";
 import { useGetHotelFromUrl } from "../../../utils/use-get-hotel-from-url";
@@ -84,7 +84,7 @@ const EditHotel: FC<{}> = ({}) => {
                 title: "Hotel has not been updated.",
                 description: `We've couldn't update hotel data due to the error: ${response.errors}`,
                 status: "error",
-                duration: config.defaultToastDuration,
+                duration: defaults.toastDuration,
                 isClosable: true,
                 position: "top-right"
               });
@@ -95,7 +95,7 @@ const EditHotel: FC<{}> = ({}) => {
                 title: "Hotel updated.",
                 description: "We've successfully updated hotel data.",
                 status: "success",
-                duration: config.defaultToastDuration,
+                duration: defaults.toastDuration,
                 isClosable: true,
                 position: "top-right"
               });

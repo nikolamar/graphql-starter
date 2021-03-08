@@ -1,7 +1,7 @@
 import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { config } from "../config";
+import { defaults } from "../configs/defaults";
 import { useMeQuery } from "../generated/graphql";
 
 export const useIsAuthenticated = () => {
@@ -15,7 +15,7 @@ export const useIsAuthenticated = () => {
         title: "User needs to be authenticated.",
         description: `You are not authenticated, if you want to open page ${router.pathname} you need to login first.`,
         status: "error",
-        duration: config.defaultToastDuration,
+        duration: defaults.toastDuration,
         isClosable: true,
         position: "top-right"
       });

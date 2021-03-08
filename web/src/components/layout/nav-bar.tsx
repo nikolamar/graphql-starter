@@ -2,7 +2,7 @@ import { useApolloClient } from "@apollo/client";
 import { Avatar, Box, Flex, HStack, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Text, useColorModeValue, useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
-import { config } from "../../config";
+import { defaults } from "../../configs/defaults";
 import { MeDocument, MeQuery, useLogoutMutation, useMeQuery } from '../../generated/graphql';
 import { isServer } from "../../utils/is-server";
 import { AccessibleLink } from "../accessible-link";
@@ -50,7 +50,7 @@ export const NavBar: FC<{}> = (() => {
         lastKnownScrollPosition = newScrollPosition;
         ticking = false;
       });
-  
+
       ticking = true;
     }
   }
@@ -70,7 +70,7 @@ export const NavBar: FC<{}> = (() => {
       title: "Logged out.",
       description: "We've successfully logged you out.",
       status: "success",
-      duration: config.defaultToastDuration,
+      duration: defaults.toastDuration,
       isClosable: true,
       position: "top-right"
     });
