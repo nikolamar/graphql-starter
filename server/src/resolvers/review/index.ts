@@ -1,8 +1,8 @@
 import {
   Arg,
+  Args,
   Ctx,
   FieldResolver,
-  GraphQLISODateTime,
   Int,
   Mutation,
   Query,
@@ -11,16 +11,16 @@ import {
   UseMiddleware
 } from "type-graphql";
 import { getConnection } from "typeorm";
-import { config } from "../config";
-import { Review } from "../entities/review";
-import { Vote } from "../entities/vote";
-import { ReviewFilterInput } from "../inputs";
-import { isAuthenticated } from "../middlewares/is-authenticated";
-import { parseCookies } from "../middlewares/parse-cookies";
-import { PaginatedReviews } from "../objects";
-import { Context, Order } from "../types";
-import { createPaginatedQuery } from "../utils/create-paginated-query";
-import { User } from "../entities/user";
+import { defaults } from "../../configs/defaults";
+import { Review } from "../../entities/review";
+import { User } from "../../entities/user";
+import { Vote } from "../../entities/vote";
+import { isAuthenticated } from "../../middlewares/is-authenticated";
+import { parseCookies } from "../../middlewares/parse-cookies";
+import { Context } from "../../types";
+import { createPaginatedQuery } from "../../utils/create-paginated-query";
+import { PaginatedArgs } from "../args";
+import { PaginatedReviews } from "./objects";
 
 @Resolver(Review)
 export class ReviewResolver {
@@ -31,7 +31,7 @@ export class ReviewResolver {
     }
     return ctx.userLoader.load(review.userId);
   }
-  
+
   @UseMiddleware(parseCookies)
   @FieldResolver(() => Int, { nullable: true })
   async voteStatus(
@@ -49,13 +49,8 @@ export class ReviewResolver {
   }
 
   @Query(() => PaginatedReviews)
-  async reviews(
-    @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => GraphQLISODateTime, { nullable: true }) cursor: Date,
-    @Arg("order", () => String, { nullable: true }) order: Order,
-    @Arg("filter", () => ReviewFilterInput, { nullable: true }) filter: ReviewFilterInput
-  ): Promise<PaginatedReviews> {
-    const dbLimit = Math.min(config.defaultPageLimit, limit);
+  async reviews(@Args() { limit, cursor, order, filter }: PaginatedArgs): Promise<PaginatedReviews> {
+    const dbLimit = Math.min(defaults.pageLimit, limit);
     const query = createPaginatedQuery("reviews", cursor, order, dbLimit, filter);
     const result = await getConnection().query(query);
 
@@ -65,7 +60,8 @@ export class ReviewResolver {
     };
   }
 
-  @Query(() => Review, { nullable: true }) review(
+  @Query(() => Review, { nullable: true })
+  review(
     @Arg("id", () => Int) id: number
   ): Promise<Review | undefined> {
     return Review.findOne(id);

@@ -1,4 +1,4 @@
-import { ImageResponse } from "../objects";
+import { ImageResponse } from "../resolvers/image/objects";
 import { Field, GraphQLISODateTime, ObjectType } from "type-graphql";
 import {
   BaseEntity,

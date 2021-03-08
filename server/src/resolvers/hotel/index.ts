@@ -1,27 +1,36 @@
+import "reflect-metadata";
 import {
   Arg,
   Ctx,
   FieldResolver,
-  GraphQLISODateTime,
   Int,
   Mutation,
+  PubSub,
   Query,
   Resolver,
   Root,
-  UseMiddleware
+  Publisher,
+  Subscription,
+  UseMiddleware,
+  Args,
+  // ResolverFilterData,
+  // Args,
 } from "type-graphql";
 import { getConnection } from "typeorm";
-import { config } from "../config";
-import { Hotel } from "../entities/hotel";
-import { Image } from "../entities/image";
-import { Review } from "../entities/review";
-import { User } from "../entities/user";
-import { HotelInput } from "../inputs";
-import { isAuthenticated } from "../middlewares/is-authenticated";
-import { parseCookies } from "../middlewares/parse-cookies";
-import { PaginatedHotels } from "../objects";
-import { Context, Order } from "../types";
-import { createPaginatedQuery } from "../utils/create-paginated-query";
+import { defaults } from "../../configs/defaults";
+import { Hotel } from "../../entities/hotel";
+import { Image } from "../../entities/image";
+import { Review } from "../../entities/review";
+import { User } from "../../entities/user";
+import { HotelInput } from "./inputs";
+import { isAuthenticated } from "../../middlewares/is-authenticated";
+import { parseCookies } from "../../middlewares/parse-cookies";
+import { PaginatedHotels } from "./objects";
+import { Context } from "../../types";
+import { createPaginatedQuery } from "../../utils/create-paginated-query";
+import * as TOPICS from "./topics";
+import { PaginatedArgs } from "../args";
+// import { NewHotelArgs } from "../args";
 
 @Resolver(Hotel)
 export class HotelResolver {
@@ -62,13 +71,8 @@ export class HotelResolver {
   }
 
   @Query(() => PaginatedHotels)
-  async hotels(
-    @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => GraphQLISODateTime, { nullable: true }) cursor: Date,
-    @Arg("order", () => String, { nullable: true }) order: Order,
-    @Arg("filter", () => HotelInput, { nullable: true }) filter: HotelInput
-  ): Promise<PaginatedHotels> {
-    const dbLimit = Math.min(config.defaultPageLimit, limit);
+  async hotels(@Args() { limit, cursor, order, filter }: PaginatedArgs): Promise<PaginatedHotels> {
+    const dbLimit = Math.min(defaults.pageLimit, limit);
     const query = createPaginatedQuery("hotels", cursor, order, dbLimit, filter);
     const result = await getConnection().query(query);
 
@@ -78,7 +82,8 @@ export class HotelResolver {
     };
   }
 
-  @Query(() => Hotel, { nullable: true }) hotel(
+  @Query(() => Hotel, { nullable: true })
+  hotel(
     @Arg("id", () => Int) id: number
   ): Promise<Hotel | undefined> {
     return Hotel.findOne(id);
@@ -89,7 +94,8 @@ export class HotelResolver {
   @Mutation(() => Hotel)
   async createHotel(
     @Arg("input") input: HotelInput,
-    @Ctx() ctx: Context
+    @Ctx() ctx: Context,
+    @PubSub(TOPICS.NEW_HOTEL) notifyAboutNewHotel: Publisher<Hotel>,
   ): Promise<Hotel | null> {
     if (Object.keys(input).length === 0 && input.constructor === Object) {
       return null;
@@ -120,6 +126,8 @@ export class HotelResolver {
       `,
         [image.id, hotel.id]
       );
+
+      await notifyAboutNewHotel(hotel);
 
       return hotel;
     });
@@ -183,5 +191,26 @@ export class HotelResolver {
       await Image.delete(imageIds);
     }
     return true;
+  }
+
+  // @Subscription(() => Hotel, {
+  //   topics: TOPICS.NEW_HOTEL,
+  //   filter: ({ payload, args }: ResolverFilterData<Hotel, NewHotelArgs>) => {
+  //     return payload.userId === args.userId;
+  //   },
+  // })
+  // newHotel(
+  //   @Root() hotel: Hotel,
+  //   @Args() { userId }: NewHotelArgs,
+  // ): NewHotelResponse {
+  //   console.log("userId", userId);
+  //   return {
+  //     hotel
+  //   };
+  // }
+
+  @Subscription({ topics: TOPICS.NEW_HOTEL })
+  newHotel(@Root() hotel: Hotel): Hotel {
+    return hotel;
   }
 }

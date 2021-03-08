@@ -1,8 +1,8 @@
 import {
   Arg,
+  Args,
   Ctx,
   FieldResolver,
-  GraphQLISODateTime,
   Int,
   Mutation,
   Query,
@@ -11,15 +11,16 @@ import {
   UseMiddleware
 } from "type-graphql";
 import { getConnection } from "typeorm";
-import { config } from "../config";
-import { Image } from "../entities/image";
-import { Profile } from "../entities/profile";
-import { ProfileInput, ReviewFilterInput } from "../inputs";
-import { isAuthenticated } from "../middlewares/is-authenticated";
-import { parseCookies } from "../middlewares/parse-cookies";
-import { PaginatedProfiles } from "../objects";
-import { Context, Order } from "../types";
-import { createPaginatedQuery } from "../utils/create-paginated-query";
+import { defaults } from "../../configs/defaults";
+import { Image } from "../../entities/image";
+import { Profile } from "../../entities/profile";
+import { ProfileInput } from "./inputs";
+import { isAuthenticated } from "../../middlewares/is-authenticated";
+import { parseCookies } from "../../middlewares/parse-cookies";
+import { Context } from "../../types";
+import { createPaginatedQuery } from "../../utils/create-paginated-query";
+import { PaginatedArgs } from "../args";
+import { PaginatedProfiles } from "./objects";
 
 @Resolver(Profile)
 export class ProfileResolver {
@@ -54,13 +55,9 @@ export class ProfileResolver {
 
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
-  @Query(() => PaginatedProfiles) async profiles(
-    @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => GraphQLISODateTime, { nullable: true }) cursor: Date,
-    @Arg("order", () => String, { nullable: true }) order: Order,
-    @Arg("filter", () => ReviewFilterInput, { nullable: true }) filter: ReviewFilterInput
-  ): Promise<PaginatedProfiles> {
-    const dbLimit = Math.min(config.defaultPageLimit, limit);
+  @Query(() => PaginatedProfiles)
+  async profiles(@Args() { limit, cursor, order, filter }: PaginatedArgs): Promise<PaginatedProfiles> {
+    const dbLimit = Math.min(defaults.pageLimit, limit);
     const query = createPaginatedQuery("profiles", cursor, order, dbLimit, filter);
     const result = await getConnection().query(query);
 

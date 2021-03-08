@@ -1,4 +1,4 @@
-import { RegisterInput } from "../inputs";
+import { RegisterInput } from "../resolvers/auth/inputs";
 
 export const validateRegister = (input: RegisterInput) => {
   if (input.username.length <= 2) {

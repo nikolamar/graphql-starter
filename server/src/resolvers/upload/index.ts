@@ -2,11 +2,11 @@ import { GraphQLUpload } from "apollo-server-express";
 import sharp from "sharp";
 import { Arg, Mutation, Resolver, UseMiddleware } from "type-graphql";
 import { v4 } from "uuid";
-import { DOMAIN, PORT, PROD } from "../constants";
-import { isAuthenticated } from "../middlewares/is-authenticated";
-import { parseCookies } from "../middlewares/parse-cookies";
-import { ImageUrl } from "../objects";
-import { FileUpload } from "../types";
+import { DOMAIN, PORT, PROD } from "../../constants";
+import { isAuthenticated } from "../../middlewares/is-authenticated";
+import { parseCookies } from "../../middlewares/parse-cookies";
+import { ImageUrl } from "../image/objects";
+import { FileUpload } from "../../types";
 
 @Resolver()
 export class UploadResolver {

@@ -1,6 +1,6 @@
 import {
   Arg,
-  GraphQLISODateTime,
+  Args,
   Int,
   Mutation,
   Query,
@@ -8,26 +8,21 @@ import {
   UseMiddleware
 } from "type-graphql";
 import { getConnection } from "typeorm";
-import { config } from "../config";
-import { Image } from "../entities/image";
-import { ImageFilterInput } from "../inputs";
-import { isAuthenticated } from "../middlewares/is-authenticated";
-import { parseCookies } from "../middlewares/parse-cookies";
-import { PaginatedImages } from "../objects";
-import { Order } from "../types";
-import { createPaginatedQuery } from "../utils/create-paginated-query";
+import { defaults } from "../../configs/defaults";
+import { Image } from "../../entities/image";
+import { isAuthenticated } from "../../middlewares/is-authenticated";
+import { parseCookies } from "../../middlewares/parse-cookies";
+import { createPaginatedQuery } from "../../utils/create-paginated-query";
+import { PaginatedArgs } from "../args";
+import { PaginatedImages } from "./objects";
 
 @Resolver(Image)
 export class ImageResolver {
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
-  @Query(() => PaginatedImages) async images(
-    @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => GraphQLISODateTime, { nullable: true }) cursor: Date,
-    @Arg("order", () => String, { nullable: true }) order: Order,
-    @Arg("filter", () => ImageFilterInput, { nullable: true }) filter: ImageFilterInput
-  ): Promise<PaginatedImages> {
-    const dbLimit = Math.min(config.defaultPageLimit, limit);
+  @Query(() => PaginatedImages)
+  async images(@Args() { limit, cursor, order, filter }: PaginatedArgs): Promise<PaginatedImages> {
+    const dbLimit = Math.min(defaults.pageLimit, limit);
     const query = createPaginatedQuery("images", cursor, order, dbLimit, filter);
     const result = await getConnection().query(query);
 
@@ -48,6 +43,7 @@ export class ImageResolver {
 
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
+  @Mutation(() => Image)
   async updateImage(
     @Arg("id", () => Int) id: number,
     @Arg("url", () => String) url: string
