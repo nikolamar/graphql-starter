@@ -3,7 +3,7 @@ import { HotelInput } from "../resolvers/hotel/inputs";
 import { Order } from "../types";
 
 @ArgsType()
-export class PaginatedArgs {
+export class PaginatedArgs<T> {
   @Field(() => Int)
   limit: number;
 
@@ -14,5 +14,5 @@ export class PaginatedArgs {
   order: Order;
 
   @Field(() => HotelInput, { nullable: true })
-  filter: HotelInput;
+  filter: T;
 }

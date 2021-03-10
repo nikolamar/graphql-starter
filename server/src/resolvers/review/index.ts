@@ -20,6 +20,7 @@ import { parseCookies } from "../../middlewares/parse-cookies";
 import { Context } from "../../types";
 import { createPaginatedQuery } from "../../utils/create-paginated-query";
 import { PaginatedArgs } from "../args";
+import { ReviewInput } from "./inputs";
 import { PaginatedReviews } from "./objects";
 
 @Resolver(Review)
@@ -49,7 +50,7 @@ export class ReviewResolver {
   }
 
   @Query(() => PaginatedReviews)
-  async reviews(@Args() { limit, cursor, order, filter }: PaginatedArgs): Promise<PaginatedReviews> {
+  async reviews(@Args() { limit, cursor, order, filter }: PaginatedArgs<ReviewInput>): Promise<PaginatedReviews> {
     const dbLimit = Math.min(defaults.pageLimit, limit);
     const query = createPaginatedQuery("reviews", cursor, order, dbLimit, filter);
     const result = await getConnection().query(query);

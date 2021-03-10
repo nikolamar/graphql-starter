@@ -14,12 +14,12 @@ import { getConnection } from "typeorm";
 import { defaults } from "../../configs/defaults";
 import { Image } from "../../entities/image";
 import { Profile } from "../../entities/profile";
-import { ProfileInput } from "./inputs";
 import { isAuthenticated } from "../../middlewares/is-authenticated";
 import { parseCookies } from "../../middlewares/parse-cookies";
 import { Context } from "../../types";
 import { createPaginatedQuery } from "../../utils/create-paginated-query";
 import { PaginatedArgs } from "../args";
+import { ProfileInput } from "./inputs";
 import { PaginatedProfiles } from "./objects";
 
 @Resolver(Profile)
@@ -56,7 +56,7 @@ export class ProfileResolver {
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Query(() => PaginatedProfiles)
-  async profiles(@Args() { limit, cursor, order, filter }: PaginatedArgs): Promise<PaginatedProfiles> {
+  async profiles(@Args() { limit, cursor, order, filter }: PaginatedArgs<ProfileInput>): Promise<PaginatedProfiles> {
     const dbLimit = Math.min(defaults.pageLimit, limit);
     const query = createPaginatedQuery("profiles", cursor, order, dbLimit, filter);
     const result = await getConnection().query(query);

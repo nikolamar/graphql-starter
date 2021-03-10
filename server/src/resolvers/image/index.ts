@@ -14,6 +14,7 @@ import { isAuthenticated } from "../../middlewares/is-authenticated";
 import { parseCookies } from "../../middlewares/parse-cookies";
 import { createPaginatedQuery } from "../../utils/create-paginated-query";
 import { PaginatedArgs } from "../args";
+import { ImageInput } from "./inputs";
 import { PaginatedImages } from "./objects";
 
 @Resolver(Image)
@@ -21,7 +22,7 @@ export class ImageResolver {
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Query(() => PaginatedImages)
-  async images(@Args() { limit, cursor, order, filter }: PaginatedArgs): Promise<PaginatedImages> {
+  async images(@Args() { limit, cursor, order, filter }: PaginatedArgs<ImageInput>): Promise<PaginatedImages> {
     const dbLimit = Math.min(defaults.pageLimit, limit);
     const query = createPaginatedQuery("images", cursor, order, dbLimit, filter);
     const result = await getConnection().query(query);

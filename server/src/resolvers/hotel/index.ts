@@ -71,7 +71,7 @@ export class HotelResolver {
   }
 
   @Query(() => PaginatedHotels)
-  async hotels(@Args() { limit, cursor, order, filter }: PaginatedArgs): Promise<PaginatedHotels> {
+  async hotels(@Args() { limit, cursor, order, filter }: PaginatedArgs<HotelInput>): Promise<PaginatedHotels> {
     const dbLimit = Math.min(defaults.pageLimit, limit);
     const query = createPaginatedQuery("hotels", cursor, order, dbLimit, filter);
     const result = await getConnection().query(query);

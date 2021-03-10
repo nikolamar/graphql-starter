@@ -5,12 +5,15 @@ import {
 } from "type-graphql";
 
 @InputType()
-export class ImageInput {
+export class ReviewInput {
   @Field({ nullable: true })
-  url: string;
+  message: string;
 
   @Field(() => Int, { nullable: true })
-  userId: number;
+  likes: number;
+
+  @Field(() => Int, { nullable: true })
+  dislikes: number;
 
   @Field(() => Int, { nullable: true })
   hotelId: number;
