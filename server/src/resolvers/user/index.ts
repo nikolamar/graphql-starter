@@ -23,8 +23,7 @@ import { isAuthenticated } from "../../middlewares/is-authenticated";
 import { parseCookies } from "../../middlewares/parse-cookies";
 import { Context } from "../../types";
 import { createPaginatedQuery } from "../../utils/create-paginated-query";
-import { PaginatedArgs } from "../args";
-import { UserInput } from "./inputs";
+import { UsersArgs } from "./args";
 import { PaginatedUsers } from "./objects";
 
 @Resolver(User)
@@ -38,7 +37,7 @@ export class UserResolver {
   @UseMiddleware(isAuthenticated)
   @UseMiddleware(isAdministrator)
   @Query(() => PaginatedUsers)
-  async users(@Args() { limit, cursor, order, filter }: PaginatedArgs<UserInput>): Promise<PaginatedUsers> {
+  async users(@Args() { limit, cursor, order, filter }: UsersArgs): Promise<PaginatedUsers> {
     const dbLimit = Math.min(defaults.pageLimit, limit);
     const query = createPaginatedQuery("users", cursor, order, dbLimit, filter);
     const result = await getConnection().query(query);

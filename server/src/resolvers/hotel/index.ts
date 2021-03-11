@@ -1,20 +1,16 @@
 import "reflect-metadata";
 import {
   Arg,
-  Ctx,
+  Args, Ctx,
   FieldResolver,
   Int,
   Mutation,
-  PubSub,
+  Publisher, PubSub,
   Query,
   Resolver,
   Root,
-  Publisher,
   Subscription,
-  UseMiddleware,
-  Args,
-  // ResolverFilterData,
-  // Args,
+  UseMiddleware
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { defaults } from "../../configs/defaults";
@@ -22,15 +18,15 @@ import { Hotel } from "../../entities/hotel";
 import { Image } from "../../entities/image";
 import { Review } from "../../entities/review";
 import { User } from "../../entities/user";
-import { HotelInput } from "./inputs";
 import { isAuthenticated } from "../../middlewares/is-authenticated";
 import { parseCookies } from "../../middlewares/parse-cookies";
-import { PaginatedHotels } from "./objects";
 import { Context } from "../../types";
 import { createPaginatedQuery } from "../../utils/create-paginated-query";
+import { HotelsArgs } from "./args";
+import { HotelInput } from "./inputs";
+import { PaginatedHotels } from "./objects";
 import * as TOPICS from "./topics";
-import { PaginatedArgs } from "../args";
-// import { NewHotelArgs } from "../args";
+// import { NewHotelArgs } from "./args";
 
 @Resolver(Hotel)
 export class HotelResolver {
@@ -71,7 +67,7 @@ export class HotelResolver {
   }
 
   @Query(() => PaginatedHotels)
-  async hotels(@Args() { limit, cursor, order, filter }: PaginatedArgs<HotelInput>): Promise<PaginatedHotels> {
+  async hotels(@Args() { limit, cursor, order, filter }: HotelsArgs): Promise<PaginatedHotels> {
     const dbLimit = Math.min(defaults.pageLimit, limit);
     const query = createPaginatedQuery("hotels", cursor, order, dbLimit, filter);
     const result = await getConnection().query(query);
@@ -195,7 +191,7 @@ export class HotelResolver {
 
   // @Subscription(() => Hotel, {
   //   topics: TOPICS.NEW_HOTEL,
-  //   filter: ({ payload, args }: ResolverFilterData<Hotel, NewHotelArgs>) => {
+  //   filter: ({ payload, args }: ResolverFilterData<Hotel, ArgsNewHotel>) => {
   //     return payload.userId === args.userId;
   //   },
   // })
