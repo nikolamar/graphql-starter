@@ -5,8 +5,6 @@ import {
 
 @InputType()
 export class ProfileInput {
-  @Field({ nullable: true })
-  gender: string;
 
   @Field({ nullable: true })
   firstName: string;
@@ -16,6 +14,9 @@ export class ProfileInput {
 
   @Field({ nullable: true })
   lastName: string;
+
+  @Field({ nullable: true })
+  gender: string;
 
   @Field({ nullable: true })
   city: string;
