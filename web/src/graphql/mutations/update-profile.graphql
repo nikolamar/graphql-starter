@@ -1,9 +1,9 @@
 mutation UpdateProfile(
   $id: Int!
-  $gender: String!
   $firstName: String!
   $middleName: String!
   $lastName: String!
+  $gender: String!
   $city: String!
   $country: String!
   $birthDate: String!
@@ -13,10 +13,10 @@ mutation UpdateProfile(
   updateProfile(
     id: $id
     input: {
-      gender: $gender
       firstName: $firstName
       middleName: $middleName
       lastName: $lastName
+      gender: $gender
       city: $city
       country: $country
       birthDate: $birthDate

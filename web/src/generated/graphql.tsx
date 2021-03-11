@@ -19,25 +19,24 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
-  helloWorld: Scalars['String'];
+  me?: Maybe<User>;
   hotels: PaginatedHotels;
   hotel?: Maybe<Hotel>;
   images: PaginatedImages;
-  test: Scalars['Boolean'];
   profiles: PaginatedProfiles;
   reviews: PaginatedReviews;
   review?: Maybe<Review>;
   users: PaginatedUsers;
   user?: Maybe<User>;
-  me?: Maybe<User>;
+  version: Scalars['String'];
 };
 
 
 export type QueryHotelsArgs = {
-  filter?: Maybe<HotelInput>;
-  order?: Maybe<Scalars['String']>;
-  cursor?: Maybe<Scalars['DateTime']>;
   limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['DateTime']>;
+  order?: Maybe<Scalars['String']>;
+  filter?: Maybe<HotelInput>;
 };
 
 
@@ -47,26 +46,26 @@ export type QueryHotelArgs = {
 
 
 export type QueryImagesArgs = {
-  filter?: Maybe<ImageFilterInput>;
-  order?: Maybe<Scalars['String']>;
-  cursor?: Maybe<Scalars['DateTime']>;
   limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['DateTime']>;
+  order?: Maybe<Scalars['String']>;
+  filter?: Maybe<ImageInput>;
 };
 
 
 export type QueryProfilesArgs = {
-  filter?: Maybe<ReviewFilterInput>;
-  order?: Maybe<Scalars['String']>;
-  cursor?: Maybe<Scalars['DateTime']>;
   limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['DateTime']>;
+  order?: Maybe<Scalars['String']>;
+  filter?: Maybe<ProfileInput>;
 };
 
 
 export type QueryReviewsArgs = {
-  filter?: Maybe<ReviewFilterInput>;
-  order?: Maybe<Scalars['String']>;
-  cursor?: Maybe<Scalars['DateTime']>;
   limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['DateTime']>;
+  order?: Maybe<Scalars['String']>;
+  filter?: Maybe<ReviewInput>;
 };
 
 
@@ -76,42 +75,15 @@ export type QueryReviewArgs = {
 
 
 export type QueryUsersArgs = {
-  filter?: Maybe<UserFilterInput>;
-  order?: Maybe<Scalars['String']>;
-  cursor?: Maybe<Scalars['DateTime']>;
   limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['DateTime']>;
+  order?: Maybe<Scalars['String']>;
+  filter?: Maybe<UserInput>;
 };
 
 
 export type QueryUserArgs = {
   id: Scalars['Int'];
-};
-
-export type PaginatedHotels = {
-  __typename?: 'PaginatedHotels';
-  hotels: Array<Hotel>;
-  hasMore: Scalars['Boolean'];
-};
-
-export type Hotel = {
-  __typename?: 'Hotel';
-  id: Scalars['Float'];
-  name: Scalars['String'];
-  city: Scalars['String'];
-  country: Scalars['String'];
-  description: Scalars['String'];
-  location: Scalars['String'];
-  stars: Scalars['Float'];
-  price: Scalars['Float'];
-  userId: Scalars['Float'];
-  user: User;
-  reviews: Array<Review>;
-  imageId?: Maybe<Scalars['Float']>;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  descriptionSnippet?: Maybe<Scalars['String']>;
-  image?: Maybe<Image>;
-  images: Array<Image>;
 };
 
 export type User = {
@@ -159,6 +131,27 @@ export type Image = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type Hotel = {
+  __typename?: 'Hotel';
+  id: Scalars['Float'];
+  name: Scalars['String'];
+  city: Scalars['String'];
+  country: Scalars['String'];
+  description: Scalars['String'];
+  location: Scalars['String'];
+  stars: Scalars['Float'];
+  price: Scalars['Float'];
+  userId: Scalars['Float'];
+  user: User;
+  reviews: Array<Review>;
+  imageId?: Maybe<Scalars['Float']>;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  descriptionSnippet?: Maybe<Scalars['String']>;
+  image?: Maybe<Image>;
+  images: Array<Image>;
+};
+
 export type Review = {
   __typename?: 'Review';
   id: Scalars['Float'];
@@ -167,10 +160,16 @@ export type Review = {
   dislikes: Scalars['Float'];
   voteStatus?: Maybe<Scalars['Int']>;
   hotelId: Scalars['Float'];
-  userId?: Maybe<Scalars['Float']>;
+  userId: Scalars['Float'];
+  user: User;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
-  user?: Maybe<User>;
+};
+
+export type PaginatedHotels = {
+  __typename?: 'PaginatedHotels';
+  hotels: Array<Hotel>;
+  hasMore: Scalars['Boolean'];
 };
 
 export type HotelInput = {
@@ -190,7 +189,7 @@ export type PaginatedImages = {
   hasMore: Scalars['Boolean'];
 };
 
-export type ImageFilterInput = {
+export type ImageInput = {
   url?: Maybe<Scalars['String']>;
   userId?: Maybe<Scalars['Int']>;
   hotelId?: Maybe<Scalars['Int']>;
@@ -202,11 +201,16 @@ export type PaginatedProfiles = {
   hasMore: Scalars['Boolean'];
 };
 
-export type ReviewFilterInput = {
-  message?: Maybe<Scalars['String']>;
-  likes?: Maybe<Scalars['Int']>;
-  dislikes?: Maybe<Scalars['Int']>;
-  hotelId?: Maybe<Scalars['Int']>;
+export type ProfileInput = {
+  firstName?: Maybe<Scalars['String']>;
+  middleName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  gender?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  birthDate?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
 };
 
 export type PaginatedReviews = {
@@ -215,13 +219,20 @@ export type PaginatedReviews = {
   hasMore: Scalars['Boolean'];
 };
 
+export type ReviewInput = {
+  message?: Maybe<Scalars['String']>;
+  likes?: Maybe<Scalars['Int']>;
+  dislikes?: Maybe<Scalars['Int']>;
+  hotelId?: Maybe<Scalars['Int']>;
+};
+
 export type PaginatedUsers = {
   __typename?: 'PaginatedUsers';
   users: Array<User>;
   hasMore: Scalars['Boolean'];
 };
 
-export type UserFilterInput = {
+export type UserInput = {
   count?: Maybe<Scalars['Int']>;
   type?: Maybe<Scalars['String']>;
   username?: Maybe<Scalars['String']>;
@@ -232,10 +243,16 @@ export type UserFilterInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  login: UserResponse;
+  logout: Scalars['Boolean'];
+  register: UserResponse;
+  forgotPassword: UserResponse;
+  changePassword: UserResponse;
   createHotel: Hotel;
   updateHotel?: Maybe<Hotel>;
   deleteHotel: Scalars['Boolean'];
   createImage: Image;
+  updateImage: Image;
   deleteImage: Scalars['Boolean'];
   createProfile: Profile;
   updateProfile?: Maybe<Profile>;
@@ -246,11 +263,27 @@ export type Mutation = {
   vote: Scalars['Boolean'];
   imageUpload: ImageUrl;
   deleteUser: Scalars['Boolean'];
-  login: UserResponse;
-  logout: Scalars['Boolean'];
-  register: UserResponse;
-  forgotPassword: UserResponse;
-  changePassword: UserResponse;
+};
+
+
+export type MutationLoginArgs = {
+  input: LoginInput;
+};
+
+
+export type MutationRegisterArgs = {
+  input: RegisterInput;
+};
+
+
+export type MutationForgotPasswordArgs = {
+  usernameoremail: Scalars['String'];
+};
+
+
+export type MutationChangePasswordArgs = {
+  newpassword: Scalars['String'];
+  token: Scalars['String'];
 };
 
 
@@ -272,6 +305,12 @@ export type MutationDeleteHotelArgs = {
 
 export type MutationCreateImageArgs = {
   url: Scalars['String'];
+};
+
+
+export type MutationUpdateImageArgs = {
+  url: Scalars['String'];
+  id: Scalars['Int'];
 };
 
 
@@ -328,45 +367,6 @@ export type MutationDeleteUserArgs = {
   id: Scalars['Int'];
 };
 
-
-export type MutationLoginArgs = {
-  input: LoginInput;
-};
-
-
-export type MutationRegisterArgs = {
-  input: RegisterInput;
-};
-
-
-export type MutationForgotPasswordArgs = {
-  usernameoremail: Scalars['String'];
-};
-
-
-export type MutationChangePasswordArgs = {
-  newpassword: Scalars['String'];
-  token: Scalars['String'];
-};
-
-export type ProfileInput = {
-  gender?: Maybe<Scalars['String']>;
-  firstName?: Maybe<Scalars['String']>;
-  middleName?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
-  city?: Maybe<Scalars['String']>;
-  country?: Maybe<Scalars['String']>;
-  birthDate?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
-  image?: Maybe<Scalars['String']>;
-};
-
-export type ImageUrl = {
-  __typename?: 'ImageUrl';
-  url: Scalars['String'];
-};
-
-
 export type UserResponse = {
   __typename?: 'UserResponse';
   errors?: Maybe<Array<FieldError>>;
@@ -389,6 +389,17 @@ export type RegisterInput = {
   username: Scalars['String'];
   password: Scalars['String'];
   type?: Maybe<Scalars['String']>;
+};
+
+export type ImageUrl = {
+  __typename?: 'ImageUrl';
+  url: Scalars['String'];
+};
+
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  newHotel: Hotel;
 };
 
 export type ErrorSnippetFragment = (
@@ -437,7 +448,7 @@ export type ProfileSnippetFragment = (
 export type ReviewSnippetFragment = (
   { __typename?: 'Review' }
   & Pick<Review, 'id' | 'message' | 'likes' | 'dislikes' | 'voteStatus' | 'hotelId' | 'createdAt'>
-  & { user?: Maybe<(
+  & { user: (
     { __typename?: 'User' }
     & { profile: (
       { __typename?: 'Profile' }
@@ -447,7 +458,7 @@ export type ReviewSnippetFragment = (
         & Pick<Image, 'id' | 'url'>
       )> }
     ) }
-  )> }
+  ) }
 );
 
 export type UserProfileSnippetFragment = (
@@ -619,10 +630,10 @@ export type UpdateHotelMutation = (
 
 export type UpdateProfileMutationVariables = Exact<{
   id: Scalars['Int'];
-  gender: Scalars['String'];
   firstName: Scalars['String'];
   middleName: Scalars['String'];
   lastName: Scalars['String'];
+  gender: Scalars['String'];
   city: Scalars['String'];
   country: Scalars['String'];
   birthDate: Scalars['String'];
@@ -1186,10 +1197,10 @@ export type UpdateHotelMutationHookResult = ReturnType<typeof useUpdateHotelMuta
 export type UpdateHotelMutationResult = Apollo.MutationResult<UpdateHotelMutation>;
 export type UpdateHotelMutationOptions = Apollo.BaseMutationOptions<UpdateHotelMutation, UpdateHotelMutationVariables>;
 export const UpdateProfileDocument = gql`
-    mutation UpdateProfile($id: Int!, $gender: String!, $firstName: String!, $middleName: String!, $lastName: String!, $city: String!, $country: String!, $birthDate: String!, $phone: String!, $image: String!) {
+    mutation UpdateProfile($id: Int!, $firstName: String!, $middleName: String!, $lastName: String!, $gender: String!, $city: String!, $country: String!, $birthDate: String!, $phone: String!, $image: String!) {
   updateProfile(
     id: $id
-    input: {gender: $gender, firstName: $firstName, middleName: $middleName, lastName: $lastName, city: $city, country: $country, birthDate: $birthDate, phone: $phone, image: $image}
+    input: {firstName: $firstName, middleName: $middleName, lastName: $lastName, gender: $gender, city: $city, country: $country, birthDate: $birthDate, phone: $phone, image: $image}
   ) {
     ...ProfileSnippet
   }
@@ -1211,10 +1222,10 @@ export type UpdateProfileMutationFn = Apollo.MutationFunction<UpdateProfileMutat
  * const [updateProfileMutation, { data, loading, error }] = useUpdateProfileMutation({
  *   variables: {
  *      id: // value for 'id'
- *      gender: // value for 'gender'
  *      firstName: // value for 'firstName'
  *      middleName: // value for 'middleName'
  *      lastName: // value for 'lastName'
+ *      gender: // value for 'gender'
  *      city: // value for 'city'
  *      country: // value for 'country'
  *      birthDate: // value for 'birthDate'
