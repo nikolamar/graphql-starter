@@ -1,5 +1,4 @@
 import {
-  Arg,
   Args,
   Ctx,
   FieldResolver,
@@ -19,7 +18,7 @@ import { isAuthenticated } from "../../middlewares/is-authenticated";
 import { parseCookies } from "../../middlewares/parse-cookies";
 import { Context } from "../../types";
 import { createPaginatedQuery } from "../../utils/create-paginated-query";
-import { ReviewsArgs } from "./args";
+import { CreateReviewArgs, DeleteReviewArgs, ReviewArgs, ReviewsArgs, UpdateReviewArgs, VoteArgs } from "./args";
 import { PaginatedReviews } from "./objects";
 
 @Resolver(Review)
@@ -61,9 +60,7 @@ export class ReviewResolver {
   }
 
   @Query(() => Review, { nullable: true })
-  review(
-    @Arg("id", () => Int) id: number
-  ): Promise<Review | undefined> {
+  review(@Args() { id }: ReviewArgs): Promise<Review | undefined> {
     return Review.findOne(id);
   }
 
@@ -71,8 +68,7 @@ export class ReviewResolver {
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Review)
   async createReview(
-    @Arg("hotelId", () => Int) hotelId: number,
-    @Arg("message", () => String) message: string,
+    @Args() { hotelId, message }: CreateReviewArgs,
     @Ctx() ctx: Context
   ): Promise<Review> {
     return Review.create({ message, hotelId, userId: ctx.req.userId }).save();
@@ -81,10 +77,7 @@ export class ReviewResolver {
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Review, { nullable: true })
-  async updateReview(
-    @Arg("id", () => Int) id: number,
-    @Arg("message", () => String) message: string
-  ): Promise<Review | undefined> {
+  async updateReview(@Args() { id, message }: UpdateReviewArgs): Promise<Review | undefined> {
     await Review.update({ id }, { message });
     const review = await Review.findOne(id);
     return review;
@@ -93,7 +86,7 @@ export class ReviewResolver {
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Boolean)
-  async deleteReview(@Arg("id", () => Int) id: number): Promise<Boolean> {
+  async deleteReview(@Args() { id }: DeleteReviewArgs): Promise<Boolean> {
     await Review.delete(id);
     return true;
   }
@@ -102,8 +95,7 @@ export class ReviewResolver {
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Boolean)
   async vote(
-    @Arg("value", () => Int) value: number,
-    @Arg("reviewId", () => Int) reviewId: number,
+    @Args() { value, reviewId }: VoteArgs,
     @Ctx() ctx: Context
   ): Promise<boolean> {
     const isPostive = value !== -1;

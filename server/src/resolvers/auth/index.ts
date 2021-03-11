@@ -1,6 +1,6 @@
 import argon2 from "argon2";
 import {
-  Arg,
+  Args,
   Ctx,
   FieldResolver,
   Mutation,
@@ -23,7 +23,7 @@ import { createTokens } from "../../utils/create-tokens";
 import { invalidateTokens } from "../../utils/invalidate-tokens";
 import { sendEmail } from "../../utils/send-email";
 import { validateRegister } from "../../utils/validate-register";
-import { LoginInput, RegisterInput } from "./inputs";
+import { ForgotPasswordArgs, LoginArgs, RegisterArgs, ChangePasswordArgs } from "./args";
 import { UserResponse } from "./objects";
 
 @Resolver(User)
@@ -42,7 +42,7 @@ export class AuthResolver {
 
   @Mutation(() => UserResponse)
   async login(
-    @Arg("input") input: LoginInput,
+    @Args() { input }: LoginArgs,
     @Ctx() ctx: Context
   ): Promise<UserResponse> {
     const isEmail = regEmail.test(input.usernameoremail);
@@ -96,7 +96,7 @@ export class AuthResolver {
 
   @Mutation(() => UserResponse)
   async register(
-    @Arg("input") input: RegisterInput,
+    @Args() { input }: RegisterArgs,
     @Ctx() ctx: Context
   ): Promise<UserResponse> {
     const errors = validateRegister(input);
@@ -129,7 +129,7 @@ export class AuthResolver {
 
   @Mutation(() => UserResponse)
   async forgotPassword(
-    @Arg("usernameoremail") usernameoremail: string,
+    @Args() { usernameoremail }: ForgotPasswordArgs,
     @Ctx() ctx: Context
   ): Promise<UserResponse> {
     const isEmail = regEmail.test(usernameoremail);
@@ -173,8 +173,7 @@ export class AuthResolver {
 
   @Mutation(() => UserResponse)
   async changePassword(
-    @Arg("token") token: string,
-    @Arg("newpassword") newpassword: string,
+    @Args() { token, newpassword}: ChangePasswordArgs,
     @Ctx() ctx: Context
   ): Promise<UserResponse> {
     if (newpassword.length <= 2) {

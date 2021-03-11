@@ -7,3 +7,15 @@ export class UsersArgs extends PaginatedArgs {
   @Field(() => UserInput, { nullable: true })
   filter: UserInput;
 }
+
+@ArgsType()
+export class UserArgs {
+  @Field()
+  id: number;
+}
+
+@ArgsType()
+export class DeleteUserArgs {
+  @Field()
+  id: number;
+}

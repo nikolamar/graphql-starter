@@ -7,3 +7,24 @@ export class ImagesArgs extends PaginatedArgs {
   @Field(() => ImageInput, { nullable: true })
   filter: ImageInput;
 }
+
+@ArgsType()
+export class CreateImageArgs {
+  @Field()
+  url: string;
+}
+
+@ArgsType()
+export class UpdateImageArgs {
+  @Field()
+  id: number;
+
+  @Field()
+  url: string;
+}
+
+@ArgsType()
+export class DeleteImageArgs {
+  @Field()
+  id: number;
+}

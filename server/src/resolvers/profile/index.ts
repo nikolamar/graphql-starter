@@ -1,9 +1,7 @@
 import {
-  Arg,
   Args,
   Ctx,
   FieldResolver,
-  Int,
   Mutation,
   Query,
   Resolver,
@@ -18,8 +16,7 @@ import { isAuthenticated } from "../../middlewares/is-authenticated";
 import { parseCookies } from "../../middlewares/parse-cookies";
 import { Context } from "../../types";
 import { createPaginatedQuery } from "../../utils/create-paginated-query";
-import { ProfilesArgs } from "./args";
-import { ProfileInput } from "./inputs";
+import { CreateProfileArgs, DeleteProfileArgs, ProfilesArgs, UpdateProfileArgs } from "./args";
 import { PaginatedProfiles } from "./objects";
 
 @Resolver(Profile)
@@ -70,9 +67,7 @@ export class ProfileResolver {
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Profile)
-  async createProfile(
-    @Arg("input") input: ProfileInput,
-  ): Promise<Profile | null> {
+  async createProfile(@Args() { input }: CreateProfileArgs): Promise<Profile | null> {
     if (Object.keys(input).length === 0 && input.constructor === Object) {
       return null;
     }
@@ -110,10 +105,7 @@ export class ProfileResolver {
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Profile, { nullable: true })
-  async updateProfile(
-    @Arg("id", () => Int) id: number,
-    @Arg("input") input: ProfileInput,
-  ): Promise<Profile | null> {
+  async updateProfile(@Args() { id, input }: UpdateProfileArgs): Promise<Profile | null> {
     if (Object.keys(input).length === 0 && input.constructor === Object) {
       return null;
     }
@@ -151,9 +143,7 @@ export class ProfileResolver {
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Boolean)
-  async deleteProfile(
-    @Arg("id", () => Int) id: number,
-  ): Promise<Boolean> {
+  async deleteProfile(@Args() { id }: DeleteProfileArgs): Promise<Boolean> {
     await Profile.delete({ id });
     return true;
   }

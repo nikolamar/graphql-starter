@@ -1,9 +1,7 @@
 import {
-  Arg,
   Args,
   Ctx,
   FieldResolver,
-  Int,
   Mutation,
   Query,
   Resolver,
@@ -23,7 +21,7 @@ import { isAuthenticated } from "../../middlewares/is-authenticated";
 import { parseCookies } from "../../middlewares/parse-cookies";
 import { Context } from "../../types";
 import { createPaginatedQuery } from "../../utils/create-paginated-query";
-import { UsersArgs } from "./args";
+import { DeleteUserArgs, UserArgs, UsersArgs } from "./args";
 import { PaginatedUsers } from "./objects";
 
 @Resolver(User)
@@ -52,9 +50,7 @@ export class UserResolver {
   @UseMiddleware(isAuthenticated)
   @UseMiddleware(isAdministrator)
   @Query(() => User, { nullable: true })
-  user(
-    @Arg("id", () => Int) id: number
-  ): Promise<User | undefined> {
+  user(@Args() { id }: UserArgs): Promise<User | undefined> {
     return User.findOne(id);
   }
 
@@ -62,7 +58,7 @@ export class UserResolver {
   @UseMiddleware(isAuthenticated)
   @UseMiddleware(isAdministrator)
   @Mutation(() => Boolean)
-  async deleteUser(@Arg("id", () => Int) id: number): Promise<Boolean> {
+  async deleteUser(@Args() { id }: DeleteUserArgs): Promise<Boolean> {
     const user = await User.findOne(id);
     const profile = await Profile.findOne(user?.profileId);
     const images = await Image.find({ where: { profileId: profile?.id }});

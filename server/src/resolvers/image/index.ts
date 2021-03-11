@@ -1,7 +1,5 @@
 import {
-  Arg,
   Args,
-  Int,
   Mutation,
   Query,
   Resolver,
@@ -13,7 +11,7 @@ import { Image } from "../../entities/image";
 import { isAuthenticated } from "../../middlewares/is-authenticated";
 import { parseCookies } from "../../middlewares/parse-cookies";
 import { createPaginatedQuery } from "../../utils/create-paginated-query";
-import { ImagesArgs } from "./args";
+import { CreateImageArgs, DeleteImageArgs, ImagesArgs, UpdateImageArgs } from "./args";
 import { PaginatedImages } from "./objects";
 
 @Resolver(Image)
@@ -35,19 +33,14 @@ export class ImageResolver {
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Image)
-  createImage(
-    @Arg("url", () => String) url: string
-  ): Promise<Image> {
+  createImage(@Args() { url }: CreateImageArgs): Promise<Image> {
     return Image.create({ url }).save();
   }
 
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Image)
-  async updateImage(
-    @Arg("id", () => Int) id: number,
-    @Arg("url", () => String) url: string
-  ): Promise<Image | undefined> {
+  async updateImage(@Args() { id, url }: UpdateImageArgs): Promise<Image | undefined> {
     await Image.update({ id }, { url });
     const image = await Image.findOne(id);
     return image;
@@ -56,7 +49,7 @@ export class ImageResolver {
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Boolean)
-  async deleteImage(@Arg("id", () => Int) id: number): Promise<Boolean> {
+  async deleteImage(@Args() { id }: DeleteImageArgs): Promise<Boolean> {
     await Image.delete(id);
     return true;
   }

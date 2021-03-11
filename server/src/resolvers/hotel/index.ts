@@ -1,9 +1,7 @@
 import "reflect-metadata";
 import {
-  Arg,
   Args, Ctx,
   FieldResolver,
-  Int,
   Mutation,
   Publisher, PubSub,
   Query,
@@ -22,8 +20,7 @@ import { isAuthenticated } from "../../middlewares/is-authenticated";
 import { parseCookies } from "../../middlewares/parse-cookies";
 import { Context } from "../../types";
 import { createPaginatedQuery } from "../../utils/create-paginated-query";
-import { HotelsArgs } from "./args";
-import { HotelInput } from "./inputs";
+import { CreateHotelArgs, DeleteHotelArgs, HotelArgs, HotelsArgs, UpdateHotelArgs } from "./args";
 import { PaginatedHotels } from "./objects";
 import * as TOPICS from "./topics";
 // import { NewHotelArgs } from "./args";
@@ -79,9 +76,7 @@ export class HotelResolver {
   }
 
   @Query(() => Hotel, { nullable: true })
-  hotel(
-    @Arg("id", () => Int) id: number
-  ): Promise<Hotel | undefined> {
+  hotel(@Args() { id }: HotelArgs): Promise<Hotel | undefined> {
     return Hotel.findOne(id);
   }
 
@@ -89,7 +84,7 @@ export class HotelResolver {
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Hotel)
   async createHotel(
-    @Arg("input") input: HotelInput,
+    @Args() { input }: CreateHotelArgs,
     @Ctx() ctx: Context,
     @PubSub(TOPICS.NEW_HOTEL) notifyAboutNewHotel: Publisher<Hotel>,
   ): Promise<Hotel | null> {
@@ -133,8 +128,7 @@ export class HotelResolver {
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Hotel, { nullable: true })
   async updateHotel(
-    @Arg("id", () => Int) id: number,
-    @Arg("input") input: HotelInput,
+    @Args() { id, input }: UpdateHotelArgs,
     @Ctx() ctx: Context
   ): Promise<Hotel | null> {
     if (Object.keys(input).length === 0 && input.constructor === Object) {
@@ -175,7 +169,7 @@ export class HotelResolver {
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Boolean)
   async deleteHotel(
-    @Arg("id", () => Int) id: number,
+    @Args() { id }: DeleteHotelArgs,
     @Ctx() ctx: Context
   ): Promise<Boolean> {
     await Hotel.delete({ id, userId: ctx.req.userId });
