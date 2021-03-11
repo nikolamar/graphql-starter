@@ -41,10 +41,6 @@ const EditHotel: FC<{}> = ({}) => {
     e.target.value = "";
   }
 
-  const handleRemoveImage = () => {
-    setImage(null);
-  }
-
   if (!data) {
     return <Wrapper minHeight="100vh" />;
   }
@@ -74,13 +70,14 @@ const EditHotel: FC<{}> = ({}) => {
 
             if (image) {
               const response = await imageUpload({ variables: { file: image } });
-              hotelVariables.image = response.data?.imageUpload.url as string;
+              hotelVariables.image = response?.data?.imageUpload?.url;
+              setImage(null);
             }
 
             const response = await updateHotel({ variables: hotelVariables });
 
-            if (response.errors) {
-              toast({
+            if (response?.errors) {
+              return toast({
                 title: "Hotel has not been updated.",
                 description: `We've couldn't update hotel data due to the error: ${response.errors}`,
                 status: "error",
@@ -90,16 +87,14 @@ const EditHotel: FC<{}> = ({}) => {
               });
             }
 
-            if (response.data?.updateHotel?.id) {
-              toast({
-                title: "Hotel updated.",
-                description: "We've successfully updated hotel data.",
-                status: "success",
-                duration: defaults.toastDuration,
-                isClosable: true,
-                position: "top-right"
-              });
-            }
+            toast({
+              title: "Hotel updated.",
+              description: "We've successfully updated hotel data.",
+              status: "success",
+              duration: defaults.toastDuration,
+              isClosable: true,
+              position: "top-right"
+            });
           }}
         >
           {({ isSubmitting }) => (
@@ -155,7 +150,7 @@ const EditHotel: FC<{}> = ({}) => {
                     <IconButton
                       aria-label="delete hotel"
                       icon={<RiDeleteBinLine/>}
-                      onClick={handleRemoveImage}
+                      onClick={() => setImage(null)}
                       colorScheme="red"
                     />)}
                 </HStack>

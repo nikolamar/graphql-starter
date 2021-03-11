@@ -39,10 +39,6 @@ const CreateHotel: FC<{}> = ({}) => {
     e.target.value = "";
   }
 
-  const handleRemoveImage = () => {
-    setImage(null);
-  }
-
   return (
     <Layout>
       <Wrapper minHeight="100vh">
@@ -64,15 +60,19 @@ const CreateHotel: FC<{}> = ({}) => {
 
             if (image) {
               const response = await imageUpload({ variables: { file: image } });
-              hotelVariables.image = response.data?.imageUpload.url as string;
+              hotelVariables.image = response?.data?.imageUpload?.url as string;
+              setImage(null);
             }
 
             const response = await createHotel({ variables: hotelVariables , update: (cache) => {
               cache.evict({ fieldName: "hotels" });
             }});
 
-            if (response.errors) {
-              toast({
+            resetForm({});
+            window.scrollTo(0, 0);
+
+            if (response?.errors) {
+              return toast({
                 title: "Hotel has not been created.",
                 description: `We've couldn't create hotel due to the error: ${response.errors}`,
                 status: "error",
@@ -80,23 +80,16 @@ const CreateHotel: FC<{}> = ({}) => {
                 isClosable: true,
                 position: "top-right"
               });
-              return;
             }
 
-            if (response.data?.createHotel?.id) {
-              toast({
-                title: "Hotel created.",
-                description: "We've successfully created hotel.",
-                status: "success",
-                duration: defaults.toastDuration,
-                isClosable: true,
-                position: "top-right"
-              });
-
-              handleRemoveImage();
-              resetForm({});
-              window.scrollTo(0, 0);
-            }
+            toast({
+              title: "Hotel created.",
+              description: "We've successfully created hotel.",
+              status: "success",
+              duration: defaults.toastDuration,
+              isClosable: true,
+              position: "top-right"
+            });
           }}
         >
           {({ isSubmitting }) => (
@@ -152,7 +145,7 @@ const CreateHotel: FC<{}> = ({}) => {
                     <IconButton
                       aria-label="delete hotel"
                       icon={<RiDeleteBinLine/>}
-                      onClick={handleRemoveImage}
+                      onClick={() => setImage(null)}
                       colorScheme="red"
                     />)}
                 </HStack>

@@ -150,8 +150,8 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
               cache.evict({ fieldName: "reviews" });
             }});
 
-            if (response.errors) {
-              toast({
+            if (response?.errors) {
+              return toast({
                 title: "Review has not been created.",
                 description: `We've couldn't create review due to the error: ${response.errors}`,
                 status: "error",
