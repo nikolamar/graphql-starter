@@ -29,7 +29,7 @@ export class UploadResolver {
     };
 
     const imageName = `${v4()}_${file.filename}`;
-    const path = __dirname + `/../../public/images/${imageName}`;
+    const path = __dirname + `/../../../public/images/${imageName}`;
     const imageBuffer = await getBuffer(file);
 
     await sharp(imageBuffer).toFile(path);
