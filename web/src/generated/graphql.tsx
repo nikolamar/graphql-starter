@@ -282,8 +282,8 @@ export type MutationForgotPasswordArgs = {
 
 
 export type MutationChangePasswordArgs = {
-  newpassword: Scalars['String'];
   token: Scalars['String'];
+  newpassword: Scalars['String'];
 };
 
 
@@ -293,8 +293,8 @@ export type MutationCreateHotelArgs = {
 
 
 export type MutationUpdateHotelArgs = {
-  input: HotelInput;
   id: Scalars['Int'];
+  input: HotelInput;
 };
 
 
@@ -309,8 +309,8 @@ export type MutationCreateImageArgs = {
 
 
 export type MutationUpdateImageArgs = {
-  url: Scalars['String'];
   id: Scalars['Int'];
+  url: Scalars['String'];
 };
 
 
@@ -325,8 +325,8 @@ export type MutationCreateProfileArgs = {
 
 
 export type MutationUpdateProfileArgs = {
-  input: ProfileInput;
   id: Scalars['Int'];
+  input: ProfileInput;
 };
 
 
@@ -336,14 +336,14 @@ export type MutationDeleteProfileArgs = {
 
 
 export type MutationCreateReviewArgs = {
-  message: Scalars['String'];
   hotelId: Scalars['Int'];
+  message: Scalars['String'];
 };
 
 
 export type MutationUpdateReviewArgs = {
-  message: Scalars['String'];
   id: Scalars['Int'];
+  message: Scalars['String'];
 };
 
 
@@ -353,8 +353,8 @@ export type MutationDeleteReviewArgs = {
 
 
 export type MutationVoteArgs = {
-  reviewId: Scalars['Int'];
   value: Scalars['Int'];
+  reviewId: Scalars['Int'];
 };
 
 

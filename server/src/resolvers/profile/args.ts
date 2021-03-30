@@ -1,4 +1,4 @@
-import { ArgsType, Field } from "type-graphql";
+import { ArgsType, Field, Int } from "type-graphql";
 import { PaginatedArgs } from "../common-args";
 import { ProfileInput } from "./inputs";
 
@@ -16,7 +16,7 @@ export class CreateProfileArgs {
 
 @ArgsType()
 export class UpdateProfileArgs {
-  @Field()
+  @Field(() => Int)
   id: number;
 
   @Field()
@@ -25,6 +25,6 @@ export class UpdateProfileArgs {
 
 @ArgsType()
 export class DeleteProfileArgs {
-  @Field()
+  @Field(() => Int)
   id: number;
 }

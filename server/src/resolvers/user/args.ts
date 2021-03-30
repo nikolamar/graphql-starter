@@ -1,4 +1,4 @@
-import { ArgsType, Field } from "type-graphql";
+import { ArgsType, Field, Int } from "type-graphql";
 import { PaginatedArgs } from "../common-args";
 import { UserInput } from "./inputs";
 
@@ -10,12 +10,12 @@ export class UsersArgs extends PaginatedArgs {
 
 @ArgsType()
 export class UserArgs {
-  @Field()
+  @Field(() => Int)
   id: number;
 }
 
 @ArgsType()
 export class DeleteUserArgs {
-  @Field()
+  @Field(() => Int)
   id: number;
 }

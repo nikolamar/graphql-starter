@@ -1,4 +1,4 @@
-import { ArgsType, Field } from "type-graphql";
+import { ArgsType, Field, Int } from "type-graphql";
 import { PaginatedArgs } from "../common-args";
 import { ImageInput } from "./inputs";
 
@@ -16,7 +16,7 @@ export class CreateImageArgs {
 
 @ArgsType()
 export class UpdateImageArgs {
-  @Field()
+  @Field(() => Int)
   id: number;
 
   @Field()
@@ -25,6 +25,6 @@ export class UpdateImageArgs {
 
 @ArgsType()
 export class DeleteImageArgs {
-  @Field()
+  @Field(() => Int)
   id: number;
 }

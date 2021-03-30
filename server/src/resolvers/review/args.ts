@@ -1,4 +1,4 @@
-import { ArgsType, Field } from "type-graphql";
+import { ArgsType, Field, Int } from "type-graphql";
 import { PaginatedArgs } from "../common-args";
 import { ReviewInput } from "./inputs";
 
@@ -10,13 +10,13 @@ export class ReviewsArgs extends PaginatedArgs {
 
 @ArgsType()
 export class ReviewArgs {
-  @Field()
+  @Field(() => Int)
   id: number;
 }
 
 @ArgsType()
 export class CreateReviewArgs {
-  @Field()
+  @Field(() => Int)
   hotelId: number;
 
   @Field()
@@ -25,7 +25,7 @@ export class CreateReviewArgs {
 
 @ArgsType()
 export class UpdateReviewArgs {
-  @Field()
+  @Field(() => Int)
   id: number;
 
   @Field()
@@ -34,15 +34,15 @@ export class UpdateReviewArgs {
 
 @ArgsType()
 export class DeleteReviewArgs {
-  @Field()
+  @Field(() => Int)
   id: number;
 }
 
 @ArgsType()
 export class VoteArgs {
-  @Field()
+  @Field(() => Int)
   value: number;
 
-  @Field()
+  @Field(() => Int)
   reviewId: number;
 }

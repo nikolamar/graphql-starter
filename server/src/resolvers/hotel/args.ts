@@ -1,4 +1,4 @@
-import { ArgsType, Field, ID } from "type-graphql";
+import { ArgsType, Field, Int } from "type-graphql";
 import { PaginatedArgs } from "../common-args";
 import { HotelInput } from "./inputs";
 
@@ -10,7 +10,7 @@ export class HotelsArgs extends PaginatedArgs {
 
 @ArgsType()
 export class HotelArgs {
-  @Field()
+  @Field(() => Int)
   id: number;
 }
 
@@ -22,7 +22,7 @@ export class CreateHotelArgs {
 
 @ArgsType()
 export class UpdateHotelArgs {
-  @Field()
+  @Field(() => Int)
   id: number;
 
   @Field()
@@ -31,12 +31,12 @@ export class UpdateHotelArgs {
 
 @ArgsType()
 export class DeleteHotelArgs {
-  @Field()
+  @Field(() => Int)
   id: number;
 }
 
 @ArgsType()
 export class NewHotelArgs {
-  @Field(() => ID)
+  @Field(() => Int)
   userId: number;
 }
