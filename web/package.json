@@ -1,8 +1,13 @@
 {
-  "name": "graphql-starter-web",
-  "version": "0.1.0",
-  "private": true,
-  "author": "sozonome",
+  "name": "graphql-starter-nextjs-apollo",
+  "version": "1.0.0",
+  "author": "nikolatec",
+  "keywords": [
+    "graphql",
+    "starter",
+    "nextjs",
+    "apollo"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
