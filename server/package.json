@@ -14,7 +14,7 @@
     "deploy": "./scripts/deploy.sh",
     "tslint": "node_modules/.bin/tslint -c ./tslint.json './src/**/*.{ts, tsx}'",
     "tslint:fix": "node_modules/.bin/tslint --fix -c ./tslint.json './src/**/*.{ts, tsx}'",
-    "prettier:base": "prettier --write src/",
+    "prettier:base": "prettier --parser typescript",
     "prettier:check": "npm run prettier:base -- --list-different \"src/**/*.{ts,tsx}\"",
     "prettier:write": "npm run prettier:base -- --write \"src/**/*.{ts,tsx}\""
   },
