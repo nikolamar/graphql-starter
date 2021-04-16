@@ -62,5 +62,16 @@
     "type-graphql": "^1.1.1",
     "typeorm": "^0.2.30",
     "uuid": "^8.3.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "npm run precommit",
+      "git add"
+    ]
   }
 }

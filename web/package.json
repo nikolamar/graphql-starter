@@ -54,5 +54,16 @@
     "prettier": "^2.0.5",
     "tslint": "^6.1.3",
     "typescript": "^3.9.7"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "npm run precommit",
+      "git add"
+    ]
   }
 }
