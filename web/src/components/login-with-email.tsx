@@ -1,20 +1,14 @@
-import {
-  Box,
-  Button,
-  useColorMode,
-  useColorModeValue
-} from "@chakra-ui/react";
+import { Box, Button, useColorMode, useColorModeValue } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import { FC } from "react";
 import { InputField } from "../components/input-field";
 import { Wrapper } from "../components/wrapper";
-import { useLoginMutation } from '../generated/graphql';
+import { useLoginMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/to-error-map";
 import * as schemas from "../yup-schemas";
 
 export const LoginWithEmail: FC<{}> = () => {
-
   const router = useRouter();
   const [login, { loading }] = useLoginMutation();
   const { colorMode } = useColorMode();
@@ -30,7 +24,13 @@ export const LoginWithEmail: FC<{}> = () => {
         alignItems="center"
         display="flex"
       >
-        <Box bgColor={color} padding="5" borderRadius="10px" shadow="2xl" w="100%">
+        <Box
+          bgColor={color}
+          padding="5"
+          borderRadius="10px"
+          shadow="2xl"
+          w="100%"
+        >
           <Formik
             validateOnBlur={false}
             validationSchema={schemas.login}
@@ -56,7 +56,7 @@ export const LoginWithEmail: FC<{}> = () => {
                   label="Username or email"
                   spellCheck={false}
                 />
-                <Box mt={4}/>
+                <Box mt={4} />
                 <InputField
                   name="password"
                   placeholder="password"
@@ -80,5 +80,4 @@ export const LoginWithEmail: FC<{}> = () => {
       </Wrapper>
     </Box>
   );
-}
-
+};

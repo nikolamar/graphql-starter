@@ -11,10 +11,10 @@ interface LayoutProps {
 export const Layout: FC<LayoutProps> = ({ children }) => {
   return (
     <Box>
-      <Meta/>
+      <Meta />
       <NavBar />
       {children}
-      <Footer/>
+      <Footer />
     </Box>
   );
 };

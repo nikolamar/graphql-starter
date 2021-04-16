@@ -8,7 +8,6 @@ interface RateProps {
 }
 
 export const Rate: FC<RateProps> = ({ defaultValue = 0, readonly = false }) => {
-
   // To set the default Star Selected
   const [defaultRating, setDefaultRating] = useState(defaultValue);
   // To set the max number of Stars
@@ -31,4 +30,4 @@ export const Rate: FC<RateProps> = ({ defaultValue = 0, readonly = false }) => {
       })}
     </Box>
   );
-}
+};

@@ -1,17 +1,25 @@
 {
-  "name": "graphql-starter-web",
-  "version": "0.1.0",
-  "private": true,
-  "author": "sozonome",
+  "name": "graphql-starter-nextjs-apollo",
+  "version": "1.0.0",
+  "author": "nikolatec",
+  "keywords": [
+    "graphql",
+    "starter",
+    "nextjs",
+    "apollo"
+  ],
   "scripts": {
-    "dev": "next dev",
+    "develop": "next dev",
     "build": "next build",
     "start": "next start",
-    "prettify": "prettier --write src/",
-    "gen": "graphql-codegen --config codegen.yml",
-    "gen-env": "gen-env-types .env.local -o src/env.d.ts -e .",
-    "lint": "node_modules/.bin/tslint -c ./tslint.json './src/**/*.ts'",
-    "lint-fix": "node_modules/.bin/tslint --fix -c ./tslint.json './src/**/*.ts'"
+    "generate:graphql": "graphql-codegen --config codegen.yml",
+    "generate:env:types": "gen-env-types .env.local -o src/env.d.ts -e .",
+    "tslint": "node_modules/.bin/tslint -c ./tslint.json \"./src/**/*.ts\"",
+    "tslint:fix": "node_modules/.bin/tslint --fix -c ./tslint.json \"./src/**/*.ts\"",
+    "prettier:base": "prettier --parser typescript",
+    "prettier:check": "npm run prettier:base -- --list-different \"src/**/*.{ts,tsx}\"",
+    "prettier:write": "npm run prettier:base -- --write \"src/**/*.{ts,tsx}\"",
+    "precommit": "npm run prettier:write"
   },
   "dependencies": {
     "@apollo/client": "^3.3.7",
@@ -42,8 +50,14 @@
     "@types/node": "^14.0.27",
     "@types/react": "^16.9.46",
     "gen-env-types": "^1.0.5",
+    "husky": "^6.0.0",
     "prettier": "^2.0.5",
     "tslint": "^6.1.3",
     "typescript": "^3.9.7"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run precommit"
+    }
   }
 }

@@ -4,15 +4,20 @@ import { MiddlewareFn } from "type-graphql";
 import {
   ACCESS_TOKEN_SECRET,
   COOKIE_NAME,
-  REFRESH_TOKEN_SECRET
+  REFRESH_TOKEN_SECRET,
 } from "../constants";
 import { User } from "../entities/user";
 import { Context } from "../types";
 import { createCookies } from "../utils/create-cookies";
 import { createTokens } from "../utils/create-tokens";
 
-export const parseCookies: MiddlewareFn<Context> = async ({ context }, next) => {
-  const { [`${COOKIE_NAME}-access-token`]: accessToken } = cookie.parse(context.req.headers.cookie!);
+export const parseCookies: MiddlewareFn<Context> = async (
+  { context },
+  next
+) => {
+  const { [`${COOKIE_NAME}-access-token`]: accessToken } = cookie.parse(
+    context.req.headers.cookie!
+  );
 
   // check if access token valid and return
   try {
@@ -23,7 +28,9 @@ export const parseCookies: MiddlewareFn<Context> = async ({ context }, next) => 
   } catch {}
 
   // const refreshToken = req.cookies[`${COOKIE_NAME}-refresh-token`];
-  const { [`${COOKIE_NAME}-refresh-token`]: refreshToken } = cookie.parse(context.req.headers.cookie!);
+  const { [`${COOKIE_NAME}-refresh-token`]: refreshToken } = cookie.parse(
+    context.req.headers.cookie!
+  );
 
   let data;
 

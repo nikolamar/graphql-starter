@@ -1,12 +1,18 @@
 import {
-  Collapse, FormControl,
-  FormErrorMessage, FormLabel,
-  HStack, NumberDecrementStepper, NumberIncrementStepper, NumberInput,
-  NumberInputField, NumberInputStepper
+  Collapse,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  HStack,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
 } from "@chakra-ui/react";
 import { useField } from "formik";
 import { FC, InputHTMLAttributes } from "react";
-import { config } from "../config";
+import { defaults } from "../configs/defaults";
 
 type InputNumFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
@@ -24,15 +30,17 @@ export const InputNumField: FC<InputNumFieldProps> = ({
   const handleChange = (val: string | number) => {
     const num = typeof val === "string" ? parseInt(val) : val;
     helpers.setValue(num);
-  }
+  };
 
   let isHorizontal = layout === "horizontal";
 
   let form = (
     <>
-      <FormLabel htmlFor={field.name} minW={config.defaultLabelMinWidth}>{label}</FormLabel>
+      <FormLabel htmlFor={field.name} minW={defaults.labelMinWidth}>
+        {label}
+      </FormLabel>
       <NumberInput
-        {...rest as any}
+        {...(rest as any)}
         value={field.value}
         defaultValue={field.value}
         isInvalid={!!error}
@@ -53,7 +61,12 @@ export const InputNumField: FC<InputNumFieldProps> = ({
     <FormControl isInvalid={!!error} className="unselectable">
       {isHorizontal ? <HStack align="center">{form}</HStack> : form}
       <Collapse in={!!error} animateOpacity>
-        <FormErrorMessage my={0} ml={isHorizontal ? config.defaultLabelMinWidth + 20 : undefined}>{error}</FormErrorMessage>
+        <FormErrorMessage
+          my={0}
+          ml={isHorizontal ? defaults.labelMinWidth + 20 : undefined}
+        >
+          {error}
+        </FormErrorMessage>
       </Collapse>
     </FormControl>
   );

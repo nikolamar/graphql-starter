@@ -65,5 +65,5 @@ export const hotel = yup.object({
 });
 
 export const review = yup.object({
-  review: yup.string().required("review is required").max(250)
+  review: yup.string().required("review is required").max(250),
 });

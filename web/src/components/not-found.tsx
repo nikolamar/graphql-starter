@@ -5,7 +5,7 @@ import {
   Image,
   Link as ChakraLink,
   Text,
-  useColorModeValue
+  useColorModeValue,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { FC } from "react";
@@ -15,7 +15,6 @@ interface NotFoundProps {
 }
 
 export const NotFound: FC<NotFoundProps> = ({ children }) => {
-
   const color = useColorModeValue("gray.300", "teal.500");
 
   return (
@@ -35,12 +34,10 @@ export const NotFound: FC<NotFoundProps> = ({ children }) => {
         <Box textAlign="center" marginTop={4}>
           <Text>It's Okay!</Text>
           <Link href="/" passHref>
-            <Button bgColor={color}>
-              Let's Head Back
-            </Button>
+            <Button bgColor={color}>Let's Head Back</Button>
           </Link>
         </Box>
       </Box>
     </>
   );
-}
+};

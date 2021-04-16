@@ -3,21 +3,20 @@ import {
   Button,
   Text,
   useColorMode,
-  useColorModeValue
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import { FC } from "react";
-import { AccessibleLink } from '../components/accessible-link';
+import { AccessibleLink } from "../components/accessible-link";
 import { InputField } from "../components/input-field";
 import { Wrapper } from "../components/wrapper";
-import { MeDocument, MeQuery, useLoginMutation } from '../generated/graphql';
+import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/to-error-map";
 import { withApollo } from "../utils/with-apollo";
 import * as schemas from "../yup-schemas";
 
 const Login: FC<{}> = () => {
-
   const router = useRouter();
   const [login, { loading }] = useLoginMutation();
   const { colorMode } = useColorMode();
@@ -33,22 +32,31 @@ const Login: FC<{}> = () => {
         alignItems="center"
         display="flex"
       >
-        <Box bgColor={color} padding="5" borderRadius="10px" shadow="2xl" w="100%">
+        <Box
+          bgColor={color}
+          padding="5"
+          borderRadius="10px"
+          shadow="2xl"
+          w="100%"
+        >
           <Formik
             validateOnBlur={false}
             validationSchema={schemas.login}
             initialValues={{ usernameoremail: "", password: "" }}
             onSubmit={async (values, { setErrors }) => {
-              const response = await login({ variables: { ...values }, update: (cache, { data }) => {
-                cache.writeQuery<MeQuery>({
-                  query: MeDocument,
-                  data: {
-                    __typename: "Query",
-                    me: data?.login.user,
-                  },
-                });
-                cache.evict({ fieldName: "hotels" });
-              }});
+              const response = await login({
+                variables: { ...values },
+                update: (cache, { data }) => {
+                  cache.writeQuery<MeQuery>({
+                    query: MeDocument,
+                    data: {
+                      __typename: "Query",
+                      me: data?.login.user,
+                    },
+                  });
+                  cache.evict({ fieldName: "hotels" });
+                },
+              });
               if (response.data?.login.errors) {
                 setErrors(toErrorMap(response.data?.login.errors));
               } else if (response.data?.login.user) {
@@ -68,7 +76,7 @@ const Login: FC<{}> = () => {
                   label="Username or email"
                   spellCheck={false}
                 />
-                <Box mt={4}/>
+                <Box mt={4} />
                 <InputField
                   name="password"
                   placeholder="password"
@@ -95,7 +103,9 @@ const Login: FC<{}> = () => {
                   </AccessibleLink>
                 </Box>
                 <Box mt={2} textAlign="center" fontSize={10}>
-                  By logging in or registering, you agree to the OfferUp <AccessibleLink href="/">Terms of Services</AccessibleLink> and <AccessibleLink href="/">Privacy Policy</AccessibleLink>
+                  By logging in or registering, you agree to the OfferUp{" "}
+                  <AccessibleLink href="/">Terms of Services</AccessibleLink>{" "}
+                  and <AccessibleLink href="/">Privacy Policy</AccessibleLink>
                 </Box>
               </Form>
             )}
@@ -104,6 +114,6 @@ const Login: FC<{}> = () => {
       </Wrapper>
     </Box>
   );
-}
+};
 
 export default withApollo({ ssr: false })(Login);

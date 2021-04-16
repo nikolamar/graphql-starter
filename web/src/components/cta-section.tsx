@@ -4,7 +4,7 @@ import {
   Flex,
   Image,
   Link,
-  useMediaQuery
+  useMediaQuery,
 } from "@chakra-ui/react";
 import { FC } from "react";
 import { AiFillGithub } from "react-icons/ai";

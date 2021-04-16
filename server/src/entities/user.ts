@@ -24,11 +24,11 @@ export class User extends BaseEntity {
   id!: number;
 
   @Field()
-  @Column({ default : 0 })
+  @Column({ default: 0 })
   count: number;
 
   @Field()
-  @Column({ default : USER })
+  @Column({ default: USER })
   type: string;
 
   @Field()

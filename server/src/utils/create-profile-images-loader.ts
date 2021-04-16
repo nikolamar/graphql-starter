@@ -11,7 +11,10 @@ export const createProfileImagesLoader = () =>
     });
     const profileIdToImages: Record<number, Image[]> = {};
     images.forEach((i) => {
-      profileIdToImages[i.profileId] = [...(profileIdToImages[i.profileId] || []), i];
+      profileIdToImages[i.profileId] = [
+        ...(profileIdToImages[i.profileId] || []),
+        i,
+      ];
     });
     const sortedImages = profileIds.map((id) => profileIdToImages[id]);
     return sortedImages;

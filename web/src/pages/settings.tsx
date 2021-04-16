@@ -1,11 +1,10 @@
-import { FormControl, FormLabel, Switch, useColorMode } from '@chakra-ui/react';
+import { FormControl, FormLabel, Switch, useColorMode } from "@chakra-ui/react";
 import { FC } from "react";
 import { Layout } from "../components/layout";
-import { Wrapper } from '../components/wrapper';
+import { Wrapper } from "../components/wrapper";
 import { withApollo } from "../utils/with-apollo";
 
 const Settings: FC<{}> = () => {
-
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
@@ -15,11 +14,16 @@ const Settings: FC<{}> = () => {
           <FormLabel htmlFor="email-alerts" mb="0">
             Turn {colorMode === "dark" ? "off" : "on"} dark mode?
           </FormLabel>
-          <Switch id="color-theme" onChange={toggleColorMode} isChecked={colorMode === "dark"} colorScheme="teal"/>
+          <Switch
+            id="color-theme"
+            onChange={toggleColorMode}
+            isChecked={colorMode === "dark"}
+            colorScheme="teal"
+          />
         </FormControl>
       </Wrapper>
     </Layout>
   );
-}
+};
 
 export default withApollo({ ssr: false })(Settings);

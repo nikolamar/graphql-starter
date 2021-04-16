@@ -2,15 +2,18 @@ import { Box, Button, HStack, IconButton, useToast } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { FC, useState } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { FilePicker } from "../../../components/file-picker";
 import { InputField } from "../../../components/input-field";
 import { InputNumField } from "../../../components/input-num-field";
 import { InputNumSliderField } from "../../../components/input-num-slider-field";
 import { Layout } from "../../../components/layout";
-import { FilePicker } from "../../../components/file-picker";
 import { Thumb } from "../../../components/thumb";
-import { Wrapper } from '../../../components/wrapper';
-import { config } from "../../../config";
-import { useImageUploadMutation, useUpdateHotelMutation } from "../../../generated/graphql";
+import { Wrapper } from "../../../components/wrapper";
+import { defaults } from "../../../configs/defaults";
+import {
+  useImageUploadMutation,
+  useUpdateHotelMutation,
+} from "../../../generated/graphql";
 import { isImage } from "../../../utils/is-image";
 import { useGetHotelFromUrl } from "../../../utils/use-get-hotel-from-url";
 import { useIsAuthenticated } from "../../../utils/use-is-authenticated";
@@ -18,7 +21,6 @@ import { withApollo } from "../../../utils/with-apollo";
 import * as schemas from "../../../yup-schemas";
 
 const EditHotel: FC<{}> = ({}) => {
-
   useIsAuthenticated();
   const [updateHotel, { loading }] = useUpdateHotelMutation();
   const { data } = useGetHotelFromUrl();
@@ -39,11 +41,7 @@ const EditHotel: FC<{}> = ({}) => {
 
     setImage(e.target.files[0]);
     e.target.value = "";
-  }
-
-  const handleRemoveImage = () => {
-    setImage(null);
-  }
+  };
 
   if (!data) {
     return <Wrapper minHeight="100vh" />;
@@ -63,43 +61,44 @@ const EditHotel: FC<{}> = ({}) => {
             image: data?.hotel?.image?.url || "",
             location: data?.hotel?.location || "",
             stars: data?.hotel?.stars || 0,
-            price: data?.hotel?.price || 0
+            price: data?.hotel?.price || 0,
           }}
           onSubmit={async (values) => {
             if (!data?.hotel?.id) {
               return;
             }
 
-            let hotelVariables = { id: data?.hotel?.id, ...values as any };
+            let hotelVariables = { id: data?.hotel?.id, ...(values as any) };
 
             if (image) {
-              const response = await imageUpload({ variables: { file: image } });
-              hotelVariables.image = response.data?.imageUpload.url as string;
+              const response = await imageUpload({
+                variables: { file: image },
+              });
+              hotelVariables.image = response?.data?.imageUpload?.url;
+              setImage(null);
             }
 
             const response = await updateHotel({ variables: hotelVariables });
 
-            if (response.errors) {
-              toast({
+            if (response?.errors) {
+              return toast({
                 title: "Hotel has not been updated.",
                 description: `We've couldn't update hotel data due to the error: ${response.errors}`,
                 status: "error",
-                duration: config.defaultToastDuration,
+                duration: defaults.toastDuration,
                 isClosable: true,
-                position: "top-right"
+                position: "top-right",
               });
             }
 
-            if (response.data?.updateHotel?.id) {
-              toast({
-                title: "Hotel updated.",
-                description: "We've successfully updated hotel data.",
-                status: "success",
-                duration: config.defaultToastDuration,
-                isClosable: true,
-                position: "top-right"
-              });
-            }
+            toast({
+              title: "Hotel updated.",
+              description: "We've successfully updated hotel data.",
+              status: "success",
+              duration: defaults.toastDuration,
+              isClosable: true,
+              position: "top-right",
+            });
           }}
         >
           {({ isSubmitting }) => (
@@ -111,7 +110,7 @@ const EditHotel: FC<{}> = ({}) => {
                 label="Name"
                 spellCheck={false}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="city"
@@ -119,7 +118,7 @@ const EditHotel: FC<{}> = ({}) => {
                 label="City"
                 spellCheck={false}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="country"
@@ -127,7 +126,7 @@ const EditHotel: FC<{}> = ({}) => {
                 label="Country"
                 spellCheck={false}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 textarea
@@ -136,7 +135,7 @@ const EditHotel: FC<{}> = ({}) => {
                 label="Description"
                 spellCheck={false}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="image"
@@ -147,23 +146,22 @@ const EditHotel: FC<{}> = ({}) => {
               >
                 <HStack mr={2}>
                   <FilePicker onChange={handlePickImage}>
-                    <Button colorScheme="teal">
-                      Pick Image
-                    </Button>
+                    <Button colorScheme="teal">Pick Image</Button>
                   </FilePicker>
                   {!image ? null : (
                     <IconButton
                       aria-label="delete hotel"
-                      icon={<RiDeleteBinLine/>}
-                      onClick={handleRemoveImage}
+                      icon={<RiDeleteBinLine />}
+                      onClick={() => setImage(null)}
                       colorScheme="red"
-                    />)}
+                    />
+                  )}
                 </HStack>
               </InputField>
               <Box display="flex" justifyContent="center">
                 <Thumb file={image} mt={2} mr={2} />
               </Box>
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="location"
@@ -171,7 +169,7 @@ const EditHotel: FC<{}> = ({}) => {
                 label="Location"
                 spellCheck={false}
               />
-                <Box mt={4}/>
+              <Box mt={4} />
               <InputNumSliderField
                 layout="horizontal"
                 name="stars"
@@ -181,7 +179,7 @@ const EditHotel: FC<{}> = ({}) => {
                 max={5}
                 step={1}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputNumField
                 layout="horizontal"
                 name="price"

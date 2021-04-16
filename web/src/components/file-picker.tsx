@@ -5,7 +5,7 @@ import styles from "./file-picker.module.css";
 type FilePickerProps = Omit<BoxProps, "onChange"> & {
   onChange?: ChangeEventHandler<{}>;
   children: React.ReactNode;
-}
+};
 
 export const FilePicker: FC<FilePickerProps> = ({
   onChange,
@@ -14,10 +14,6 @@ export const FilePicker: FC<FilePickerProps> = ({
 }) => (
   <Box {...rest} className={styles.container}>
     {children}
-    <input
-      type="file"
-      onChange={onChange}
-      className={styles.input}
-    />
+    <input type="file" onChange={onChange} className={styles.input} />
   </Box>
 );

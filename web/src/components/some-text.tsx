@@ -3,7 +3,6 @@ import { FC } from "react";
 import { HelperImage } from "./helper-image";
 
 export const SomeText: FC<{}> = () => {
-
   const color = useColorModeValue("gray.200", "gray.500");
 
   return (
@@ -12,11 +11,7 @@ export const SomeText: FC<{}> = () => {
         Hello
       </Heading>
 
-      <Box
-        padding={4}
-        borderRadius={4}
-        bgColor={color}
-      >
+      <Box padding={4} borderRadius={4} bgColor={color}>
         <Text d="flex" alignItems="center" fontSize="sm">
           This is a
           <HelperImage src="/nextjs-black-logo.svg" label="NextJS" />

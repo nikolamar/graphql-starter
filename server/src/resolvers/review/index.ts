@@ -1,26 +1,32 @@
 import {
-  Arg,
+  Args,
   Ctx,
   FieldResolver,
-  GraphQLISODateTime,
   Int,
   Mutation,
   Query,
   Resolver,
   Root,
-  UseMiddleware
+  UseMiddleware,
 } from "type-graphql";
 import { getConnection } from "typeorm";
-import { config } from "../config";
-import { Review } from "../entities/review";
-import { Vote } from "../entities/vote";
-import { ReviewFilterInput } from "../inputs";
-import { isAuthenticated } from "../middlewares/is-authenticated";
-import { parseCookies } from "../middlewares/parse-cookies";
-import { PaginatedReviews } from "../objects";
-import { Context, Order } from "../types";
-import { createPaginatedQuery } from "../utils/create-paginated-query";
-import { User } from "../entities/user";
+import { defaults } from "../../configs/defaults";
+import { Review } from "../../entities/review";
+import { User } from "../../entities/user";
+import { Vote } from "../../entities/vote";
+import { isAuthenticated } from "../../middlewares/is-authenticated";
+import { parseCookies } from "../../middlewares/parse-cookies";
+import { Context } from "../../types";
+import { createPaginatedQuery } from "../../utils/create-paginated-query";
+import {
+  CreateReviewArgs,
+  DeleteReviewArgs,
+  ReviewArgs,
+  ReviewsArgs,
+  UpdateReviewArgs,
+  VoteArgs,
+} from "./args";
+import { PaginatedReviews } from "./objects";
 
 @Resolver(Review)
 export class ReviewResolver {
@@ -31,7 +37,7 @@ export class ReviewResolver {
     }
     return ctx.userLoader.load(review.userId);
   }
-  
+
   @UseMiddleware(parseCookies)
   @FieldResolver(() => Int, { nullable: true })
   async voteStatus(
@@ -50,24 +56,26 @@ export class ReviewResolver {
 
   @Query(() => PaginatedReviews)
   async reviews(
-    @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => GraphQLISODateTime, { nullable: true }) cursor: Date,
-    @Arg("order", () => String, { nullable: true }) order: Order,
-    @Arg("filter", () => ReviewFilterInput, { nullable: true }) filter: ReviewFilterInput
+    @Args() { limit, cursor, order, filter }: ReviewsArgs
   ): Promise<PaginatedReviews> {
-    const dbLimit = Math.min(config.defaultPageLimit, limit);
-    const query = createPaginatedQuery("reviews", cursor, order, dbLimit, filter);
+    const dbLimit = Math.min(defaults.pageLimit, limit);
+    const query = createPaginatedQuery(
+      "reviews",
+      cursor,
+      order,
+      dbLimit,
+      filter
+    );
     const result = await getConnection().query(query);
 
     return {
       reviews: result.slice(0, dbLimit),
-      hasMore: result.length === (dbLimit + 1),
+      hasMore: result.length === dbLimit + 1,
     };
   }
 
-  @Query(() => Review, { nullable: true }) review(
-    @Arg("id", () => Int) id: number
-  ): Promise<Review | undefined> {
+  @Query(() => Review, { nullable: true })
+  review(@Args() { id }: ReviewArgs): Promise<Review | undefined> {
     return Review.findOne(id);
   }
 
@@ -75,8 +83,7 @@ export class ReviewResolver {
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Review)
   async createReview(
-    @Arg("hotelId", () => Int) hotelId: number,
-    @Arg("message", () => String) message: string,
+    @Args() { hotelId, message }: CreateReviewArgs,
     @Ctx() ctx: Context
   ): Promise<Review> {
     return Review.create({ message, hotelId, userId: ctx.req.userId }).save();
@@ -86,8 +93,7 @@ export class ReviewResolver {
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Review, { nullable: true })
   async updateReview(
-    @Arg("id", () => Int) id: number,
-    @Arg("message", () => String) message: string
+    @Args() { id, message }: UpdateReviewArgs
   ): Promise<Review | undefined> {
     await Review.update({ id }, { message });
     const review = await Review.findOne(id);
@@ -97,7 +103,7 @@ export class ReviewResolver {
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Boolean)
-  async deleteReview(@Arg("id", () => Int) id: number): Promise<Boolean> {
+  async deleteReview(@Args() { id }: DeleteReviewArgs): Promise<Boolean> {
     await Review.delete(id);
     return true;
   }
@@ -106,8 +112,7 @@ export class ReviewResolver {
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Boolean)
   async vote(
-    @Arg("value", () => Int) value: number,
-    @Arg("reviewId", () => Int) reviewId: number,
+    @Args() { value, reviewId }: VoteArgs,
     @Ctx() ctx: Context
   ): Promise<boolean> {
     const isPostive = value !== -1;

@@ -1,27 +1,37 @@
+import "reflect-metadata";
 import {
-  Arg,
+  Args,
   Ctx,
   FieldResolver,
-  GraphQLISODateTime,
-  Int,
   Mutation,
+  Publisher,
+  PubSub,
   Query,
   Resolver,
   Root,
-  UseMiddleware
+  Subscription,
+  UseMiddleware,
 } from "type-graphql";
 import { getConnection } from "typeorm";
-import { config } from "../config";
-import { Hotel } from "../entities/hotel";
-import { Image } from "../entities/image";
-import { Review } from "../entities/review";
-import { User } from "../entities/user";
-import { HotelInput } from "../inputs";
-import { isAuthenticated } from "../middlewares/is-authenticated";
-import { parseCookies } from "../middlewares/parse-cookies";
-import { PaginatedHotels } from "../objects";
-import { Context, Order } from "../types";
-import { createPaginatedQuery } from "../utils/create-paginated-query";
+import { defaults } from "../../configs/defaults";
+import { Hotel } from "../../entities/hotel";
+import { Image } from "../../entities/image";
+import { Review } from "../../entities/review";
+import { User } from "../../entities/user";
+import { isAuthenticated } from "../../middlewares/is-authenticated";
+import { parseCookies } from "../../middlewares/parse-cookies";
+import { Context } from "../../types";
+import { createPaginatedQuery } from "../../utils/create-paginated-query";
+import {
+  CreateHotelArgs,
+  DeleteHotelArgs,
+  HotelArgs,
+  HotelsArgs,
+  UpdateHotelArgs,
+} from "./args";
+import { PaginatedHotels } from "./objects";
+import * as TOPICS from "./topics";
+// import { NewHotelArgs } from "./args";
 
 @Resolver(Hotel)
 export class HotelResolver {
@@ -63,24 +73,26 @@ export class HotelResolver {
 
   @Query(() => PaginatedHotels)
   async hotels(
-    @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => GraphQLISODateTime, { nullable: true }) cursor: Date,
-    @Arg("order", () => String, { nullable: true }) order: Order,
-    @Arg("filter", () => HotelInput, { nullable: true }) filter: HotelInput
+    @Args() { limit, cursor, order, filter }: HotelsArgs
   ): Promise<PaginatedHotels> {
-    const dbLimit = Math.min(config.defaultPageLimit, limit);
-    const query = createPaginatedQuery("hotels", cursor, order, dbLimit, filter);
+    const dbLimit = Math.min(defaults.pageLimit, limit);
+    const query = createPaginatedQuery(
+      "hotels",
+      cursor,
+      order,
+      dbLimit,
+      filter
+    );
     const result = await getConnection().query(query);
 
     return {
       hotels: result.slice(0, dbLimit),
-      hasMore: result.length === (dbLimit + 1),
+      hasMore: result.length === dbLimit + 1,
     };
   }
 
-  @Query(() => Hotel, { nullable: true }) hotel(
-    @Arg("id", () => Int) id: number
-  ): Promise<Hotel | undefined> {
+  @Query(() => Hotel, { nullable: true })
+  hotel(@Args() { id }: HotelArgs): Promise<Hotel | undefined> {
     return Hotel.findOne(id);
   }
 
@@ -88,8 +100,9 @@ export class HotelResolver {
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Hotel)
   async createHotel(
-    @Arg("input") input: HotelInput,
-    @Ctx() ctx: Context
+    @Args() { input }: CreateHotelArgs,
+    @Ctx() ctx: Context,
+    @PubSub(TOPICS.NEW_HOTEL) notifyAboutNewHotel: Publisher<Hotel>
   ): Promise<Hotel | null> {
     if (Object.keys(input).length === 0 && input.constructor === Object) {
       return null;
@@ -102,16 +115,28 @@ export class HotelResolver {
     }
 
     return await getConnection().transaction(async (tm) => {
-      const [ image ] = await tm.query(
+      const [
+        image,
+      ] = await tm.query(
         `INSERT INTO "images"("url") VALUES ($1) RETURNING "id"`,
         [url]
       );
-      const [ hotel ] = await tm.query(
+      const [hotel] = await tm.query(
         `INSERT INTO "hotels"
         ("name", "city", "country", "description", "location", "stars", "price", "userId", "imageId", "createdAt", "updatedAt")
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, DEFAULT, DEFAULT)
         RETURNING "id", "name", "city", "country", "description", "location", "stars", "price", "userId", "imageId", "createdAt", "updatedAt"`,
-        [input.name, input.city, input.country, input.description, input.location, input.stars, input.price, ctx.req.userId, image.id]
+        [
+          input.name,
+          input.city,
+          input.country,
+          input.description,
+          input.location,
+          input.stars,
+          input.price,
+          ctx.req.userId,
+          image.id,
+        ]
       );
       await tm.query(
         `UPDATE images
@@ -121,6 +146,8 @@ export class HotelResolver {
         [image.id, hotel.id]
       );
 
+      await notifyAboutNewHotel(hotel);
+
       return hotel;
     });
   }
@@ -129,8 +156,7 @@ export class HotelResolver {
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Hotel, { nullable: true })
   async updateHotel(
-    @Arg("id", () => Int) id: number,
-    @Arg("input") input: HotelInput,
+    @Args() { id, input }: UpdateHotelArgs,
     @Ctx() ctx: Context
   ): Promise<Hotel | null> {
     if (Object.keys(input).length === 0 && input.constructor === Object) {
@@ -171,17 +197,38 @@ export class HotelResolver {
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Boolean)
   async deleteHotel(
-    @Arg("id", () => Int) id: number,
+    @Args() { id }: DeleteHotelArgs,
     @Ctx() ctx: Context
   ): Promise<Boolean> {
     await Hotel.delete({ id, userId: ctx.req.userId });
 
-    const images = await Image.find({ where: { hotelId: id }});
-    const imageIds = images.map(i => i.id);
+    const images = await Image.find({ where: { hotelId: id } });
+    const imageIds = images.map((i) => i.id);
 
     if (imageIds?.length) {
       await Image.delete(imageIds);
     }
     return true;
+  }
+
+  // @Subscription(() => Hotel, {
+  //   topics: TOPICS.NEW_HOTEL,
+  //   filter: ({ payload, args }: ResolverFilterData<Hotel, ArgsNewHotel>) => {
+  //     return payload.userId === args.userId;
+  //   },
+  // })
+  // newHotel(
+  //   @Root() hotel: Hotel,
+  //   @Args() { userId }: NewHotelArgs,
+  // ): NewHotelResponse {
+  //   console.log("userId", userId);
+  //   return {
+  //     hotel
+  //   };
+  // }
+
+  @Subscription({ topics: TOPICS.NEW_HOTEL })
+  newHotel(@Root() hotel: Hotel): Hotel {
+    return hotel;
   }
 }

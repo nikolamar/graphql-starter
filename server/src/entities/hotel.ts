@@ -14,7 +14,7 @@ import {
 import { Review } from "./review";
 import { User } from "./user";
 import { Image } from "./image";
-import { ImageResponse } from "../objects";
+import { ImageResponse } from "../resolvers/image/objects";
 
 @ObjectType()
 @Entity({ name: "hotels" })

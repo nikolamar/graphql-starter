@@ -1,4 +1,16 @@
-import { Avatar, Box, Button, Divider, HStack, Menu, MenuButton, MenuItem, MenuList, Text, useToast } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  Button,
+  Divider,
+  HStack,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { FC, useState } from "react";
 import { FilePicker } from "../components/file-picker";
@@ -6,14 +18,17 @@ import { InputField } from "../components/input-field";
 import { Layout } from "../components/layout";
 import { Thumb } from "../components/thumb";
 import { Wrapper } from "../components/wrapper";
-import { config } from "../config";
-import { useImageUploadMutation, useMeQuery, useUpdateProfileMutation } from "../generated/graphql";
+import { defaults } from "../configs/defaults";
+import {
+  useImageUploadMutation,
+  useMeQuery,
+  useUpdateProfileMutation,
+} from "../generated/graphql";
 import { isImage } from "../utils/is-image";
 import { useIsAuthenticated } from "../utils/use-is-authenticated";
 import { withApollo } from "../utils/with-apollo";
 
 const MyAccount: FC<{}> = () => {
-
   useIsAuthenticated();
   const toast = useToast();
   const { data } = useMeQuery();
@@ -38,7 +53,7 @@ const MyAccount: FC<{}> = () => {
 
     setImage(e.target.files[0]);
     e.target.value = "";
-  }
+  };
 
   const isProfileChanged = (values: any) => {
     if (
@@ -55,7 +70,7 @@ const MyAccount: FC<{}> = () => {
       return false;
     }
     return true;
-  }
+  };
 
   return (
     <Layout>
@@ -63,19 +78,36 @@ const MyAccount: FC<{}> = () => {
         <HStack spacing="10">
           <Menu>
             {image ? (
-                <MenuButton>
-                  <Thumb file={image} w="128px" h="128px" borderRadius="64px" overflow="hidden" />
-                </MenuButton>
-              ) : (
-                <MenuButton>
-                  <Avatar name={data?.me?.profile?.fullName || undefined} src={data?.me?.profile?.image?.url || undefined} size="2xl" />
-                </MenuButton>
-              )}
+              <MenuButton>
+                <Thumb
+                  file={image}
+                  w="128px"
+                  h="128px"
+                  borderRadius="64px"
+                  overflow="hidden"
+                />
+              </MenuButton>
+            ) : (
+              <MenuButton>
+                <Avatar
+                  name={data?.me?.profile?.fullName || undefined}
+                  src={data?.me?.profile?.image?.url || undefined}
+                  size="2xl"
+                />
+              </MenuButton>
+            )}
             <div>
               <MenuList>
                 <MenuItem>View Profile Picture</MenuItem>
                 <MenuItem p={0}>
-                  <FilePicker paddingX={3} paddingY={2} w="230px" onChange={handlePickImage}>Pick Profile Picture</FilePicker>
+                  <FilePicker
+                    paddingX={3}
+                    paddingY={2}
+                    w="230px"
+                    onChange={handlePickImage}
+                  >
+                    Pick Profile Picture
+                  </FilePicker>
                 </MenuItem>
               </MenuList>
             </div>
@@ -105,44 +137,50 @@ const MyAccount: FC<{}> = () => {
               return;
             }
 
-            let { email, ...rest } = values;
-            let profileVariables = { id: data?.me?.profile?.id, ...rest as any };
+            let { email, username, ...rest } = values;
+            let profileVariables = {
+              id: data?.me?.profile?.id,
+              ...(rest as any),
+            };
 
             if (image) {
-              const response = await imageUpload({ variables: { file: image } });
-              profileVariables.image = response.data?.imageUpload.url as string;
+              const response = await imageUpload({
+                variables: { file: image },
+              });
+              profileVariables.image = response?.data?.imageUpload?.url;
+              setImage(null);
             }
 
-            const response = await updateProfile({ variables: profileVariables });
+            const response = await updateProfile({
+              variables: profileVariables,
+            });
 
-            if (response.errors) {
-              toast({
+            if (response?.errors) {
+              return toast({
                 title: "Profile has not been updated.",
                 description: `We've couldn't update your profile due to the error: ${response.errors}`,
                 status: "error",
-                duration: config.defaultToastDuration,
+                duration: defaults.toastDuration,
                 isClosable: true,
-                position: "top-right"
+                position: "top-right",
               });
             }
 
-            if (response.data?.updateProfile?.id) {
-              toast({
-                title: "Profile updated.",
-                description: "We've successfully updated your profile.",
-                status: "success",
-                duration: config.defaultToastDuration,
-                isClosable: true,
-                position: "top-right"
-              });
-            }
+            toast({
+              title: "Profile updated.",
+              description: "We've successfully updated your profile.",
+              status: "success",
+              duration: defaults.toastDuration,
+              isClosable: true,
+              position: "top-right",
+            });
           }}
         >
           {({ isSubmitting, values }) => (
             <Form className="form-standard">
-              <Box mt={4}/>
-              <Divider/>
-              <Box mt={4}/>
+              <Box mt={4} />
+              <Divider />
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="firstName"
@@ -150,7 +188,7 @@ const MyAccount: FC<{}> = () => {
                 label="First Name"
                 spellCheck={false}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="middleName"
@@ -158,7 +196,7 @@ const MyAccount: FC<{}> = () => {
                 label="Middle Name"
                 spellCheck={false}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="lastName"
@@ -166,7 +204,7 @@ const MyAccount: FC<{}> = () => {
                 label="Last Name"
                 spellCheck={false}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="username"
@@ -175,7 +213,7 @@ const MyAccount: FC<{}> = () => {
                 disabled={true}
                 spellCheck={false}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="email"
@@ -184,7 +222,7 @@ const MyAccount: FC<{}> = () => {
                 spellCheck={false}
                 disabled={true}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="gender"
@@ -192,7 +230,7 @@ const MyAccount: FC<{}> = () => {
                 label="Gender"
                 spellCheck={false}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="city"
@@ -200,7 +238,7 @@ const MyAccount: FC<{}> = () => {
                 label="City"
                 spellCheck={false}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="country"
@@ -208,7 +246,7 @@ const MyAccount: FC<{}> = () => {
                 label="Country"
                 spellCheck={false}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="birthDate"
@@ -216,7 +254,7 @@ const MyAccount: FC<{}> = () => {
                 label="Birth Date"
                 spellCheck={false}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="phone"
@@ -240,6 +278,6 @@ const MyAccount: FC<{}> = () => {
       </Wrapper>
     </Layout>
   );
-}
+};
 
 export default withApollo({ ssr: false })(MyAccount);

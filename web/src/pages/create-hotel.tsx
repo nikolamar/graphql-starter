@@ -8,16 +8,18 @@ import { InputNumSliderField } from "../components/input-num-slider-field";
 import { Layout } from "../components/layout";
 import { FilePicker } from "../components/file-picker";
 import { Thumb } from "../components/thumb";
-import { Wrapper } from '../components/wrapper';
-import { config } from "../config";
-import { useCreateHotelMutation, useImageUploadMutation } from "../generated/graphql";
+import { Wrapper } from "../components/wrapper";
+import { defaults } from "../configs/defaults";
+import {
+  useCreateHotelMutation,
+  useImageUploadMutation,
+} from "../generated/graphql";
 import { isImage } from "../utils/is-image";
 import { useIsAuthenticated } from "../utils/use-is-authenticated";
 import { withApollo } from "../utils/with-apollo";
 import * as schemas from "../yup-schemas";
 
 const CreateHotel: FC<{}> = ({}) => {
-
   useIsAuthenticated();
   const toast = useToast();
   const [createHotel, { loading }] = useCreateHotelMutation();
@@ -37,11 +39,7 @@ const CreateHotel: FC<{}> = ({}) => {
 
     setImage(e.target.files[0]);
     e.target.value = "";
-  }
-
-  const handleRemoveImage = () => {
-    setImage(null);
-  }
+  };
 
   return (
     <Layout>
@@ -57,46 +55,48 @@ const CreateHotel: FC<{}> = ({}) => {
             image: "",
             location: "",
             stars: 0,
-            price: 0
+            price: 0,
           }}
           onSubmit={async (values, { resetForm }) => {
             let hotelVariables = { ...values };
 
             if (image) {
-              const response = await imageUpload({ variables: { file: image } });
-              hotelVariables.image = response.data?.imageUpload.url as string;
+              const response = await imageUpload({
+                variables: { file: image },
+              });
+              hotelVariables.image = response?.data?.imageUpload?.url as string;
+              setImage(null);
             }
 
-            const response = await createHotel({ variables: hotelVariables , update: (cache) => {
-              cache.evict({ fieldName: "hotels" });
-            }});
+            const response = await createHotel({
+              variables: hotelVariables,
+              update: (cache) => {
+                cache.evict({ fieldName: "hotels" });
+              },
+            });
 
-            if (response.errors) {
-              toast({
+            resetForm({});
+            window.scrollTo(0, 0);
+
+            if (response?.errors) {
+              return toast({
                 title: "Hotel has not been created.",
                 description: `We've couldn't create hotel due to the error: ${response.errors}`,
                 status: "error",
-                duration: config.defaultToastDuration,
+                duration: defaults.toastDuration,
                 isClosable: true,
-                position: "top-right"
+                position: "top-right",
               });
-              return;
             }
 
-            if (response.data?.createHotel?.id) {
-              toast({
-                title: "Hotel created.",
-                description: "We've successfully created hotel.",
-                status: "success",
-                duration: config.defaultToastDuration,
-                isClosable: true,
-                position: "top-right"
-              });
-
-              handleRemoveImage();
-              resetForm({});
-              window.scrollTo(0, 0);
-            }
+            toast({
+              title: "Hotel created.",
+              description: "We've successfully created hotel.",
+              status: "success",
+              duration: defaults.toastDuration,
+              isClosable: true,
+              position: "top-right",
+            });
           }}
         >
           {({ isSubmitting }) => (
@@ -108,7 +108,7 @@ const CreateHotel: FC<{}> = ({}) => {
                 label="Name"
                 spellCheck={false}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="city"
@@ -116,7 +116,7 @@ const CreateHotel: FC<{}> = ({}) => {
                 label="City"
                 spellCheck={false}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="country"
@@ -124,7 +124,7 @@ const CreateHotel: FC<{}> = ({}) => {
                 label="Country"
                 spellCheck={false}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 textarea
@@ -133,7 +133,7 @@ const CreateHotel: FC<{}> = ({}) => {
                 label="Description"
                 spellCheck={false}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="image"
@@ -144,23 +144,22 @@ const CreateHotel: FC<{}> = ({}) => {
               >
                 <HStack mr={2}>
                   <FilePicker onChange={handlePickImage}>
-                    <Button colorScheme="teal">
-                      Pick Image
-                    </Button>
+                    <Button colorScheme="teal">Pick Image</Button>
                   </FilePicker>
                   {!image ? null : (
                     <IconButton
                       aria-label="delete hotel"
-                      icon={<RiDeleteBinLine/>}
-                      onClick={handleRemoveImage}
+                      icon={<RiDeleteBinLine />}
+                      onClick={() => setImage(null)}
                       colorScheme="red"
-                    />)}
+                    />
+                  )}
                 </HStack>
               </InputField>
               <Box display="flex" justifyContent="center">
                 <Thumb file={image} mt={2} mr={2} />
               </Box>
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputField
                 layout="horizontal"
                 name="location"
@@ -168,7 +167,7 @@ const CreateHotel: FC<{}> = ({}) => {
                 label="Location"
                 spellCheck={false}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputNumSliderField
                 layout="horizontal"
                 name="stars"
@@ -178,7 +177,7 @@ const CreateHotel: FC<{}> = ({}) => {
                 max={5}
                 step={1}
               />
-              <Box mt={4}/>
+              <Box mt={4} />
               <InputNumField
                 layout="horizontal"
                 name="price"
