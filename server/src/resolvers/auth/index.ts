@@ -7,10 +7,14 @@ import {
   Query,
   Resolver,
   Root,
-  UseMiddleware
+  UseMiddleware,
 } from "type-graphql";
 import { v4 } from "uuid";
-import { COOKIE_NAME, CORS_ORIGIN, FORGOT_PASSWORD_PREFIX } from "../../constants";
+import {
+  COOKIE_NAME,
+  CORS_ORIGIN,
+  FORGOT_PASSWORD_PREFIX,
+} from "../../constants";
 import { Profile } from "../../entities/profile";
 import { User } from "../../entities/user";
 import { isAuthenticated } from "../../middlewares/is-authenticated";
@@ -23,7 +27,12 @@ import { createTokens } from "../../utils/create-tokens";
 import { invalidateTokens } from "../../utils/invalidate-tokens";
 import { sendEmail } from "../../utils/send-email";
 import { validateRegister } from "../../utils/validate-register";
-import { ForgotPasswordArgs, LoginArgs, RegisterArgs, ChangePasswordArgs } from "./args";
+import {
+  ForgotPasswordArgs,
+  LoginArgs,
+  RegisterArgs,
+  ChangePasswordArgs,
+} from "./args";
 import { UserResponse } from "./objects";
 
 @Resolver(User)
@@ -110,12 +119,17 @@ export class AuthResolver {
     let user: any;
     try {
       const profile = await Profile.create().save();
-      user = await User.create({ ...input, ...{ password: hashedPassword, profileId: profile.id }}).save();
+      user = await User.create({
+        ...input,
+        ...{ password: hashedPassword, profileId: profile.id },
+      }).save();
     } catch (err: any) {
       if (err.code === "23505") {
         if (err.detail === `Key (email)=(${input.email}) already exists.`) {
           return createError("email", "email already taken");
-        } else if (err.detail === `Key (username)=(${input.username}) already exists.`) {
+        } else if (
+          err.detail === `Key (username)=(${input.username}) already exists.`
+        ) {
           return createError("username", "username already taken");
         }
       }
@@ -173,7 +187,7 @@ export class AuthResolver {
 
   @Mutation(() => UserResponse)
   async changePassword(
-    @Args() { token, newpassword}: ChangePasswordArgs,
+    @Args() { token, newpassword }: ChangePasswordArgs,
     @Ctx() ctx: Context
   ): Promise<UserResponse> {
     if (newpassword.length <= 2) {
@@ -206,4 +220,3 @@ export class AuthResolver {
     return { user };
   }
 }
-

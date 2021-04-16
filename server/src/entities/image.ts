@@ -2,8 +2,11 @@ import { Field, GraphQLISODateTime, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
-  CreateDateColumn, Entity,
-  ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { Hotel } from "./hotel";
 import { Profile } from "./profile";
@@ -32,7 +35,9 @@ export class Image extends BaseEntity {
    * in this entity
    */
   @Field(() => Profile)
-  @ManyToOne(() => Profile, (profile) => profile.images, { onDelete: "CASCADE" })
+  @ManyToOne(() => Profile, (profile) => profile.images, {
+    onDelete: "CASCADE",
+  })
   profile: Profile;
 
   /**

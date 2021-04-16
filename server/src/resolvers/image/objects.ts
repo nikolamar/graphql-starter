@@ -1,7 +1,4 @@
-import {
-  Field,
-  ObjectType
-} from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { Image } from "../../entities/image";
 
 @ObjectType()

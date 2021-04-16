@@ -1,14 +1,16 @@
 import "reflect-metadata";
 import {
-  Args, Ctx,
+  Args,
+  Ctx,
   FieldResolver,
   Mutation,
-  Publisher, PubSub,
+  Publisher,
+  PubSub,
   Query,
   Resolver,
   Root,
   Subscription,
-  UseMiddleware
+  UseMiddleware,
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { defaults } from "../../configs/defaults";
@@ -20,7 +22,13 @@ import { isAuthenticated } from "../../middlewares/is-authenticated";
 import { parseCookies } from "../../middlewares/parse-cookies";
 import { Context } from "../../types";
 import { createPaginatedQuery } from "../../utils/create-paginated-query";
-import { CreateHotelArgs, DeleteHotelArgs, HotelArgs, HotelsArgs, UpdateHotelArgs } from "./args";
+import {
+  CreateHotelArgs,
+  DeleteHotelArgs,
+  HotelArgs,
+  HotelsArgs,
+  UpdateHotelArgs,
+} from "./args";
 import { PaginatedHotels } from "./objects";
 import * as TOPICS from "./topics";
 // import { NewHotelArgs } from "./args";
@@ -64,14 +72,22 @@ export class HotelResolver {
   }
 
   @Query(() => PaginatedHotels)
-  async hotels(@Args() { limit, cursor, order, filter }: HotelsArgs): Promise<PaginatedHotels> {
+  async hotels(
+    @Args() { limit, cursor, order, filter }: HotelsArgs
+  ): Promise<PaginatedHotels> {
     const dbLimit = Math.min(defaults.pageLimit, limit);
-    const query = createPaginatedQuery("hotels", cursor, order, dbLimit, filter);
+    const query = createPaginatedQuery(
+      "hotels",
+      cursor,
+      order,
+      dbLimit,
+      filter
+    );
     const result = await getConnection().query(query);
 
     return {
       hotels: result.slice(0, dbLimit),
-      hasMore: result.length === (dbLimit + 1),
+      hasMore: result.length === dbLimit + 1,
     };
   }
 
@@ -86,7 +102,7 @@ export class HotelResolver {
   async createHotel(
     @Args() { input }: CreateHotelArgs,
     @Ctx() ctx: Context,
-    @PubSub(TOPICS.NEW_HOTEL) notifyAboutNewHotel: Publisher<Hotel>,
+    @PubSub(TOPICS.NEW_HOTEL) notifyAboutNewHotel: Publisher<Hotel>
   ): Promise<Hotel | null> {
     if (Object.keys(input).length === 0 && input.constructor === Object) {
       return null;
@@ -99,16 +115,28 @@ export class HotelResolver {
     }
 
     return await getConnection().transaction(async (tm) => {
-      const [ image ] = await tm.query(
+      const [
+        image,
+      ] = await tm.query(
         `INSERT INTO "images"("url") VALUES ($1) RETURNING "id"`,
         [url]
       );
-      const [ hotel ] = await tm.query(
+      const [hotel] = await tm.query(
         `INSERT INTO "hotels"
         ("name", "city", "country", "description", "location", "stars", "price", "userId", "imageId", "createdAt", "updatedAt")
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, DEFAULT, DEFAULT)
         RETURNING "id", "name", "city", "country", "description", "location", "stars", "price", "userId", "imageId", "createdAt", "updatedAt"`,
-        [input.name, input.city, input.country, input.description, input.location, input.stars, input.price, ctx.req.userId, image.id]
+        [
+          input.name,
+          input.city,
+          input.country,
+          input.description,
+          input.location,
+          input.stars,
+          input.price,
+          ctx.req.userId,
+          image.id,
+        ]
       );
       await tm.query(
         `UPDATE images
@@ -174,8 +202,8 @@ export class HotelResolver {
   ): Promise<Boolean> {
     await Hotel.delete({ id, userId: ctx.req.userId });
 
-    const images = await Image.find({ where: { hotelId: id }});
-    const imageIds = images.map(i => i.id);
+    const images = await Image.find({ where: { hotelId: id } });
+    const imageIds = images.map((i) => i.id);
 
     if (imageIds?.length) {
       await Image.delete(imageIds);

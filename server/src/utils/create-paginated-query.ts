@@ -14,14 +14,19 @@ export const createPaginatedQuery = (
   let whereQuery = "";
 
   if (createdAt) {
-    whereQuery = ` WHERE ${sqlTable}."createdAt" ${order === "ASC" ? ">" : "<"} ${createdAt}`;
+    whereQuery = ` WHERE ${sqlTable}."createdAt" ${
+      order === "ASC" ? ">" : "<"
+    } ${createdAt}`;
   }
 
   let filterQuery = "";
 
   if (filter) {
     let initial = filter && createdAt ? " AND" : " WHERE";
-    filterQuery = Object.keys(filter).reduce((a, v) => `${a} "${v}"=${filter[v]}`, initial);
+    filterQuery = Object.keys(filter).reduce(
+      (a, v) => `${a} "${v}"=${filter[v]}`,
+      initial
+    );
   }
 
   let orderQuery = "";
@@ -32,5 +37,11 @@ export const createPaginatedQuery = (
 
   let limitQuery = ` LIMIT ${dbLimit + 1}`;
 
-  return `SELECT * FROM ${sqlTable}` + whereQuery + filterQuery + orderQuery + limitQuery;
-}
+  return (
+    `SELECT * FROM ${sqlTable}` +
+    whereQuery +
+    filterQuery +
+    orderQuery +
+    limitQuery
+  );
+};

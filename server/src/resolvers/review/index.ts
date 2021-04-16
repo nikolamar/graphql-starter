@@ -7,7 +7,7 @@ import {
   Query,
   Resolver,
   Root,
-  UseMiddleware
+  UseMiddleware,
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { defaults } from "../../configs/defaults";
@@ -18,7 +18,14 @@ import { isAuthenticated } from "../../middlewares/is-authenticated";
 import { parseCookies } from "../../middlewares/parse-cookies";
 import { Context } from "../../types";
 import { createPaginatedQuery } from "../../utils/create-paginated-query";
-import { CreateReviewArgs, DeleteReviewArgs, ReviewArgs, ReviewsArgs, UpdateReviewArgs, VoteArgs } from "./args";
+import {
+  CreateReviewArgs,
+  DeleteReviewArgs,
+  ReviewArgs,
+  ReviewsArgs,
+  UpdateReviewArgs,
+  VoteArgs,
+} from "./args";
 import { PaginatedReviews } from "./objects";
 
 @Resolver(Review)
@@ -48,14 +55,22 @@ export class ReviewResolver {
   }
 
   @Query(() => PaginatedReviews)
-  async reviews(@Args() { limit, cursor, order, filter }: ReviewsArgs): Promise<PaginatedReviews> {
+  async reviews(
+    @Args() { limit, cursor, order, filter }: ReviewsArgs
+  ): Promise<PaginatedReviews> {
     const dbLimit = Math.min(defaults.pageLimit, limit);
-    const query = createPaginatedQuery("reviews", cursor, order, dbLimit, filter);
+    const query = createPaginatedQuery(
+      "reviews",
+      cursor,
+      order,
+      dbLimit,
+      filter
+    );
     const result = await getConnection().query(query);
 
     return {
       reviews: result.slice(0, dbLimit),
-      hasMore: result.length === (dbLimit + 1),
+      hasMore: result.length === dbLimit + 1,
     };
   }
 
@@ -77,7 +92,9 @@ export class ReviewResolver {
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Review, { nullable: true })
-  async updateReview(@Args() { id, message }: UpdateReviewArgs): Promise<Review | undefined> {
+  async updateReview(
+    @Args() { id, message }: UpdateReviewArgs
+  ): Promise<Review | undefined> {
     await Review.update({ id }, { message });
     const review = await Review.findOne(id);
     return review;

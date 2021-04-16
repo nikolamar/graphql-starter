@@ -11,7 +11,7 @@ import { createUserLoader } from "./utils/create-user-loader";
 import { createVoteStatusLoader } from "./utils/create-vote-status-loader";
 
 export type Context = {
-  req: Request & { userId: any, type: any };
+  req: Request & { userId: any; type: any };
   res: Response;
   redis: Redis;
   userLoader: ReturnType<typeof createUserLoader>;

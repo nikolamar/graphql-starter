@@ -15,7 +15,7 @@ export class UploadResolver {
   @Mutation(() => ImageUrl)
   async imageUpload(
     // @ts-ignore
-    @Arg("file", () => GraphQLUpload) file: any,
+    @Arg("file", () => GraphQLUpload) file: any
   ): Promise<ImageUrl> {
     const { createReadStream } = await file;
     const getBuffer = (_: FileUpload) => {

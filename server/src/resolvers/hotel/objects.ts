@@ -1,7 +1,4 @@
-import {
-  Field,
-  ObjectType
-} from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { Hotel } from "../../entities/hotel";
 
 @ObjectType()

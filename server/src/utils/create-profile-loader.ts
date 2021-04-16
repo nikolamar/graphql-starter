@@ -11,6 +11,8 @@ export const createProfileLoader = () =>
       profileIdToProfile[p.id] = p;
     });
 
-    const sortedProfiles = profileIds.map((profileId) => profileIdToProfile[profileId]);
+    const sortedProfiles = profileIds.map(
+      (profileId) => profileIdToProfile[profileId]
+    );
     return sortedProfiles;
   });

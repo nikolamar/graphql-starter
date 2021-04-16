@@ -6,7 +6,7 @@ import {
   Query,
   Resolver,
   Root,
-  UseMiddleware
+  UseMiddleware,
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { defaults } from "../../configs/defaults";
@@ -16,7 +16,12 @@ import { isAuthenticated } from "../../middlewares/is-authenticated";
 import { parseCookies } from "../../middlewares/parse-cookies";
 import { Context } from "../../types";
 import { createPaginatedQuery } from "../../utils/create-paginated-query";
-import { CreateProfileArgs, DeleteProfileArgs, ProfilesArgs, UpdateProfileArgs } from "./args";
+import {
+  CreateProfileArgs,
+  DeleteProfileArgs,
+  ProfilesArgs,
+  UpdateProfileArgs,
+} from "./args";
 import { PaginatedProfiles } from "./objects";
 
 @Resolver(Profile)
@@ -53,21 +58,31 @@ export class ProfileResolver {
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Query(() => PaginatedProfiles)
-  async profiles(@Args() { limit, cursor, order, filter }: ProfilesArgs): Promise<PaginatedProfiles> {
+  async profiles(
+    @Args() { limit, cursor, order, filter }: ProfilesArgs
+  ): Promise<PaginatedProfiles> {
     const dbLimit = Math.min(defaults.pageLimit, limit);
-    const query = createPaginatedQuery("profiles", cursor, order, dbLimit, filter);
+    const query = createPaginatedQuery(
+      "profiles",
+      cursor,
+      order,
+      dbLimit,
+      filter
+    );
     const result = await getConnection().query(query);
 
     return {
       profiles: result.slice(0, dbLimit),
-      hasMore: result.length === (dbLimit + 1),
+      hasMore: result.length === dbLimit + 1,
     };
   }
 
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Profile)
-  async createProfile(@Args() { input }: CreateProfileArgs): Promise<Profile | null> {
+  async createProfile(
+    @Args() { input }: CreateProfileArgs
+  ): Promise<Profile | null> {
     if (Object.keys(input).length === 0 && input.constructor === Object) {
       return null;
     }
@@ -79,16 +94,28 @@ export class ProfileResolver {
     }
 
     return await getConnection().transaction(async (tm) => {
-      const [ image ] = await tm.query(
+      const [
+        image,
+      ] = await tm.query(
         `INSERT INTO "images"("url") VALUES ($1) RETURNING "id"`,
         [url]
       );
-      const [ profile ] = await tm.query(
+      const [profile] = await tm.query(
         `INSERT INTO "profiles"
         ("gender", "firstName", "middleName", "lastName", "city", "country", "birthDate", "phone", "imageId", "createdAt", "updatedAt")
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, DEFAULT, DEFAULT)
         RETURNING "gender", "firstName", "middleName", "lastName", "city", "country", "birthDate", "phone", "imageId", "createdAt", "updatedAt"`,
-        [input.gender, input.firstName, input.middleName, input.lastName, input.city, input.country, input.birthDate, input.phone, image.id]
+        [
+          input.gender,
+          input.firstName,
+          input.middleName,
+          input.lastName,
+          input.city,
+          input.country,
+          input.birthDate,
+          input.phone,
+          image.id,
+        ]
       );
       await tm.query(
         `UPDATE images
@@ -105,7 +132,9 @@ export class ProfileResolver {
   @UseMiddleware(parseCookies)
   @UseMiddleware(isAuthenticated)
   @Mutation(() => Profile, { nullable: true })
-  async updateProfile(@Args() { id, input }: UpdateProfileArgs): Promise<Profile | null> {
+  async updateProfile(
+    @Args() { id, input }: UpdateProfileArgs
+  ): Promise<Profile | null> {
     if (Object.keys(input).length === 0 && input.constructor === Object) {
       return null;
     }

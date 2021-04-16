@@ -8,12 +8,7 @@ import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
 import { redisConfig } from "./configs/redis";
 import { typeormConfig } from "./configs/typeorm";
-import {
-  CORS_ORIGIN,
-  PORT,
-  PROD,
-  REDIS_URL
-} from "./constants";
+import { CORS_ORIGIN, PORT, PROD, REDIS_URL } from "./constants";
 import { AuthResolver } from "./resolvers/auth";
 import { HotelResolver } from "./resolvers/hotel";
 import { ImageResolver } from "./resolvers/image";
@@ -70,7 +65,7 @@ const main = async () => {
         ImageResolver,
         HotelResolver,
         ReviewResolver,
-        UploadResolver
+        UploadResolver,
       ],
     }),
     // context is created on every request
@@ -84,11 +79,11 @@ const main = async () => {
       reviewsLoader: createReviewsLoader(),
       imageLoader: createImageLoader(),
       profileImagesLoader: createProfileImagesLoader(),
-      hotelImagesLoader: createHotelImagesLoader()
+      hotelImagesLoader: createHotelImagesLoader(),
     }),
     subscriptions: {
       onConnect: () => console.log("Connected to websocket"),
-    }
+    },
   });
 
   apolloServer.applyMiddleware({

@@ -1,7 +1,4 @@
-import {
-  Field,
-  ObjectType
-} from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { Profile } from "../../entities/profile";
 
 @ObjectType()
@@ -12,4 +9,3 @@ export class PaginatedProfiles {
   @Field()
   hasMore: boolean;
 }
-

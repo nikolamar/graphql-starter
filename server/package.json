@@ -6,14 +6,17 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "dist": "nodemon dist/index.js",
-    "dev": "nodemon --exec ts-node src/index.ts",
-    "gen-dat": "npx typeorm migration:create -n gen-data",
-    "gen-env": "gen-env-types .env -o src/env.d.ts -e .",
-    "gen-mig": "npx typeorm migration:generate -n tables",
+    "production": "nodemon dist/index.js",
+    "develop": "nodemon --exec ts-node src/index.ts",
+    "generate:env:types": "gen-env-types .env -o src/env.d.ts -e .",
+    "generate:migration:data": "npx typeorm migration:create -n gen-data",
+    "generate:migration:tables": "npx typeorm migration:generate -n tables",
     "deploy": "./scripts/deploy.sh",
-    "lint": "node_modules/.bin/tslint -c ./tslint.json './src/**/*.{ts, tsx}'",
-    "lint-fix": "node_modules/.bin/tslint --fix -c ./tslint.json './src/**/*.{ts, tsx}'"
+    "tslint": "node_modules/.bin/tslint -c ./tslint.json './src/**/*.{ts, tsx}'",
+    "tslint:fix": "node_modules/.bin/tslint --fix -c ./tslint.json './src/**/*.{ts, tsx}'",
+    "prettier:base": "prettier --write src/",
+    "prettier:check": "npm run prettier:base -- --list-different \"src/**/*.{ts,tsx}\"",
+    "prettier:write": "npm run prettier:base -- --write \"src/**/*.{ts,tsx}\""
   },
   "author": "",
   "license": "ISC",
@@ -32,6 +35,7 @@
     "@types/uuid": "^8.3.0",
     "gen-env-types": "^1.0.5",
     "nodemon": "^2.0.6",
+    "prettier": "^2.2.1",
     "ts-node": "^9.1.1",
     "tslint": "^6.1.3",
     "typescript": "^4.1.3"
