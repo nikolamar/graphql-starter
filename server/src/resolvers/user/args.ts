@@ -12,7 +12,7 @@ export class UsersArgs extends PaginatedArgs {
 export class UserArgs {
 
   @Field(() => Int)
-  id: number;
+  id: number
 }
 
 @ArgsType()
