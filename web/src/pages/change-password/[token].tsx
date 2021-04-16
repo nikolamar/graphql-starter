@@ -1,4 +1,10 @@
-import { Box, Button, Flex, useColorMode, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  useColorMode,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import { FC, useState } from "react";
@@ -8,14 +14,13 @@ import { Wrapper } from "../../components/wrapper";
 import {
   MeDocument,
   MeQuery,
-  useChangePasswordMutation
+  useChangePasswordMutation,
 } from "../../generated/graphql";
 import { toErrorMap } from "../../utils/to-error-map";
 import { withApollo } from "../../utils/with-apollo";
 import * as schemas from "../../yup-schemas";
 
 const ChangePassword: FC<{}> = () => {
-
   const router = useRouter();
   const [changePassword, { loading }] = useChangePasswordMutation();
   const [linkError, setLinkError] = useState("");
@@ -32,23 +37,37 @@ const ChangePassword: FC<{}> = () => {
         alignItems="center"
         display="flex"
       >
-        <Box bgColor={color} padding="5" borderRadius="10px" shadow="2xl" w="100%">
+        <Box
+          bgColor={color}
+          padding="5"
+          borderRadius="10px"
+          shadow="2xl"
+          w="100%"
+        >
           <Formik
             validateOnBlur={false}
             validationSchema={schemas.newpassword}
             initialValues={{ newpassword: "" }}
             onSubmit={async (values, { setErrors }) => {
-              const response = await changePassword({ variables: { token: router.query.token as string, newpassword: values.newpassword }, update: (cache, { data }) => {
-                cache.writeQuery<MeQuery>({
-                  query: MeDocument,
-                  data: {
-                    __typename: "Query",
-                    me: data?.changePassword.user,
-                  },
-                });
-              }});
+              const response = await changePassword({
+                variables: {
+                  token: router.query.token as string,
+                  newpassword: values.newpassword,
+                },
+                update: (cache, { data }) => {
+                  cache.writeQuery<MeQuery>({
+                    query: MeDocument,
+                    data: {
+                      __typename: "Query",
+                      me: data?.changePassword.user,
+                    },
+                  });
+                },
+              });
               if (response.data?.changePassword.errors) {
-                const errorMap = toErrorMap(response.data.changePassword.errors);
+                const errorMap = toErrorMap(
+                  response.data.changePassword.errors
+                );
                 if ("link" in errorMap) {
                   setLinkError(errorMap.link);
                 }

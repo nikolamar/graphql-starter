@@ -1,11 +1,18 @@
 import {
-  Collapse, FormControl,
-  FormErrorMessage, FormLabel, HStack,
-  NumberDecrementStepper, NumberIncrementStepper, NumberInput,
+  Collapse,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  HStack,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
   NumberInputField,
-  NumberInputStepper, Slider,
+  NumberInputStepper,
+  Slider,
   SliderFilledTrack,
-  SliderThumb, SliderTrack
+  SliderThumb,
+  SliderTrack,
 } from "@chakra-ui/react";
 import { useField } from "formik";
 import { FC, InputHTMLAttributes } from "react";
@@ -27,16 +34,18 @@ export const InputNumSliderField: FC<InputNumSliderFieldProps> = ({
   const handleChange = (val: string | number) => {
     const num = typeof val === "string" ? parseInt(val) : val;
     helpers.setValue(num);
-  }
+  };
 
   let isHorizontal = layout === "horizontal";
 
   let form = (
     <>
-      <FormLabel htmlFor={field.name} minW={defaults.labelMinWidth}>{label}</FormLabel>
+      <FormLabel htmlFor={field.name} minW={defaults.labelMinWidth}>
+        {label}
+      </FormLabel>
       <HStack width="100%" mx={isHorizontal ? 2 : undefined} spacing={5}>
         <NumberInput
-          {...rest as any}
+          {...(rest as any)}
           value={field.value}
           defaultValue={field.value}
           isInvalid={!!error}
@@ -51,8 +60,10 @@ export const InputNumSliderField: FC<InputNumSliderFieldProps> = ({
         </NumberInput>
         <Slider
           mr={2}
-          focusThumbOnChange={false} value={field.value}
-          max={rest.max as number} colorScheme="teal"
+          focusThumbOnChange={false}
+          value={field.value}
+          max={rest.max as number}
+          colorScheme="teal"
           min={rest.min as number}
           onChange={handleChange}
         >
@@ -69,7 +80,12 @@ export const InputNumSliderField: FC<InputNumSliderFieldProps> = ({
     <FormControl isInvalid={!!error} className="unselectable">
       {isHorizontal ? <HStack align="center">{form}</HStack> : form}
       <Collapse in={!!error} animateOpacity>
-        <FormErrorMessage my={0} ml={isHorizontal ? defaults.labelMinWidth + 20 : undefined}>{error}</FormErrorMessage>
+        <FormErrorMessage
+          my={0}
+          ml={isHorizontal ? defaults.labelMinWidth + 20 : undefined}
+        >
+          {error}
+        </FormErrorMessage>
       </Collapse>
     </FormControl>
   );

@@ -12,8 +12,8 @@
     "gen-env": "gen-env-types .env -o src/env.d.ts -e .",
     "gen-mig": "npx typeorm migration:generate -n tables",
     "deploy": "./scripts/deploy.sh",
-    "lint": "node_modules/.bin/tslint -c ./tslint.json './src/**/*.ts'",
-    "lint-fix": "node_modules/.bin/tslint --fix -c ./tslint.json './src/**/*.ts'"
+    "lint": "node_modules/.bin/tslint -c ./tslint.json './src/**/*.{ts, tsx}'",
+    "lint-fix": "node_modules/.bin/tslint --fix -c ./tslint.json './src/**/*.{ts, tsx}'"
   },
   "author": "",
   "license": "ISC",

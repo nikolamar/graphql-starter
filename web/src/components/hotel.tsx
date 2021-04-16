@@ -1,15 +1,35 @@
-import { Box, Button, Collapse, Flex, Heading, HStack, IconButton, Image, Text, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Collapse,
+  Flex,
+  Heading,
+  HStack,
+  IconButton,
+  Image,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import moment from "moment";
 import { useRouter } from "next/router";
 import { FC, useState } from "react";
-import { IoIosArrowDropdownCircle, IoIosArrowDropupCircle } from "react-icons/io";
+import {
+  IoIosArrowDropdownCircle,
+  IoIosArrowDropupCircle,
+} from "react-icons/io";
 import { RiDeleteBinLine, RiEdit2Line } from "react-icons/ri";
 import { InputField } from "../components/input-field";
 import { Review } from "../components/review";
 import { ReviewsHeader } from "../components/reviews-header";
 import { defaults } from "../configs/defaults";
-import { HotelSnippetFragment, useCreateReviewMutation, useDeleteHotelMutation, useMeQuery, useReviewsQuery } from "../generated/graphql";
+import {
+  HotelSnippetFragment,
+  useCreateReviewMutation,
+  useDeleteHotelMutation,
+  useMeQuery,
+  useReviewsQuery,
+} from "../generated/graphql";
 import * as schemas from "../yup-schemas";
 import { AccessibleLink } from "./accessible-link";
 import { Rate } from "./rate";
@@ -19,7 +39,6 @@ interface HotelProps {
 }
 
 export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
-
   const toast = useToast();
   const router = useRouter();
   const { data: dataMe } = useMeQuery();
@@ -34,16 +53,19 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
       order,
       hotelId: hotel.id,
       limit: defaults.pageLimit,
-      cursor: null
+      cursor: null,
     },
     notifyOnNetworkStatusChange: true,
   });
 
   const handleDelete = () => {
-    deleteHotel({ variables: { id: hotel.id }, update: (cache) => {
-      cache.evict({ id: "Hotel:" + hotel.id });
-    }});
-  }
+    deleteHotel({
+      variables: { id: hotel.id },
+      update: (cache) => {
+        cache.evict({ id: "Hotel:" + hotel.id });
+      },
+    });
+  };
 
   const handleLoadMoreReviews = () => {
     fetchMore({
@@ -51,14 +73,15 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
         order,
         hotelId: hotel.id,
         limit: defaults.pageLimit,
-        cursor: data?.reviews.reviews[data?.reviews.reviews.length - 1].createdAt
+        cursor:
+          data?.reviews.reviews[data?.reviews.reviews.length - 1].createdAt,
       },
     });
-  }
+  };
 
   const handleShowReviewsButton = () => {
     setReviewsVisible(!isReviewsVisible);
-  }
+  };
 
   let tools = null;
 
@@ -69,13 +92,13 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
           <IconButton
             size="xs"
             aria-label="update hotel"
-            icon={<RiEdit2Line/>}
+            icon={<RiEdit2Line />}
           />
         </AccessibleLink>
         <IconButton
           size="xs"
           aria-label="delete hotel"
-          icon={<RiDeleteBinLine/>}
+          icon={<RiDeleteBinLine />}
           onClick={handleDelete}
         />
       </>
@@ -83,7 +106,14 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
   }
 
   return (
-    <Box key={hotel.id} mb={defaults.margin} p={defaults.padding} shadow="base" borderWidth="1px" borderRadius={5}>
+    <Box
+      key={hotel.id}
+      mb={defaults.margin}
+      p={defaults.padding}
+      shadow="base"
+      borderWidth="1px"
+      borderRadius={5}
+    >
       <HStack align="flex-start">
         <Image
           mr={1}
@@ -95,27 +125,48 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
         />
         <Box flex={1}>
           <HStack>
-            <AccessibleLink href="/hotel/[id]" as={`/hotel/${hotel.id}`} flex={1} height={10}>
-              <Heading fontSize="l" noOfLines={1}>{hotel.name}</Heading>
+            <AccessibleLink
+              href="/hotel/[id]"
+              as={`/hotel/${hotel.id}`}
+              flex={1}
+              height={10}
+            >
+              <Heading fontSize="l" noOfLines={1}>
+                {hotel.name}
+              </Heading>
             </AccessibleLink>
-            <Rate readonly={true} defaultValue={hotel.stars}/>
+            <Rate readonly={true} defaultValue={hotel.stars} />
             {tools}
           </HStack>
           <Text fontSize={12}>Created by {hotel.user.username}</Text>
           <Flex align="flex-start" minHeight={120}>
-            <Text flex={1} mt={4} fontSize={14} noOfLines={5} textAlign="justify">
+            <Text
+              flex={1}
+              mt={4}
+              fontSize={14}
+              noOfLines={5}
+              textAlign="justify"
+            >
               {hotel.description}
             </Text>
           </Flex>
           <Box mt={2}>
-            <Text fontSize={24} textAlign="right">{hotel.price} €</Text>
+            <Text fontSize={24} textAlign="right">
+              {hotel.price} €
+            </Text>
             <Flex alignItems="flex-end">
-              <Text fontSize={12}>{moment(hotel.createdAt).format('LL')}</Text>
+              <Text fontSize={12}>{moment(hotel.createdAt).format("LL")}</Text>
               <Button
                 mt={2}
                 minW={170}
                 ml="auto"
-                leftIcon={isReviewsVisible ? <IoIosArrowDropupCircle/> : <IoIosArrowDropdownCircle />}
+                leftIcon={
+                  isReviewsVisible ? (
+                    <IoIosArrowDropupCircle />
+                  ) : (
+                    <IoIosArrowDropdownCircle />
+                  )
+                }
                 onClick={handleShowReviewsButton}
                 isLoading={loading}
                 colorScheme="teal"
@@ -127,7 +178,7 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
         </Box>
       </HStack>
       <Collapse in={isReviewsVisible} animateOpacity>
-        <ReviewsHeader/>
+        <ReviewsHeader />
         <Formik
           validateOnBlur={false}
           validationSchema={schemas.review}
@@ -140,15 +191,18 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
                 status: "error",
                 duration: defaults.toastDuration,
                 isClosable: true,
-                position: "top-right"
+                position: "top-right",
               });
               router.replace("/login?next=" + router.asPath);
               return;
             }
 
-            const response = await createReview({ variables: { hotelId: hotel.id, message: values.review }, update: (cache) => {
-              cache.evict({ fieldName: "reviews" });
-            }});
+            const response = await createReview({
+              variables: { hotelId: hotel.id, message: values.review },
+              update: (cache) => {
+                cache.evict({ fieldName: "reviews" });
+              },
+            });
 
             if (response?.errors) {
               return toast({
@@ -157,7 +211,7 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
                 status: "error",
                 duration: defaults.toastDuration,
                 isClosable: true,
-                position: "top-right"
+                position: "top-right",
               });
             }
           }}
@@ -184,14 +238,25 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
             </Form>
           )}
         </Formik>
-        {data?.reviews?.reviews?.map((review) => <Review key={review.id}>{review}</Review>)}
-        {!data?.reviews?.hasMore ? null : <Flex>
-          <Button m="auto" my="8" isLoading={loading} onClick={handleLoadMoreReviews}>
-            Load More
-          </Button>
-        </Flex>}
-        {data?.reviews?.reviews?.length ? null : <Text textAlign="center">No reviews yet, be first to review it!</Text>}
+        {data?.reviews?.reviews?.map((review) => (
+          <Review key={review.id}>{review}</Review>
+        ))}
+        {!data?.reviews?.hasMore ? null : (
+          <Flex>
+            <Button
+              m="auto"
+              my="8"
+              isLoading={loading}
+              onClick={handleLoadMoreReviews}
+            >
+              Load More
+            </Button>
+          </Flex>
+        )}
+        {data?.reviews?.reviews?.length ? null : (
+          <Text textAlign="center">No reviews yet, be first to review it!</Text>
+        )}
       </Collapse>
     </Box>
   );
-}
+};

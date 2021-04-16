@@ -1,7 +1,4 @@
-import {
-  ApolloClient,
-  InMemoryCache
-} from "@apollo/client";
+import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { createUploadLink } from "apollo-upload-client";
 import { withApollo as createWithApollo } from "next-apollo";
 import { API_URL } from "../constants";

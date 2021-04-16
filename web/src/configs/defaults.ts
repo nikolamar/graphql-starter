@@ -4,5 +4,5 @@ export const defaults = {
   pageLimit: 20,
   toastDuration: 2000,
   labelMinWidth: 100,
-  order: "DESC"
+  order: "DESC",
 };

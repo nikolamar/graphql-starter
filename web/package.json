@@ -12,11 +12,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "prettify": "prettier --write src/",
-    "gen": "graphql-codegen --config codegen.yml",
-    "gen-env": "gen-env-types .env.local -o src/env.d.ts -e .",
-    "lint": "node_modules/.bin/tslint -c ./tslint.json './src/**/*.ts'",
-    "lint-fix": "node_modules/.bin/tslint --fix -c ./tslint.json './src/**/*.ts'"
+    "generate:graphql": "graphql-codegen --config codegen.yml",
+    "generate:env:types": "gen-env-types .env.local -o src/env.d.ts -e .",
+    "tslint": "node_modules/.bin/tslint -c ./tslint.json './src/**/*.ts'",
+    "tslint:fix": "node_modules/.bin/tslint --fix -c ./tslint.json './src/**/*.ts'",
+    "prettier:base": "prettier --write src/",
+    "prettier:check": "npm run prettier:base -- --list-different \"src/**/*.{ts,tsx}\"",
+    "prettier:write": "npm run prettier:base -- --write \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
     "@apollo/client": "^3.3.7",

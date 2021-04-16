@@ -17,7 +17,7 @@ export const useIsAuthenticated = () => {
         status: "error",
         duration: defaults.toastDuration,
         isClosable: true,
-        position: "top-right"
+        position: "top-right",
       });
       router.replace("/login?next=" + router.asPath);
     }

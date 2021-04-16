@@ -1,17 +1,34 @@
 import { useApolloClient } from "@apollo/client";
-import { Avatar, Box, Flex, HStack, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Text, useColorModeValue, useToast } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  Flex,
+  HStack,
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuItem,
+  MenuList,
+  Text,
+  useColorModeValue,
+  useToast,
+} from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 import { defaults } from "../../configs/defaults";
-import { MeDocument, MeQuery, useLogoutMutation, useMeQuery } from '../../generated/graphql';
+import {
+  MeDocument,
+  MeQuery,
+  useLogoutMutation,
+  useMeQuery,
+} from "../../generated/graphql";
 import { isServer } from "../../utils/is-server";
 import { AccessibleLink } from "../accessible-link";
 
 let lastKnownScrollPosition = 0;
 let ticking = false;
 
-export const NavBar: FC<{}> = (() => {
-
+export const NavBar: FC<{}> = () => {
   const toast = useToast();
   const router = useRouter();
   const color = useColorModeValue("white", "gray.800");
@@ -29,7 +46,7 @@ export const NavBar: FC<{}> = (() => {
     }
     return () => {
       window.removeEventListener("scroll", handleScroll);
-    }
+    };
   }, []);
 
   const handleScroll = () => {
@@ -41,10 +58,16 @@ export const NavBar: FC<{}> = (() => {
 
     if (!ticking) {
       window.requestAnimationFrame(() => {
-        if (newScrollPosition > lastKnownScrollPosition && newScrollPosition > 100) {
+        if (
+          newScrollPosition > lastKnownScrollPosition &&
+          newScrollPosition > 100
+        ) {
           setNavSmaller(true);
         }
-        if (newScrollPosition < lastKnownScrollPosition && newScrollPosition < 100) {
+        if (
+          newScrollPosition < lastKnownScrollPosition &&
+          newScrollPosition < 100
+        ) {
           setNavSmaller(false);
         }
         lastKnownScrollPosition = newScrollPosition;
@@ -53,18 +76,20 @@ export const NavBar: FC<{}> = (() => {
 
       ticking = true;
     }
-  }
+  };
 
   const handleLogout = async () => {
-    await logout({ update: (cache) => {
-      cache.writeQuery<MeQuery>({
-        query: MeDocument,
-        data: {
-          __typename: "Query",
-          me: null,
-        },
-      });
-    }}); // redirecting with middleware "use-is-auth.ts"
+    await logout({
+      update: (cache) => {
+        cache.writeQuery<MeQuery>({
+          query: MeDocument,
+          data: {
+            __typename: "Query",
+            me: null,
+          },
+        });
+      },
+    }); // redirecting with middleware "use-is-auth.ts"
     await apollo.clearStore();
     toast({
       title: "Logged out.",
@@ -72,21 +97,35 @@ export const NavBar: FC<{}> = (() => {
       status: "success",
       duration: defaults.toastDuration,
       isClosable: true,
-      position: "top-right"
+      position: "top-right",
     });
-  }
+  };
 
   return (
-    <Flex zIndex={1000} position="sticky" top={0} height={isSmaller ? 55 : 100} bg={color} mt="2rem" shadow={isSmaller ? "md" : undefined} transition="height 500ms">
+    <Flex
+      zIndex={1000}
+      position="sticky"
+      top={0}
+      height={isSmaller ? 55 : 100}
+      bg={color}
+      mt="2rem"
+      shadow={isSmaller ? "md" : undefined}
+      transition="height 500ms"
+    >
       <Flex flex={1} m="auto" align="center" maxW={800}>
         <HStack>
           <AccessibleLink href="/">
-            <Text fontSize={16} fontWeight="600">Hotels</Text>
+            <Text fontSize={16} fontWeight="600">
+              Hotels
+            </Text>
           </AccessibleLink>
-          {!data?.me? null : (
+          {!data?.me ? null : (
             <AccessibleLink href="/create-hotel">
-              <Text fontSize={16} fontWeight="600">Create Hotel</Text>
-            </AccessibleLink>)}
+              <Text fontSize={16} fontWeight="600">
+                Create Hotel
+              </Text>
+            </AccessibleLink>
+          )}
         </HStack>
         <Box ml="auto">
           {!data?.me ? (
@@ -98,12 +137,21 @@ export const NavBar: FC<{}> = (() => {
               <Text>{data.me.email || data.me.username}</Text>
               <Menu>
                 <MenuButton>
-                  <Avatar size={isSmaller ? "sm" : "md"} name={data?.me?.profile?.fullName || undefined} src={data.me?.profile?.image?.url || undefined} transition="width 500ms, height 500ms"/>
+                  <Avatar
+                    size={isSmaller ? "sm" : "md"}
+                    name={data?.me?.profile?.fullName || undefined}
+                    src={data.me?.profile?.image?.url || undefined}
+                    transition="width 500ms, height 500ms"
+                  />
                 </MenuButton>
                 <div>
                   <MenuList>
-                    <MenuItem onClick={() => router.push("my-account")}><Text>My Account</Text></MenuItem>
-                    <MenuItem onClick={() => router.push("settings")}>Settings</MenuItem>
+                    <MenuItem onClick={() => router.push("my-account")}>
+                      <Text>My Account</Text>
+                    </MenuItem>
+                    <MenuItem onClick={() => router.push("settings")}>
+                      Settings
+                    </MenuItem>
                     <MenuDivider />
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </MenuList>
@@ -115,4 +163,4 @@ export const NavBar: FC<{}> = (() => {
       </Flex>
     </Flex>
   );
-});
+};

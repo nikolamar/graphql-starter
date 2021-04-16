@@ -1,41 +1,38 @@
-import { FC, useState } from 'react';
+import { FC, useState } from "react";
 import { Hotel } from "../../components/hotel";
 import { HotelSkeleton } from "../../components/hotel-skeleton";
 import { Layout } from "../../components/layout";
 import { NotFound } from "../../components/not-found";
 import { Wrapper } from "../../components/wrapper";
 import { defaults } from "../../configs/defaults";
-import { useGetHotelFromUrl } from '../../utils/use-get-hotel-from-url';
-import { withApollo } from '../../utils/with-apollo';
+import { useGetHotelFromUrl } from "../../utils/use-get-hotel-from-url";
+import { withApollo } from "../../utils/with-apollo";
 
 const HotelById: FC<{}> = () => {
-
   const [sliceIdx, setSliceIdx] = useState(Infinity);
 
-  const {data, loading} = useGetHotelFromUrl();
+  const { data, loading } = useGetHotelFromUrl();
 
   const handleLoadMoreReviews = () => {
     setSliceIdx(defaults.pageLimit);
-  }
+  };
 
   const handleHideReviews = () => {
     setSliceIdx(1);
-  }
+  };
 
   if (loading) {
     return (
       <Layout>
         <Wrapper minHeight="100vh">
-          <HotelSkeleton/>
+          <HotelSkeleton />
         </Wrapper>
       </Layout>
     );
   }
 
   if (!data?.hotel) {
-    return (
-      <NotFound>Hotel not Found.</NotFound>
-    );
+    return <NotFound>Hotel not Found.</NotFound>;
   }
 
   return (
@@ -45,6 +42,6 @@ const HotelById: FC<{}> = () => {
       </Wrapper>
     </Layout>
   );
-}
+};
 
 export default withApollo({ ssr: true })(HotelById);
