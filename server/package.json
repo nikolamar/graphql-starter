@@ -36,7 +36,6 @@
     "@types/uuid": "^8.3.0",
     "gen-env-types": "^1.0.5",
     "husky": "^6.0.0",
-    "lint-staged": "^10.5.4",
     "nodemon": "^2.0.6",
     "prettier": "^2.2.1",
     "ts-node": "^9.1.1",
@@ -66,13 +65,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "npm run precommit"
     }
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "prettier /src --write",
-      "git add"
-    ]
   }
 }
