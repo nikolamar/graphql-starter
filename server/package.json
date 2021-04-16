@@ -12,11 +12,12 @@
     "generate:migration:data": "npx typeorm migration:create -n gen-data",
     "generate:migration:tables": "npx typeorm migration:generate -n tables",
     "deploy": "./scripts/deploy.sh",
-    "tslint": "node_modules/.bin/tslint -c ./tslint.json './src/**/*.{ts, tsx}'",
-    "tslint:fix": "node_modules/.bin/tslint --fix -c ./tslint.json './src/**/*.{ts, tsx}'",
+    "tslint": "node_modules/.bin/tslint -c ./tslint.json \"./src/**/*.{ts, tsx}\"",
+    "tslint:fix": "node_modules/.bin/tslint --fix -c ./tslint.json \"./src/**/*.{ts, tsx}\"",
     "prettier:base": "prettier --parser typescript",
     "prettier:check": "npm run prettier:base -- --list-different \"src/**/*.{ts,tsx}\"",
-    "prettier:write": "npm run prettier:base -- --write \"src/**/*.{ts,tsx}\""
+    "prettier:write": "npm run prettier:base -- --write \"src/**/*.{ts,tsx}\"",
+    "precommit": "npm run prettier:write"
   },
   "author": "",
   "license": "ISC",
@@ -34,6 +35,7 @@
     "@types/sharp": "^0.27.1",
     "@types/uuid": "^8.3.0",
     "gen-env-types": "^1.0.5",
+    "husky": "^6.0.0",
     "nodemon": "^2.0.6",
     "prettier": "^2.2.1",
     "ts-node": "^9.1.1",
