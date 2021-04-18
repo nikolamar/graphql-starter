@@ -21,6 +21,6 @@
     "isolatedModules": true,
     "jsx": "preserve"
   },
-  "include": ["./src/**/*.ts", "./src/**/*.tsx"],
-  "exclude": ["./node_modules", "./public", "./.next"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "public", ".next"]
 }
