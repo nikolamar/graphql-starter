@@ -4,7 +4,7 @@ export const createPaginatedQuery = (
   order: string,
   dbLimit: number,
   filter: any
-) => {
+): string => {
   let createdAt = null;
 
   if (cursor) {

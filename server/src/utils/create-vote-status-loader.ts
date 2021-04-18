@@ -3,7 +3,10 @@ import DataLoader from "dataloader";
 
 // [{reviewId: 5, userId: 10}]
 // [{reviewId: 5, userId: 10, value: 1}]
-export const createVoteStatusLoader = () =>
+export const createVoteStatusLoader = (): DataLoader<
+  { reviewId: number; userId: number },
+  Vote | null
+> =>
   new DataLoader<{ reviewId: number; userId: number }, Vote | null>(
     async (keys) => {
       const votes = await Vote.findByIds(keys as any);

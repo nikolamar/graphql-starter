@@ -4,7 +4,7 @@ import { Image } from "../entities/image";
 
 // [1, 78, 8, 9]
 // [[{id: 1, url: 'http...'}], ...]
-export const createHotelImagesLoader = () =>
+export const createHotelImagesLoader = (): DataLoader<number, Image[]> =>
   new DataLoader<number, Image[]>(async (hotelIds) => {
     const images = await Image.find({
       where: { hotelId: In([...hotelIds]) },

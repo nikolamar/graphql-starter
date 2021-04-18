@@ -27,7 +27,10 @@ import { PaginatedProfiles } from "./objects";
 @Resolver(Profile)
 export class ProfileResolver {
   @FieldResolver(() => Image, { nullable: true })
-  image(@Root() profile: Profile, @Ctx() ctx: Context) {
+  image(
+    @Root() profile: Profile,
+    @Ctx() ctx: Context
+  ): Promise<Image> | undefined {
     if (!profile.imageId) {
       return;
     }
@@ -35,7 +38,10 @@ export class ProfileResolver {
   }
 
   @FieldResolver(() => [Image])
-  async images(@Root() profile: Profile, @Ctx() ctx: Context) {
+  async images(
+    @Root() profile: Profile,
+    @Ctx() ctx: Context
+  ): Promise<Image[]> {
     const images = await ctx.profileImagesLoader.load(profile.id);
     return images || [];
   }

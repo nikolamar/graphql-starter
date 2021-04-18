@@ -5,7 +5,7 @@ export const createCookies = (
   res: Response,
   accessToken: string,
   refreshToken: string
-) => {
+): void => {
   res.cookie(`${COOKIE_NAME}-access-token`, accessToken, {
     expires: new Date(Date.now() + 1000 * 60 * 15),
   });

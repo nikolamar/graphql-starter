@@ -4,7 +4,7 @@ import { Review } from "../entities/review";
 
 // [1, 78, 8, 9]
 // [[{id: 1, message: 'great'}], ...]
-export const createReviewsLoader = () =>
+export const createReviewsLoader = (): DataLoader<number, Review[]> =>
   new DataLoader<number, Review[]>(async (hotelIds) => {
     const reviews = await Review.find({
       where: { hotelId: In([...hotelIds]) },

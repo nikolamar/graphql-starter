@@ -38,7 +38,7 @@ import { UserResponse } from "./objects";
 @Resolver(User)
 export class AuthResolver {
   @FieldResolver(() => Profile)
-  profile(@Root() user: User, @Ctx() ctx: Context) {
+  profile(@Root() user: User, @Ctx() ctx: Context): Promise<Profile> {
     return ctx.profileLoader.load(user.profileId);
   }
 
@@ -175,7 +175,7 @@ export class AuthResolver {
     ); // 3 days
 
     // logout from other systems
-    invalidateTokens(user);
+    void invalidateTokens(user);
 
     await sendEmail(
       user.email,
@@ -212,7 +212,7 @@ export class AuthResolver {
     await ctx.redis.del(key);
 
     // logout from other systems
-    invalidateTokens(user);
+    void invalidateTokens(user);
 
     // log in user after change password
     ctx.req.userId = user.id;

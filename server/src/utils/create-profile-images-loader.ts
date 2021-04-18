@@ -4,7 +4,7 @@ import { Image } from "../entities/image";
 
 // [1, 78, 8, 9]
 // [[{id: 1, url: 'http...'}], ...]
-export const createProfileImagesLoader = () =>
+export const createProfileImagesLoader = (): DataLoader<number, Image[]> =>
   new DataLoader<number, Image[]>(async (profileIds) => {
     const images = await Image.find({
       where: { profileId: In([...profileIds]) },

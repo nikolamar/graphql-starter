@@ -36,3 +36,8 @@ export interface NewHotelPayload {
   hotel: Hotel;
   dateString: string;
 }
+
+export type Tokens = {
+  accessToken: string;
+  refreshToken: string;
+};
