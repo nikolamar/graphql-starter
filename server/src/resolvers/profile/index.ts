@@ -100,12 +100,10 @@ export class ProfileResolver {
     }
 
     return await getConnection().transaction(async (tm) => {
-      const [
-        image,
-      ] = await tm.query(
-        `INSERT INTO "images"("url") VALUES ($1) RETURNING "id"`,
-        [url]
-      );
+      const iq = `
+      INSERT INTO "images"("url")
+      VALUES ($1) RETURNING "id"`;
+      const [image] = await tm.query(iq, [url]);
       const [profile] = await tm.query(
         `INSERT INTO "profiles"
         ("gender", "firstName", "middleName", "lastName", "city", "country", "birthDate", "phone", "imageId", "createdAt", "updatedAt")
@@ -168,7 +166,7 @@ export class ProfileResolver {
       .createQueryBuilder()
       .update(Profile)
       .set({ ...values })
-      .where(`id = :id`, { id })
+      .where("id = :id", { id })
       .returning("*")
       .execute();
 

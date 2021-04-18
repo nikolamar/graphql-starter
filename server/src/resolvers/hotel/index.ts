@@ -115,12 +115,11 @@ export class HotelResolver {
     }
 
     return await getConnection().transaction(async (tm) => {
-      const [
-        image,
-      ] = await tm.query(
-        `INSERT INTO "images"("url") VALUES ($1) RETURNING "id"`,
-        [url]
-      );
+      const iq = `
+      INSERT INTO "images"("url")
+      VALUES ($1) RETURNING "id"
+      `;
+      const [image] = await tm.query(iq, [url]);
       const [hotel] = await tm.query(
         `INSERT INTO "hotels"
         ("name", "city", "country", "description", "location", "stars", "price", "userId", "imageId", "createdAt", "updatedAt")

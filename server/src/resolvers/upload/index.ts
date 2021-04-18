@@ -1,4 +1,3 @@
-import { GraphQLUpload } from "apollo-server-express";
 import sharp from "sharp";
 import { Arg, Mutation, Resolver, UseMiddleware } from "type-graphql";
 import { v4 } from "uuid";
@@ -7,6 +6,7 @@ import { isAuthenticated } from "../../middlewares/is-authenticated";
 import { parseCookies } from "../../middlewares/parse-cookies";
 import { ImageUrl } from "../image/objects";
 import { FileUpload } from "../../types";
+import { GraphQLUpload } from "graphql-upload";
 
 @Resolver()
 export class UploadResolver {
@@ -14,12 +14,13 @@ export class UploadResolver {
   @UseMiddleware(isAuthenticated)
   @Mutation(() => ImageUrl)
   async imageUpload(
-    // @ts-ignore
-    @Arg("file", () => GraphQLUpload) file: any
+    @Arg("file", () => GraphQLUpload) file: FileUpload
   ): Promise<ImageUrl> {
-    const { createReadStream } = await file;
-    const getBuffer = (_: FileUpload) => {
+    const { createReadStream } = (await file) as any;
+
+    const getBuffer = () => {
       const stream = createReadStream();
+
       return new Promise<Buffer>((resolve, reject) => {
         const buffers: Buffer[] = [];
         stream.on("error", (error: any) => reject(error));
@@ -28,9 +29,11 @@ export class UploadResolver {
       });
     };
 
-    const imageName = `${v4()}_${file.filename}`;
+    const imageName = `${v4()}_${(file as any).filename}`;
+
     const path = __dirname + `/../../../public/images/${imageName}`;
-    const imageBuffer = await getBuffer(file);
+
+    const imageBuffer = await getBuffer();
 
     await sharp(imageBuffer).toFile(path);
 

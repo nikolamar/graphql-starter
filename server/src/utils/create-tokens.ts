@@ -1,9 +1,8 @@
 import { sign } from "jsonwebtoken";
-import { Tokens } from "src/types";
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "../constants";
 import { User } from "../entities/user";
 
-export const createTokens = (user: User): Tokens => ({
+export const createTokens = (user: User) => ({
   accessToken: sign({ userId: user.id, type: user.type }, ACCESS_TOKEN_SECRET, {
     expiresIn: "15min",
   }),

@@ -23,7 +23,7 @@ export const sendEmail = async (to: string, html: string): Promise<void> => {
 
   // send mail with defined transport object
   let info = await transporter.sendMail({
-    from: `"Fred Foo 👻" <foo@example.com>`, // sender address
+    from: "'Fred Foo 👻' <foo@example.com>", // sender address
     to: to, // list of receivers
     subject: "Change password", // Subject line
     html,
