@@ -71,19 +71,21 @@ const EditHotel: FC<{}> = ({}) => {
             let hotelVariables = { id: data?.hotel?.id, ...(values as any) };
 
             if (image) {
-              const response = await imageUpload({
+              const imageResponse = await imageUpload({
                 variables: { file: image },
               });
-              hotelVariables.image = response?.data?.imageUpload?.url;
+              hotelVariables.image = imageResponse?.data?.imageUpload?.url;
               setImage(null);
             }
 
-            const response = await updateHotel({ variables: hotelVariables });
+            const hotelResponse = await updateHotel({
+              variables: hotelVariables,
+            });
 
-            if (response?.errors) {
+            if (hotelResponse?.errors) {
               return toast({
                 title: "Hotel has not been updated.",
-                description: `We've couldn't update hotel data due to the error: ${response.errors}`,
+                description: `We've couldn't update hotel data due to the error: ${hotelResponse.errors}`,
                 status: "error",
                 duration: defaults.toastDuration,
                 isClosable: true,

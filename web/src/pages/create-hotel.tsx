@@ -61,14 +61,15 @@ const CreateHotel: FC<{}> = ({}) => {
             let hotelVariables = { ...values };
 
             if (image) {
-              const response = await imageUpload({
+              let imageResponse = await imageUpload({
                 variables: { file: image },
               });
-              hotelVariables.image = response?.data?.imageUpload?.url as string;
+              hotelVariables.image = imageResponse?.data?.imageUpload
+                ?.url as string;
               setImage(null);
             }
 
-            const response = await createHotel({
+            let hotelResponse = await createHotel({
               variables: hotelVariables,
               update: (cache) => {
                 cache.evict({ fieldName: "hotels" });
@@ -78,10 +79,10 @@ const CreateHotel: FC<{}> = ({}) => {
             resetForm({});
             window.scrollTo(0, 0);
 
-            if (response?.errors) {
+            if (hotelResponse?.errors) {
               return toast({
                 title: "Hotel has not been created.",
-                description: `We've couldn't create hotel due to the error: ${response.errors}`,
+                description: `We've couldn't create hotel due to the error: ${hotelResponse.errors}`,
                 status: "error",
                 duration: defaults.toastDuration,
                 isClosable: true,

@@ -144,10 +144,10 @@ const MyAccount: FC<{}> = () => {
             };
 
             if (image) {
-              const response = await imageUpload({
+              const imageResponse = await imageUpload({
                 variables: { file: image },
               });
-              profileVariables.image = response?.data?.imageUpload?.url;
+              profileVariables.image = imageResponse?.data?.imageUpload?.url;
               setImage(null);
             }
 
