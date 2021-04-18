@@ -18,7 +18,6 @@ module.exports = {
     node: true,
   },
   extends: [
-  extends: [
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
     // "plugin:@typescript-eslint/recommended-requiring-type-checking",

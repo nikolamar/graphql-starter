@@ -3,3 +3,5 @@ assets
 dist
 public
 .next
+
+src/migrations/*.ts
