@@ -1,0 +1,12 @@
+5 ESLint rules behave differently from their TSLint counterparts:
+  * @typescript-eslint/no-unused-expressions:
+    - The TSLint optional config "allow-new" is the default ESLint behavior and will no longer be ignored.
+  * no-underscore-dangle:
+    - Leading or trailing underscores (_) on identifiers will now be forbidden.
+  * one-var:
+    - Variables declared in for loops will no longer be checked.
+  * prefer-arrow/prefer-arrow-functions:
+    - ESLint does not support allowing named functions defined with the function keyword.
+  * no-invalid-this:
+    - Functions in methods will no longer be ignored.
+
