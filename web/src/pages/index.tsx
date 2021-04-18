@@ -9,7 +9,7 @@ import { withApollo } from "../utils/with-apollo";
 // import { isServer } from "../utils/is-server";
 
 const Index: FC<{}> = () => {
-  const [order, setOrder] = useState(defaults.order);
+  const [order] = useState(defaults.order);
 
   const { data, loading, fetchMore } = useHotelsQuery({
     // skip: isServer(),
@@ -22,11 +22,12 @@ const Index: FC<{}> = () => {
   });
 
   const handleLoadMoreHotels = () => {
-    fetchMore({
+    void fetchMore({
       variables: {
         order,
         limit: defaults.pageLimit,
-        cursor: data?.hotels.hotels[data?.hotels.hotels.length - 1].createdAt,
+        cursor: data?.hotels?.hotels[data?.hotels?.hotels?.length - 1]
+          ?.createdAt as string,
       },
     });
   };
