@@ -44,7 +44,7 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
   const { data: dataMe } = useMeQuery();
   const [deleteHotel] = useDeleteHotelMutation();
   const [createReview] = useCreateReviewMutation();
-  const [order, setOrder] = useState(defaults.order);
+  const [order] = useState(defaults.order);
   const [isReviewsVisible, setReviewsVisible] = useState(false);
 
   const { data, loading, fetchMore } = useReviewsQuery({
@@ -187,13 +187,13 @@ export const Hotel: FC<HotelProps> = ({ children: hotel }) => {
             if (!dataMe?.me?.id) {
               toast({
                 title: "Review has not been created.",
-                description: `You need to login before you review it!`,
+                description: "You need to login before you review it!",
                 status: "error",
                 duration: defaults.toastDuration,
                 isClosable: true,
                 position: "top-right",
               });
-              router.replace("/login?next=" + router.asPath);
+              void router.replace("/login?next=" + router.asPath);
               return;
             }
 

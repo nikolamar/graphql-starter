@@ -1,25 +1,25 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { Hotel } from "../../components/hotel";
 import { HotelSkeleton } from "../../components/hotel-skeleton";
 import { Layout } from "../../components/layout";
 import { NotFound } from "../../components/not-found";
 import { Wrapper } from "../../components/wrapper";
-import { defaults } from "../../configs/defaults";
+// import { defaults } from "../../configs/defaults";
 import { useGetHotelFromUrl } from "../../utils/use-get-hotel-from-url";
 import { withApollo } from "../../utils/with-apollo";
 
 const HotelById: FC<{}> = () => {
-  const [sliceIdx, setSliceIdx] = useState(Infinity);
+  // const [sliceIdx, setSliceIdx] = useState(Infinity);
 
   const { data, loading } = useGetHotelFromUrl();
 
-  const handleLoadMoreReviews = () => {
-    setSliceIdx(defaults.pageLimit);
-  };
+  // const handleLoadMoreReviews = () => {
+  //   setSliceIdx(defaults.pageLimit);
+  // };
 
-  const handleHideReviews = () => {
-    setSliceIdx(1);
-  };
+  // const handleHideReviews = () => {
+  //   setSliceIdx(1);
+  // };
 
   if (loading) {
     return (

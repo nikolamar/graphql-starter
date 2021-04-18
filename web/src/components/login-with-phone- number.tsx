@@ -6,23 +6,21 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
-import { useEffect, useState } from "react";
+import { useEffect, useState, FC } from "react";
 import { FaFacebook, FaGoogle, FaTwitter } from "react-icons/fa";
 import { InputField } from "../components/input-field";
 import { Wrapper } from "../components/wrapper";
 import countriesData from "../countries-data";
 import * as schemas from "../yup-schemas";
 
-export const LoginWithPhoneNumber = () => {
+export const LoginWithPhoneNumber: FC<{}> = () => {
   const [regionIdx, setRegionIdx] = useState(0);
   const { colorMode } = useColorMode();
   const color = useColorModeValue("white", "gray.800");
 
   useEffect(() => {
     const region = navigator.language.split("-")[1];
-    const idx = countriesData
-      .map((region) => region.countryCode)
-      .indexOf(region);
+    const idx = countriesData.map((item) => item.countryCode).indexOf(region);
     if (idx) {
       setRegionIdx(idx);
     }

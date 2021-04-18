@@ -11,11 +11,11 @@ export const Rate: FC<RateProps> = ({ defaultValue = 0, readonly = false }) => {
   // To set the default Star Selected
   const [defaultRating, setDefaultRating] = useState(defaultValue);
   // To set the max number of Stars
-  const [maxRating, setMaxRating] = useState([1, 2, 3, 4, 5]);
+  const [maxRating] = useState([1, 2, 3, 4, 5]);
 
   return (
     <Box>
-      {maxRating.map((item, key) => {
+      {maxRating.map((item) => {
         return (
           <StarIcon
             key={item}
