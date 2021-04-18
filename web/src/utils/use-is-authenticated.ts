@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { defaults } from "../configs/defaults";
 import { useMeQuery } from "../generated/graphql";
 
-export const useIsAuthenticated = () => {
+export const useIsAuthenticated = (): void => {
   const { data, loading } = useMeQuery();
   const router = useRouter();
   const toast = useToast();
@@ -19,7 +19,7 @@ export const useIsAuthenticated = () => {
         isClosable: true,
         position: "top-right",
       });
-      router.replace("/login?next=" + router.asPath);
+      void router.replace("/login?next=" + router.asPath);
     }
   }, [loading, data, router]);
 };
