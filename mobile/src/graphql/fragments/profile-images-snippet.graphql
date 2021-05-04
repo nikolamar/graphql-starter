@@ -1,0 +1,10 @@
+fragment ProfileImagesSnippet on Profile {
+  image {
+    id
+    url
+  }
+  images {
+    id
+    url
+  }
+}

@@ -1,0 +1,8 @@
+query Users($limit: Int!, $cursor: DateTime) {
+  users(limit: $limit, cursor: $cursor) {
+    hasMore
+    users {
+      ...UserSnippet
+    }
+  }
+}

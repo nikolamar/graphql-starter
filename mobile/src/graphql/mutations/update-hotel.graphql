@@ -1,0 +1,27 @@
+mutation UpdateHotel(
+  $id: Int!
+  $name: String!
+  $city: String!
+  $country: String!
+  $description: String!
+  $image: String!
+  $location: String!
+  $stars: Int!
+  $price: Int!
+) {
+  updateHotel(
+    id: $id
+    input: {
+      name: $name
+      city: $city
+      country: $country
+      description: $description
+      image: $image
+      location: $location
+      stars: $stars
+      price: $price
+    }
+  ) {
+    ...HotelSnippet
+  }
+}

@@ -1,0 +1,5 @@
+fragment UserProfileSnippet on User {
+  profile {
+    ...ProfileSnippet
+  }
+}

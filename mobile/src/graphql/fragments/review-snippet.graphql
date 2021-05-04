@@ -1,0 +1,18 @@
+fragment ReviewSnippet on Review {
+  id
+  message
+  likes
+  dislikes
+  voteStatus
+  hotelId
+  createdAt
+  user {
+    profile {
+      fullName
+      image {
+        id
+        url
+      }
+    }
+  }
+}

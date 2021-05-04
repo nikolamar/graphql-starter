@@ -1,0 +1,9 @@
+fragment UserResponseSnippet on UserResponse {
+  errors {
+    ...ErrorSnippet
+  }
+  user {
+    ...UserSnippet
+    ...UserProfileSnippet
+  }
+}
